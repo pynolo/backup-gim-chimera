@@ -1,4 +1,4 @@
-package it.giunti.chimera.chimera;
+package it.giunti.chimera;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

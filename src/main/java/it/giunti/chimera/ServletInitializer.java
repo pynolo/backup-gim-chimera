@@ -1,4 +1,4 @@
-package it.giunti.chimera.chimera;
+package it.giunti.chimera;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
