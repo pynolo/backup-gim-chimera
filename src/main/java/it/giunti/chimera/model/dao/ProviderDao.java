@@ -10,26 +10,26 @@ import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.model.entity.Providers;
+import it.giunti.chimera.model.entity.Provider;
 import it.giunti.chimera.util.QueryUtil;
 
-@Repository("providersDao")
-public class ProvidersDao {
+@Repository("providerDao")
+public class ProviderDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Providers selectById(int id) {
-		return entityManager.find(Providers.class, id);
+	public Provider selectById(int id) {
+		return entityManager.find(Provider.class, id);
 	}
 	
-	public Providers insert(Providers item) {
+	public Provider insert(Provider item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public Providers update(Providers item) {
-		Providers itemToUpdate = selectById(item.getId());
+	public Provider update(Provider item) {
+		Provider itemToUpdate = selectById(item.getId());
 		itemToUpdate.setCasPrefix(item.getCasPrefix());
 		itemToUpdate.setName(item.getName());
 		entityManager.merge(itemToUpdate);
@@ -38,31 +38,31 @@ public class ProvidersDao {
 	}
 
 	public void delete(int id) {
-		Providers item = selectById(id);
+		Provider item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Providers findByCasPrefix(String casPrefix) 
+	public Provider findByCasPrefix(String casPrefix) 
 			throws EmptyResultException, DuplicateResultException {
-		Providers result = null;
-		String hql = "from Providers as p where " +
+		Provider result = null;
+		String hql = "from Provider as p where " +
 				"p.casPrefix = :id1 " +
 				"order by p.id asc";
 		Query q = entityManager.createQuery(hql);
 		casPrefix = QueryUtil.escapeParam(casPrefix);
 		q.setParameter("id1", casPrefix);
-		List<Providers> pList = (List<Providers>) q.getResultList();
+		List<Provider> pList = (List<Provider>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() == 1) {
 				result = pList.get(0);
 			} else {
 				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in Providers have prefix="+casPrefix);
+					throw new EmptyResultException("No rows in Provider have prefix="+casPrefix);
 				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in Providers have the same prefix");
+					throw new DuplicateResultException("More rows in Provider have the same prefix");
 			}
 		}
 		return result;

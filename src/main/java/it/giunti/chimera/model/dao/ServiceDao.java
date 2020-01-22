@@ -9,25 +9,25 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.model.entity.Services;
+import it.giunti.chimera.model.entity.Service;
 
 @Repository("servicesDao")
-public class ServicesDao {
+public class ServiceDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Services selectById(int id) {
-		return entityManager.find(Services.class, id);
+	public Service selectById(int id) {
+		return entityManager.find(Service.class, id);
 	}
 	
-	public Services insert(Services item) {
+	public Service insert(Service item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public Services update(Services item) {
-		Services itemToUpdate = selectById(item.getId());
+	public Service update(Service item) {
+		Service itemToUpdate = selectById(item.getId());
 		itemToUpdate.setAccessKey(item.getAccessKey());
 		itemToUpdate.setContact(item.getContact());
 		itemToUpdate.setName(item.getName());
@@ -37,23 +37,23 @@ public class ServicesDao {
 	}
 
 	public void delete(int id) {
-		Services item = selectById(id);
+		Service item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Services> findByIdIdentity(Integer idIdentity) 
+	public List<Service> findByIdIdentity(Integer idIdentity) 
 			throws EmptyResultException {
 		String hql = "select serv "+
-				"from IdentitiesServices as iserv, Services as serv where " +
+				"from IdentityService as iserv, Service as serv where " +
 				"serv.id = iserv.idService and "+
 				"iserv.idIdentity = :id1 "+
 				"order by iserv.id ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", idIdentity);
-		List<Services> sList = (List<Services>) q.getResultList();
+		List<Service> sList = (List<Service>) q.getResultList();
 		if (sList != null) {
 			if (sList.size() == 0) throw new EmptyResultException("No services found");
 		} else {
@@ -63,13 +63,13 @@ public class ServicesDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Services findByAccessKey(String accessKey) throws EmptyResultException {
-		String hql = "from Services as serv where " +
+	public Service findByAccessKey(String accessKey) throws EmptyResultException {
+		String hql = "from Service as serv where " +
 				"serv.accessKey = :s1 "+
 				"order by serv.id ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("s1", accessKey);
-		List<Services> sList = (List<Services>) q.getResultList();
+		List<Service> sList = (List<Service>) q.getResultList();
 		if (sList != null) {
 			if (sList.size() == 0) throw new EmptyResultException("No services found");
 		} else {
@@ -80,11 +80,11 @@ public class ServicesDao {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Services> findAll() throws EmptyResultException {
-		String hql = "from Services as s " +
+	public List<Service> findAll() throws EmptyResultException {
+		String hql = "from Service as s " +
 				"order by s.id ";
 		Query q = entityManager.createQuery(hql);
-		List<Services> pList = (List<Services>) q.getResultList();
+		List<Service> pList = (List<Service>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() == 0) throw new EmptyResultException("No services found");
 		} else {

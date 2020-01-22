@@ -14,7 +14,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class Users {
     @Column(name = "password", length = 256)
     private String password;
 
-    public Users() {
+    public User() {
     }
 
 	public Integer getId() {
@@ -64,10 +64,10 @@ public class Users {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Users)) {
+        if (!(object instanceof User)) {
             return false;
         }
-        Users other = (Users) object;
+        User other = (User) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -76,7 +76,7 @@ public class Users {
 
     @Override
     public String toString() {
-        return "Users[id=" + id + "]";
+        return "User[id=" + id + "]";
     }
 
 }

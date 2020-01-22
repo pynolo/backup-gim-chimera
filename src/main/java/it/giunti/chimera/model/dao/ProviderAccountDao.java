@@ -15,31 +15,31 @@ import org.springframework.stereotype.Repository;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.model.entity.Identities;
-import it.giunti.chimera.model.entity.ProviderAccounts;
-import it.giunti.chimera.model.entity.Providers;
+import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.model.entity.Provider;
 import it.giunti.chimera.util.QueryUtil;
 
-@Repository("providerAccountsDao")
-public class ProviderAccountsDao {
+@Repository("providerAccountDao")
+public class ProviderAccountDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
     @Autowired
-    @Qualifier("providersDao")
-    private ProvidersDao providersDao;
+    @Qualifier("providerDao")
+    private ProviderDao providerDao;
     
-	public ProviderAccounts selectById(int id) {
-		return entityManager.find(ProviderAccounts.class, id);
+	public ProviderAccount selectById(int id) {
+		return entityManager.find(ProviderAccount.class, id);
 	}
 	
-	public ProviderAccounts insert(ProviderAccounts item) {
+	public ProviderAccount insert(ProviderAccount item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public ProviderAccounts update(ProviderAccounts item) {
-		ProviderAccounts itemToUpdate = selectById(item.getId());
+	public ProviderAccount update(ProviderAccount item) {
+		ProviderAccount itemToUpdate = selectById(item.getId());
 		itemToUpdate.setAccountIdentifier(item.getAccountIdentifier());
 		itemToUpdate.setIdentity(item.getIdentity());
 		itemToUpdate.setLastModified(item.getLastModified());
@@ -50,17 +50,17 @@ public class ProviderAccountsDao {
 	}
 
 	public void delete(int id) {
-		ProviderAccounts item = selectById(id);
+		ProviderAccount item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ProviderAccounts findByProviderIdentifier(String pac4jPrefix, String accountIdentifier) 
+	public ProviderAccount findByProviderIdentifier(String pac4jPrefix, String accountIdentifier) 
 			throws EmptyResultException, DuplicateResultException {
-		ProviderAccounts result = null;
-		String hql = "from ProviderAccounts as pa where " +
+		ProviderAccount result = null;
+		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
 				"pa.accountIdentifier = :id2 " +
 				"order by pa.id asc";
@@ -69,30 +69,29 @@ public class ProviderAccountsDao {
 		accountIdentifier = QueryUtil.escapeParam(accountIdentifier);
 		q.setParameter("id1", pac4jPrefix);
 		q.setParameter("id2", accountIdentifier);
-		List<ProviderAccounts> pList = (List<ProviderAccounts>) q.getResultList();
+		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() == 1) {
 				result = pList.get(0);
 			} else {
 				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in ProviderAccounts corresponds to "+pac4jPrefix+"#"+accountIdentifier);
+					throw new EmptyResultException("No rows in ProviderAccount corresponds to "+pac4jPrefix+"#"+accountIdentifier);
 				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in ProviderAccounts corresponds to "+pac4jPrefix+"#"+accountIdentifier);
+					throw new DuplicateResultException("More rows in ProviderAccount corresponds to "+pac4jPrefix+"#"+accountIdentifier);
 			}
 		}
 		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ProviderAccounts> findByIdentity(Integer idIdentity) 
-			throws EmptyResultException, DuplicateResultException {
-		List<ProviderAccounts> result = null;
-		String hql = "from ProviderAccounts as pa where " +
+	public List<ProviderAccount> findByIdentity(Integer idIdentity) {
+		List<ProviderAccount> result = null;
+		String hql = "from ProviderAccount as pa where " +
 				"pa.identity.id = :id1 " +
 				"order by pa.id asc";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", idIdentity);
-		List<ProviderAccounts> pList = (List<ProviderAccounts>) q.getResultList();
+		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
 			result = pList;
 		}
@@ -100,26 +99,26 @@ public class ProviderAccountsDao {
 	}
 		
 	@SuppressWarnings("unchecked")
-	public List<ProviderAccounts> findByIdentityAndProvider(Integer idIdentity, String pac4jPrefix) {
-		String hql = "from ProviderAccounts as pa where " +
+	public List<ProviderAccount> findByIdentityAndProvider(Integer idIdentity, String pac4jPrefix) {
+		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
 				"pa.identity.id = :id2 " +
 				"order by pa.id asc";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", pac4jPrefix);
 		q.setParameter("id2", idIdentity);
-		List<ProviderAccounts> pList = (List<ProviderAccounts>) q.getResultList();
+		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
 			return pList;
 		}
-		return new ArrayList<ProviderAccounts>();
+		return new ArrayList<ProviderAccount>();
 	}
 	
-	public ProviderAccounts createProviderAccount(Identities identity, String pac4jPrefix, String accountIdentifier) 
+	public ProviderAccount createProviderAccount(Identity identity, String pac4jPrefix, String accountIdentifier) 
 			throws BusinessException {
-		Providers provider;
+		Provider provider;
 		try {
-			provider = providersDao.findByCasPrefix(pac4jPrefix);
+			provider = providerDao.findByCasPrefix(pac4jPrefix);
 		} catch (EmptyResultException e) {
 			throw new BusinessException(e.getMessage());
 		} catch (DuplicateResultException e) {
@@ -128,13 +127,13 @@ public class ProviderAccountsDao {
 		if (provider == null) throw new BusinessException("No provider identified by '"+pac4jPrefix+"'");
 		
 		//TEST 1
-		//List<ProviderAccounts> testList = findByProviderAndIdentifier(ses, pac4jPrefix, accountIdentifier);
-		//if (testList.size() > 0) throw new BusinessException("One or more ProviderAccounts correspond to "+pac4jPrefix+"#"+accountIdentifier);
+		//List<ProviderAccount> testList = findByProviderAndIdentifier(ses, pac4jPrefix, accountIdentifier);
+		//if (testList.size() > 0) throw new BusinessException("One or more ProviderAccount correspond to "+pac4jPrefix+"#"+accountIdentifier);
 		//TEST 2
-		List<ProviderAccounts> testList = findByIdentityAndProvider(identity.getId(), pac4jPrefix);
+		List<ProviderAccount> testList = findByIdentityAndProvider(identity.getId(), pac4jPrefix);
 		if (testList.size() > 0) throw new BusinessException("A ProviderAccount for "+pac4jPrefix+" and user_uid "+identity.getIdentityUid()+" already exists");
 		
-		ProviderAccounts result = new ProviderAccounts();
+		ProviderAccount result = new ProviderAccount();
 		result.setAccountIdentifier(accountIdentifier);
 		result.setIdentity(identity);
 		result.setLastModified(new Date());
@@ -146,8 +145,8 @@ public class ProviderAccountsDao {
 	@SuppressWarnings("unchecked")
 	public void deleteProviderAccount(Integer idIdentity, String pac4jPrefix, String accountIdentifier) 
 			throws EmptyResultException, DuplicateResultException {
-		ProviderAccounts toDelete = null;
-		String hql = "from ProviderAccounts as pa where " +
+		ProviderAccount toDelete = null;
+		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
 				"pa.accountIdentifier = :id2 and " +
 				"pa.identity.id = :id3 " +
@@ -158,15 +157,15 @@ public class ProviderAccountsDao {
 		q.setParameter("id1", pac4jPrefix);
 		q.setParameter("id2", accountIdentifier);
 		q.setParameter("id3", idIdentity);
-		List<ProviderAccounts> pList = (List<ProviderAccounts>) q.getResultList();
+		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() == 1) {
 				toDelete = pList.get(0);
 			} else {
 				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in ProviderAccounts to delete");
+					throw new EmptyResultException("No rows in ProviderAccount to delete");
 				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in ProviderAccounts corresponds to given user");
+					throw new DuplicateResultException("More rows in ProviderAccount corresponds to given user");
 			}
 		}
 		delete(toDelete.getId());

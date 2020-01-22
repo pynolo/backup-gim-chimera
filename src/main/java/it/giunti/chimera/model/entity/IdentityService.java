@@ -16,7 +16,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(name = "identities_services",
 		uniqueConstraints = @UniqueConstraint(columnNames = {"id_identity", "id_service"}))
-public class IdentitiesServices {
+public class IdentityService {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class IdentitiesServices {
     @Column(name = "id_service", nullable = false)
     private Integer idService;
 
-    public IdentitiesServices() {
+    public IdentityService() {
     }
 
 	public Integer getId() {
@@ -67,10 +67,10 @@ public class IdentitiesServices {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof IdentitiesServices)) {
+        if (!(object instanceof IdentityService)) {
             return false;
         }
-        IdentitiesServices other = (IdentitiesServices) object;
+        IdentityService other = (IdentityService) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -79,7 +79,7 @@ public class IdentitiesServices {
 
     @Override
     public String toString() {
-        return "IdentitiesServices[id=" + id + "]";
+        return "IdentityService[id=" + id + "]";
     }
 
 }

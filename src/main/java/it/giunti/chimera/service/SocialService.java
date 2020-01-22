@@ -11,20 +11,20 @@ import org.springframework.stereotype.Service;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.model.dao.IdentitiesDao;
-import it.giunti.chimera.model.dao.ProviderAccountsDao;
-import it.giunti.chimera.model.entity.Identities;
-import it.giunti.chimera.model.entity.ProviderAccounts;
+import it.giunti.chimera.model.dao.IdentityDao;
+import it.giunti.chimera.model.dao.ProviderAccountDao;
+import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.ProviderAccount;
 
 @Service("socialService")
 public class SocialService {
 
 	@Autowired
-	@Qualifier("identitiesDao")
-	IdentitiesDao identitiesDao;
+	@Qualifier("identityDao")
+	IdentityDao identityDao;
 	@Autowired
-	@Qualifier("providerAccountsDao")
-	ProviderAccountsDao providerAccountsDao;
+	@Qualifier("providerAccountDao")
+	ProviderAccountDao providerAccountDao;
 	
 	public String getCasPrefixFromSocialId(String socialId) 
 			throws BusinessException {
@@ -61,49 +61,56 @@ public class SocialService {
 	}
 	
 	@Transactional
-	public Identities getIdentityBySocialId(String socialId)
+	public Identity getIdentityBySocialId(String socialId)
 			throws BusinessException, EmptyResultException, DuplicateResultException {
-		Identities result = null;
+		Identity result = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
-		ProviderAccounts account = providerAccountsDao.findByProviderIdentifier(prefix, suffix);
+		ProviderAccount account = providerAccountDao.findByProviderIdentifier(prefix, suffix);
 		if (account != null) result = account.getIdentity();
 		return result;
 	}
 	
 	@Transactional
-	public ProviderAccounts getAccountByIdentityUidAndSocialId(String identityUid, String socialId)
+	public List<ProviderAccount> findAccountsByIdentityUid(String identityUid) {
+		Identity identity = identityDao.findByIdentityUid( identityUid);
+		List<ProviderAccount> pList = providerAccountDao.findByIdentity(identity.getId());
+		return pList;
+	}
+	
+	@Transactional
+	public ProviderAccount getAccountByIdentityUidAndSocialId(String identityUid, String socialId)
 			throws BusinessException, EmptyResultException, DuplicateResultException {
-		ProviderAccounts account = null;
+		ProviderAccount account = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		//String suffix = getIdentifierFromSocialId(socialId);
-		Identities identity = identitiesDao.findByIdentityUid( identityUid);
-		List<ProviderAccounts> pList = providerAccountsDao.findByIdentityAndProvider(identity.getId(), prefix);
+		Identity identity = identityDao.findByIdentityUid( identityUid);
+		List<ProviderAccount> pList = providerAccountDao.findByIdentityAndProvider(identity.getId(), prefix);
 		if (pList.size() == 1) {
 			account = pList.get(0);
 		} else {
 			if (pList.size() == 0)
-				throw new EmptyResultException("No rows in ProviderAccounts correspond to "+prefix);
+				throw new EmptyResultException("No rows in ProviderAccount correspond to "+prefix);
 			if (pList.size() > 1)
-				throw new DuplicateResultException("More rows in ProviderAccounts correspond to "+prefix);
+				throw new DuplicateResultException("More rows in ProviderAccount correspond to "+prefix);
 		}
 		return account;
 	}
 	
 	@Transactional
-	public ProviderAccounts createProviderAccount(Identities identity, String socialId)
+	public ProviderAccount createProviderAccount(Identity identity, String socialId)
 			throws BusinessException {
-		ProviderAccounts result = null;
+		ProviderAccount result = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
-		result = providerAccountsDao.createProviderAccount(identity, prefix, suffix);
+		result = providerAccountDao.createProviderAccount(identity, prefix, suffix);
 		return result;
 	}
 	
 	@Transactional
-	public void deleteProviderAccount(ProviderAccounts pa) throws BusinessException {
+	public void deleteProviderAccount(ProviderAccount pa) throws BusinessException {
 		if (pa != null) {
-			providerAccountsDao.delete(pa.getId());
+			providerAccountDao.delete(pa.getId());
 		} else {
 			throw new BusinessException("ProviderAccount to delete is null");
 		}

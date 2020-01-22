@@ -13,8 +13,8 @@ import javax.persistence.Table;
  * @author paolo
  */
 @Entity
-@Table(name = "providers")
-public class Providers {
+@Table(name = "provinces")
+public class Province {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +22,13 @@ public class Providers {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Basic(optional = false)
-    @Column(name = "cas_prefix", nullable = false, length = 64)
-    private String casPrefix;
-    @Basic(optional = false)
     @Column(name = "name", nullable = false, length = 256)
     private String name;
+    @Basic(optional = false)
+    @Column(name = "code", nullable = false, length = 4)
+    private String code;
 
-    public Providers() {
+    public Province() {
     }
 
     public Integer getId() {
@@ -47,12 +47,12 @@ public class Providers {
 		this.name = name;
 	}
 
-	public String getCasPrefix() {
-		return casPrefix;
+	public String getCode() {
+		return code;
 	}
 
-	public void setCasPrefix(String casPrefix) {
-		this.casPrefix = casPrefix;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@Override
@@ -64,10 +64,11 @@ public class Providers {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Providers)) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Province)) {
             return false;
         }
-        Providers other = (Providers) object;
+        Province other = (Province) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -76,7 +77,7 @@ public class Providers {
 
     @Override
     public String toString() {
-        return "Providers[id=" + id + "]";
+        return "Province[id=" + id + "]";
     }
 
 }

@@ -13,8 +13,8 @@ import javax.persistence.Table;
  * @author paolo
  */
 @Entity
-@Table(name = "services")
-public class Services {
+@Table(name = "providers")
+public class Provider {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,15 +22,13 @@ public class Services {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Basic(optional = false)
+    @Column(name = "cas_prefix", nullable = false, length = 64)
+    private String casPrefix;
+    @Basic(optional = false)
     @Column(name = "name", nullable = false, length = 256)
     private String name;
-    @Basic(optional = false)
-    @Column(name = "access_key", nullable = false, length = 128)
-    private String accessKey;
-    @Column(name = "contact", length = 256)
-    private String contact;
-    
-    public Services() {
+
+    public Provider() {
     }
 
     public Integer getId() {
@@ -49,20 +47,12 @@ public class Services {
 		this.name = name;
 	}
 
-	public String getAccessKey() {
-		return accessKey;
+	public String getCasPrefix() {
+		return casPrefix;
 	}
 
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public String getContact() {
-		return contact;
-	}
-
-	public void setContact(String contact) {
-		this.contact = contact;
+	public void setCasPrefix(String casPrefix) {
+		this.casPrefix = casPrefix;
 	}
 
 	@Override
@@ -74,11 +64,10 @@ public class Services {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Services)) {
+        if (!(object instanceof Provider)) {
             return false;
         }
-        Services other = (Services) object;
+        Provider other = (Provider) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -87,7 +76,7 @@ public class Services {
 
     @Override
     public String toString() {
-        return "Services[id=" + id + "]";
+        return "Provider[id=" + id + "]";
     }
 
 }

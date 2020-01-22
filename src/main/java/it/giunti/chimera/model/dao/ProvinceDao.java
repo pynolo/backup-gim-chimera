@@ -8,31 +8,31 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.model.entity.Providers;
-import it.giunti.chimera.model.entity.Provinces;
+import it.giunti.chimera.model.entity.Provider;
+import it.giunti.chimera.model.entity.Province;
 import it.giunti.chimera.util.QueryUtil;
 
-@Repository("provincesDao")
-public class ProvincesDao {
+@Repository("provinceDao")
+public class ProvinceDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Providers selectById(int id) {
-		return entityManager.find(Providers.class, id);
+	public Provider selectById(int id) {
+		return entityManager.find(Provider.class, id);
 	}
 		
 	@SuppressWarnings("unchecked")
-	public Provinces findByCode(String pv) {
+	public Province findByCode(String pv) {
 		if (pv == null) return null;
-		Provinces result = null;
-		String hql = "from Provinces as pv where " +
+		Province result = null;
+		String hql = "from Province as pv where " +
 				"pv.code like :id1 " +
 				"order by pv.id asc";
 		Query q = entityManager.createQuery(hql);
 		pv = QueryUtil.escapeParam(pv);
 		q.setParameter("id1", pv);
-		List<Provinces> pList = (List<Provinces>) q.getResultList();
+		List<Province> pList = (List<Province>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() == 1) {
 				result = pList.get(0);

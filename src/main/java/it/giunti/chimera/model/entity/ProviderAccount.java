@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "provider_accounts")
-public class ProviderAccounts {
+public class ProviderAccount {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,16 +32,16 @@ public class ProviderAccounts {
     private String accountIdentifier;
     @JoinColumn(name = "id_identity", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
-    private Identities identity;
+    private Identity identity;
     @JoinColumn(name = "id_provider", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
-    private Providers provider;
+    private Provider provider;
     @Basic(optional = false)
     @Column(name = "last_modified", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
     
-    public ProviderAccounts() {
+    public ProviderAccount() {
     }
 
     public Integer getId() {
@@ -60,19 +60,19 @@ public class ProviderAccounts {
 		this.accountIdentifier = accountIdentifier;
 	}
 
-	public Identities getIdentity() {
+	public Identity getIdentity() {
 		return identity;
 	}
 
-	public void setIdentity(Identities identity) {
+	public void setIdentity(Identity identity) {
 		this.identity = identity;
 	}
 
-	public Providers getProvider() {
+	public Provider getProvider() {
 		return provider;
 	}
 
-	public void setProvider(Providers provider) {
+	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
 
@@ -93,10 +93,10 @@ public class ProviderAccounts {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof ProviderAccounts)) {
+        if (!(object instanceof ProviderAccount)) {
             return false;
         }
-        ProviderAccounts other = (ProviderAccounts) object;
+        ProviderAccount other = (ProviderAccount) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -105,7 +105,7 @@ public class ProviderAccounts {
 
     @Override
     public String toString() {
-        return "ProviderAccounts[id=" + id + "]";
+        return "ProviderAccount[id=" + id + "]";
     }
 
 }

@@ -21,7 +21,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "identities")
-public class Identities {
+public class Identity {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -80,15 +80,15 @@ public class Identities {
     private String partitaIva;
     
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
-	private Set<ProviderAccounts> providerAccounts;
+	private Set<ProviderAccount> providerAccount;
     
 //	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
 //	@JoinTable(name = "identities_services", 
 //		joinColumns = { @JoinColumn(name = "id_identity") }, 
 //		inverseJoinColumns = { @JoinColumn(name = "id_service") })
-//	private Set<Services> services;
+//	private Set<Service> services;
     
-    public Identities() {
+    public Identity() {
     }
 
     public Integer getId() {
@@ -263,12 +263,12 @@ public class Identities {
 		this.partitaIva = partitaIva;
 	}
 
-	public Set<ProviderAccounts> getProviderAccounts() {
-		return providerAccounts;
+	public Set<ProviderAccount> getProviderAccounts() {
+		return providerAccount;
 	}
 
-	public void setProviderAccounts(Set<ProviderAccounts> providerAccounts) {
-		this.providerAccounts = providerAccounts;
+	public void setProviderAccounts(Set<ProviderAccount> providerAccount) {
+		this.providerAccount = providerAccount;
 	}
 
 	@Override
@@ -280,10 +280,10 @@ public class Identities {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof Identities)) {
+        if (!(object instanceof Identity)) {
             return false;
         }
-        Identities other = (Identities) object;
+        Identity other = (Identity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -292,7 +292,7 @@ public class Identities {
 
     @Override
     public String toString() {
-        return "Identities[id=" + id + "] "+identityUid;
+        return "Identity[id=" + id + "] "+identityUid;
     }
 
 }

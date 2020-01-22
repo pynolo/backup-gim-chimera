@@ -19,7 +19,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "log_identities")
-public class LogIdentities {
+public class LogIdentity {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,7 +45,7 @@ public class LogIdentities {
     @Transient
     private String serviceDescr;
     
-    public LogIdentities() {
+    public LogIdentity() {
     }
 
     public Integer getId() {
@@ -121,10 +121,10 @@ public class LogIdentities {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof LogIdentities)) {
+        if (!(object instanceof LogIdentity)) {
             return false;
         }
-        LogIdentities other = (LogIdentities) object;
+        LogIdentity other = (LogIdentity) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -133,7 +133,7 @@ public class LogIdentities {
 
     @Override
     public String toString() {
-        return "LogIdentities[id=" + id + "]";
+        return "LogIdentity[id=" + id + "]";
     }
 
 }

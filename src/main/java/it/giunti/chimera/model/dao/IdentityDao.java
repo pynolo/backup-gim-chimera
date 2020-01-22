@@ -18,18 +18,17 @@ import org.springframework.stereotype.Repository;
 import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.GiuntiCardModeEnum;
 import it.giunti.chimera.IdentityPropertiesEnum;
 import it.giunti.chimera.ValidationException;
-import it.giunti.chimera.model.entity.Identities;
-import it.giunti.chimera.model.entity.Provinces;
+import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.Province;
 import it.giunti.chimera.util.PasswordUtil;
 import it.giunti.chimera.util.QueryUtil;
 import it.giunti.chimera.util.ValidationUtil;
 
-@Repository("identitiesDao")
-public class IdentitiesDao {
+@Repository("identityDao")
+public class IdentityDao {
 
 	private static final String emailRegExp = "^([\\w_!#\\$%&'\\*\\+\\-/=\\?\\^`\\{\\|\\}~\\.])+@([\\w\\-\\.]+\\.)+[\\w]{2,8}$";
 	//private static final String emailRegExp = "^([a-zA-Z0-9_\\-\\.])+@([\\w\\-\\.]+\\.)+[A-Z]{2,6}$";
@@ -39,20 +38,20 @@ public class IdentitiesDao {
 	private EntityManager entityManager;
 
 	@Autowired
-	@Qualifier("provincesDao")
-	ProvincesDao provincesDao;
+	@Qualifier("provinceDao")
+	ProvinceDao provinceDao;
 	
-	public Identities selectById(int id) {
-		return entityManager.find(Identities.class, id);
+	public Identity selectById(int id) {
+		return entityManager.find(Identity.class, id);
 	}
 	
-	public Identities insert(Identities item) {
+	public Identity insert(Identity item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public Identities update(Identities item) {
-		Identities itemToUpdate = selectById(item.getId());
+	public Identity update(Identity item) {
+		Identity itemToUpdate = selectById(item.getId());
 		itemToUpdate.setAddressProvinceId(item.getAddressProvinceId());
 		itemToUpdate.setAddressStreet(item.getAddressStreet());
 		itemToUpdate.setAddressTown(item.getAddressTown());
@@ -80,7 +79,7 @@ public class IdentitiesDao {
 	}
 
 	public void delete(int id) {
-		Identities item = selectById(id);
+		Identity item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
@@ -88,101 +87,88 @@ public class IdentitiesDao {
 	
 	
 	@SuppressWarnings("unchecked")
-	public Identities findByIdentityUid(String identityUid) 
-			throws EmptyResultException, DuplicateResultException{
-		Identities result = null;
-		String hql = "from Identities as up where " +
+	public Identity findByIdentityUid(String identityUid) {
+		String hql = "from Identity as up where " +
 				"up.identityUid = :uid1 " +
 				"order by up.id asc";
 		Query q = entityManager.createQuery(hql);
 		identityUid = QueryUtil.escapeParam(identityUid);
 		q.setParameter("uid1", identityUid);
-		List<Identities> upList = (List<Identities>) q.getResultList();
+		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
-			if (upList.size() == 1) {
-				result = upList.get(0);
+			if (upList.size() > 0) {
+				return upList.get(0);
 			} else {
-				if (upList.size() == 0)
-					throw new EmptyResultException("No rows in Identities have identityUid="+identityUid);
-				if (upList.size() > 1)
-					throw new DuplicateResultException("More rows in Identities have the same identityUid");
+				return null;
 			}
 		}
-		return result;
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Identities findByEmail(String email) 
-			throws EmptyResultException, DuplicateResultException {
-		Identities result = null;
-		String hql = "from Identities as up where " +
+	public Identity findByEmail(String email) throws DuplicateResultException {
+		Identity result = null;
+		String hql = "from Identity as up where " +
 				"up.email like :s1 " +
 				"order by up.id asc";
 		Query q = entityManager.createQuery(hql);
 		email = QueryUtil.escapeParam(email);
 		q.setParameter("s1", email);
-		List<Identities> upList = (List<Identities>) q.getResultList();
+		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
 			if (upList.size() == 1) {
 				result = upList.get(0);
 			} else {
-				if (upList.size() == 0)
-					throw new EmptyResultException("No rows in Identities have email="+email);
 				if (upList.size() > 1)
-					throw new DuplicateResultException("More rows in Identities have the same email");
+					throw new DuplicateResultException("More rows in Identity have the same email");
 			}
 		}
 		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Identities findByUserName(String userName) 
-			throws EmptyResultException, DuplicateResultException {
-		Identities result = null;
-		String hql = "from Identities as up where " +
+	public Identity findByUserName(String userName) 
+			throws DuplicateResultException {
+		Identity result = null;
+		String hql = "from Identity as up where " +
 				"up.userName like :s1 " +
 				"order by up.id asc";
 		Query q = entityManager.createQuery(hql);
 		userName = QueryUtil.escapeParam(userName);
 		q.setParameter("s1", userName);
-		List<Identities> upList = (List<Identities>) q.getResultList();
+		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
 			if (upList.size() == 1) {
 				result = upList.get(0);
 			} else {
-				if (upList.size() == 0)
-					throw new EmptyResultException("No rows in Identities have userName="+userName);
 				if (upList.size() > 1)
-					throw new DuplicateResultException("More rows in Identities have the same userName");
+					throw new DuplicateResultException("More rows in Identity have the same userName");
 			}
 		}
 		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Identities> findAll(int offset, int pageSize) 
-			throws EmptyResultException {
-		String hql = "from Identities as up order by up.id asc";
+	public List<Identity> findAll(int offset, int pageSize) {
+		String hql = "from Identity as up order by up.id asc";
 		Query q = entityManager.createQuery(hql);
 		q.setFirstResult(offset);
 		q.setMaxResults(pageSize);
-		List<Identities> upList = (List<Identities>) q.getResultList();
+		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
-			if (upList.size() == 0)
-				throw new EmptyResultException("No rows in Identities");
 			return upList;
 		}
-		return new ArrayList<Identities>();
+		return new ArrayList<Identity>();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Identities> findByChangeTime(Date startDt) {
-		String hql = "from Identities as up where "+
+	public List<Identity> findByChangeTime(Date startDt) {
+		String hql = "from Identity as up where "+
 				"up.changeTime >= :dt1 "+
 				"order by up.changeTime asc";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("dt1", startDt);
-		List<Identities> upList = (List<Identities>) q.getResultList();
+		List<Identity> upList = (List<Identity>) q.getResultList();
 		return upList;
 	}
 	
@@ -239,7 +225,7 @@ public class IdentitiesDao {
 		}
 		//COD_PROVINCIA
 		if (property.equals(IdentityPropertiesEnum.COD_PROVINCIA)) {
-			Provinces found = provincesDao.findByCode(stringValue.toUpperCase());
+			Province found = provinceDao.findByCode(stringValue.toUpperCase());
 			if (found != null) {
 				result = found.getCode();
 			} else {
@@ -303,11 +289,9 @@ public class IdentitiesDao {
 			throw new ValidationException("Email non valida");
 		}
 		//Uniqueness verification
-		Identities uProp = null;
+		Identity uProp = null;
 		try {
 			uProp = findByEmail(email);
-		} catch (EmptyResultException e) {
-			//uProp is still null and that's ok
 		} catch (DuplicateResultException e) {
 			//There are already many lines with that email!!
 			throw new ValidationException("Email gia' assegnata", e);

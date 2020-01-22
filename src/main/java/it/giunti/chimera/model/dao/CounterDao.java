@@ -7,26 +7,26 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.AppConstants;
-import it.giunti.chimera.model.entity.Counters;
+import it.giunti.chimera.model.entity.Counter;
 import it.giunti.chimera.util.NumberBaseConverter;
 
-@Repository("countersDao")
-public class CountersDao {
+@Repository("counterDao")
+public class CounterDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Counters selectById(int id) {
-		return entityManager.find(Counters.class, id);
+	public Counter selectById(int id) {
+		return entityManager.find(Counter.class, id);
 	}
 	
-	public Counters insert(Counters item) {
+	public Counter insert(Counter item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public Counters update(Counters item) {
-		Counters itemToUpdate = selectById(item.getId());
+	public Counter update(Counter item) {
+		Counter itemToUpdate = selectById(item.getId());
 		itemToUpdate.setCkey(item.getCkey());
 		itemToUpdate.setLocked(item.getLocked());
 		itemToUpdate.setNumber(item.getNumber());
@@ -36,7 +36,7 @@ public class CountersDao {
 	}
 
 	public void delete(int id) {
-		Counters item = selectById(id);
+		Counter item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
@@ -44,13 +44,13 @@ public class CountersDao {
 	
 	
 	public String generateIdentityUid() {
-		String queryString = "from Counters ac where ac.ckey = :s1 ";
+		String queryString = "from Counter ac where ac.ckey = :s1 ";
 		Query q = entityManager.createQuery(queryString);
 		q.setParameter("s1", AppConstants.PARAM_IDENTITY_UID);
-		Counters cont = (Counters)q.getSingleResult();
+		Counter cont = (Counter)q.getSingleResult();
 		if (cont == null) {
 			//se non esiste un cursore per le anagrafiche allora lo crea
-			Counters ac = new Counters();
+			Counter ac = new Counter();
 			ac.setCkey(AppConstants.PARAM_IDENTITY_UID);
 			ac.setNumber(AppConstants.DEFAULT_IDENTITY_UID_START_VALUE);
 			ac.setLocked(false);

@@ -13,8 +13,8 @@ import javax.persistence.Table;
  * @author paolo
  */
 @Entity
-@Table(name = "provinces")
-public class Provinces {
+@Table(name = "services")
+public class Service {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +25,12 @@ public class Provinces {
     @Column(name = "name", nullable = false, length = 256)
     private String name;
     @Basic(optional = false)
-    @Column(name = "code", nullable = false, length = 4)
-    private String code;
-
-    public Provinces() {
+    @Column(name = "access_key", nullable = false, length = 128)
+    private String accessKey;
+    @Column(name = "contact", length = 256)
+    private String contact;
+    
+    public Service() {
     }
 
     public Integer getId() {
@@ -47,12 +49,20 @@ public class Provinces {
 		this.name = name;
 	}
 
-	public String getCode() {
-		return code;
+	public String getAccessKey() {
+		return accessKey;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	public String getContact() {
+		return contact;
+	}
+
+	public void setContact(String contact) {
+		this.contact = contact;
 	}
 
 	@Override
@@ -65,10 +75,10 @@ public class Provinces {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Provinces)) {
+        if (!(object instanceof Service)) {
             return false;
         }
-        Provinces other = (Provinces) object;
+        Service other = (Service) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -77,7 +87,7 @@ public class Provinces {
 
     @Override
     public String toString() {
-        return "Provinces[id=" + id + "]";
+        return "Service[id=" + id + "]";
     }
 
 }

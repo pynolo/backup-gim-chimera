@@ -19,7 +19,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "counters")
-public class Counters {
+public class Counter {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +36,10 @@ public class Counters {
 	@Column(name = "locked", nullable = false)
 	private Boolean locked;
 	
-	public Counters() {
+	public Counter() {
 	}
 
-	public Counters(Integer id) {
+	public Counter(Integer id) {
 		this.id = id;
 	}
 
@@ -84,10 +84,10 @@ public class Counters {
 
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof Counters)) {
+		if (!(object instanceof Counter)) {
 			return false;
 		}
-		Counters other = (Counters) object;
+		Counter other = (Counter) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
 			return false;
 		}
@@ -96,7 +96,7 @@ public class Counters {
 
 	@Override
 	public String toString() {
-		return "Counters[ckey=" + ckey + "] "+number;
+		return "Counter[ckey=" + ckey + "] "+number;
 	}
 
 
