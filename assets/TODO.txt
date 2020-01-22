@@ -1,0 +1,3 @@
+- aggiungere tabele newsletters
+- implementare logging interno su tabella
+- salvare il identityUidOld nel merge

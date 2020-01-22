@@ -4,48 +4,48 @@ import java.util.Date;
 
 public class ConsentBean {
 	
-	private String consentRange = null;
-	private Boolean consentTos = null;
-	private Boolean consentMkt = null;
-	private Boolean consentPrf = null;
-	private Date consentDateTos = null;
-	private Date consentDateMkt = null;
+	private String range = null;
+	private Boolean tos = null;
+	private Boolean marketing = null;
+	private Boolean profiling = null;
+	private Date tosDate = null;
+	private Date marketingDate = null;
 	
-	public String getConsentRange() {
-		return consentRange;
+	public String getRange() {
+		return range;
 	}
-	public void setConsentRange(String consentRange) {
-		this.consentRange = consentRange;
+	public void setRange(String range) {
+		this.range = range;
 	}
-	public Boolean getConsentTos() {
-		return consentTos;
+	public Boolean getTos() {
+		return tos;
 	}
-	public void setConsentTos(Boolean consentTos) {
-		this.consentTos = consentTos;
+	public void setTos(Boolean tos) {
+		this.tos = tos;
 	}
-	public Boolean getConsentMkt() {
-		return consentMkt;
+	public Boolean getMarketing() {
+		return marketing;
 	}
-	public void setConsentMkt(Boolean consentMkt) {
-		this.consentMkt = consentMkt;
+	public void setMarketing(Boolean marketing) {
+		this.marketing = marketing;
 	}
-	public Boolean getConsentPrf() {
-		return consentPrf;
+	public Boolean getProfiling() {
+		return profiling;
 	}
-	public void setConsentPrf(Boolean consentPrf) {
-		this.consentPrf = consentPrf;
+	public void setProfiling(Boolean profiling) {
+		this.profiling = profiling;
 	}
-	public Date getConsentDateTos() {
-		return consentDateTos;
+	public Date getTosDate() {
+		return tosDate;
 	}
-	public void setConsentDateTos(Date consentDateTos) {
-		this.consentDateTos = consentDateTos;
+	public void setTosDate(Date tosDate) {
+		this.tosDate = tosDate;
 	}
-	public Date getConsentDateMkt() {
-		return consentDateMkt;
+	public Date getMarketingDate() {
+		return marketingDate;
 	}
-	public void setConsentDateMkt(Date consentDateMkt) {
-		this.consentDateMkt = consentDateMkt;
+	public void setMarketingDate(Date marketingDate) {
+		this.marketingDate = marketingDate;
 	}
 	
 }

@@ -52,6 +52,8 @@ public class IdentityDao {
 	
 	public Identity update(Identity item) {
 		Identity itemToUpdate = selectById(item.getId());
+		itemToUpdate.setIdentityUid(item.getIdentityUid());
+		itemToUpdate.setIdentityUidOld(item.getIdentityUidOld());
 		itemToUpdate.setAddressProvinceId(item.getAddressProvinceId());
 		itemToUpdate.setAddressStreet(item.getAddressStreet());
 		itemToUpdate.setAddressTown(item.getAddressTown());
@@ -64,15 +66,18 @@ public class IdentityDao {
 		itemToUpdate.setFirstName(item.getFirstName());
 		itemToUpdate.setGiuntiCard(item.getGiuntiCard());
 		itemToUpdate.setGiuntiCardMode(item.getGiuntiCardMode());
-		itemToUpdate.setIdentityUid(item.getIdentityUid());
 		itemToUpdate.setIdService(item.getIdService());
 		itemToUpdate.setLastName(item.getLastName());
 		itemToUpdate.setPartitaIva(item.getPartitaIva());
 		itemToUpdate.setPasswordMd5(item.getPasswordMd5());
-		itemToUpdate.setProviderAccounts(item.getProviderAccounts());
+		itemToUpdate.setProviderAccountSet(item.getProviderAccountSet());
+		itemToUpdate.setIdentityConsentSet(item.getIdentityConsentSet());
 		itemToUpdate.setSex(item.getSex());
 		itemToUpdate.setTelephone(item.getTelephone());
 		itemToUpdate.setUserName(item.getUserName());
+		itemToUpdate.setInterest(item.getInterest());
+		itemToUpdate.setJob(item.getJob());
+		itemToUpdate.setSchool(item.getSchool());
 		entityManager.merge(itemToUpdate);
 		entityManager.flush();
 		return item;

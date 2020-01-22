@@ -32,6 +32,9 @@ public class Identity {
     @Column(name = "identity_uid", nullable = false, length = 32)
     private String identityUid;
     @Basic(optional = false)
+    @Column(name = "identity_uid_old", nullable = false, length = 32)
+    private String identityUidOld;
+    @Basic(optional = false)
     @Column(name = "change_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date changeTime;
@@ -78,16 +81,19 @@ public class Identity {
     private String codiceFiscale; 
     @Column(name = "partita_iva", length = 16)
     private String partitaIva;
+    @Column(name = "interest", length = 256)
+    private String interest;
+    @Column(name = "job", length = 256)
+    private String job;
+    @Column(name = "school", length = 256)
+    private String school;
     
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
-	private Set<ProviderAccount> providerAccount;
+	private Set<ProviderAccount> providerAccountSet;
     
-//	@ManyToMany(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
-//	@JoinTable(name = "identities_services", 
-//		joinColumns = { @JoinColumn(name = "id_identity") }, 
-//		inverseJoinColumns = { @JoinColumn(name = "id_service") })
-//	private Set<Service> services;
-    
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
+	private Set<IdentityConsent> identityConsentSet;
+	
     public Identity() {
     }
 
@@ -263,12 +269,60 @@ public class Identity {
 		this.partitaIva = partitaIva;
 	}
 
-	public Set<ProviderAccount> getProviderAccounts() {
-		return providerAccount;
+	public String getIdentityUidOld() {
+		return identityUidOld;
 	}
 
-	public void setProviderAccounts(Set<ProviderAccount> providerAccount) {
-		this.providerAccount = providerAccount;
+	public void setIdentityUidOld(String identityUidOld) {
+		this.identityUidOld = identityUidOld;
+	}
+
+	public String getInterest() {
+		return interest;
+	}
+
+	public void setInterest(String interest) {
+		this.interest = interest;
+	}
+
+	public String getJob() {
+		return job;
+	}
+
+	public void setJob(String job) {
+		this.job = job;
+	}
+
+	public String getSchool() {
+		return school;
+	}
+
+	public void setSchool(String school) {
+		this.school = school;
+	}
+
+	public Set<ProviderAccount> getProviderAccountSet() {
+		return providerAccountSet;
+	}
+
+	public void setProviderAccountSet(Set<ProviderAccount> providerAccountSet) {
+		this.providerAccountSet = providerAccountSet;
+	}
+
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
+
+	public Set<IdentityConsent> getIdentityConsentSet() {
+		return identityConsentSet;
+	}
+
+	public void setIdentityConsentSet(Set<IdentityConsent> identityConsentSet) {
+		this.identityConsentSet = identityConsentSet;
 	}
 
 	@Override

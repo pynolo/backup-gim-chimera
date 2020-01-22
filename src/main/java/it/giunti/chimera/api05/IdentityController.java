@@ -15,6 +15,7 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.Service;
 import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.srvc.ServiceSrvc;
+import it.giunti.chimera.util.PasswordUtil;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,11 +37,23 @@ public class IdentityController {
 				ErrorBean error = null;
 				try {
 					Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
-					IdentityBean bean = BeanConverter
+					if (entity != null) {
+						// Identity found
+						String passwordMd5 = PasswordUtil.md5(input.getPassword());
+						if (entity.getPasswordMd5().equals(passwordMd5)) {
+							IdentityBean bean = BeanConverter.toIdentityBean(entity);
+							return bean;
+						}
+						// Wrong password
+					} 
+					//Identity not found
+					error = new ErrorBean();
+					error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
+					error.setMessage("Le credenziali non sono corrette. ");
 				} catch (DuplicateResultException e) {
 					error = new ErrorBean();
 					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-					error.setMessage("Risultato non univoco per "+input.getEmail());
+					error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
 				}
 			}
 			// ACCESS KEY FAILS
@@ -56,48 +69,64 @@ public class IdentityController {
 
 	@PostMapping("/api05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody IdentityInputBean input) {
-
+		if (input != null) {
+			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
+			if (service != null) {
+				// ACCESS KEY EXISTS
+				Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
+				IdentityBean bean = BeanConverter.toIdentityBean(entity);
+				return bean;
+			}
+			// ACCESS KEY FAILS
+		}
+		// NO INPUT
+		IdentityBean resultBean = new IdentityBean();
+		ErrorBean error = new ErrorBean();
+		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
+		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		resultBean.setError(error);
+		return resultBean;	
 	}
-	
-	@PostMapping("/api05/get_identity_by_email")
-	public IdentityBean getIdentityByEmail(@Valid @RequestBody IdentityInputBean input) {
 
-	}
-	
-	@PostMapping("/api05/get_identity_by_social_id")
-	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/validate_identity_data")
-	public IdentityBean validateIdentityData(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/create_identity")
-	public IdentityBean createIdentity(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/update_identity")
-	public IdentityBean updateIdentity(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/update_identity_consent")
-	public IdentityBean updateIdentityConsent(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/replace_identity")
-	public IdentityBean replaceIdentity(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-	
-	@PostMapping("/api05/delete_identity")
-	public IdentityBean deleteIdentity(@Valid @RequestBody IdentityInputBean input) {
-
-	}
+//	@PostMapping("/api05/get_identity_by_email")
+//	public IdentityBean getIdentityByEmail(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/get_identity_by_social_id")
+//	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/validate_identity_data")
+//	public IdentityBean validateIdentityData(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/create_identity")
+//	public IdentityBean createIdentity(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/update_identity")
+//	public IdentityBean updateIdentity(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/update_identity_consent")
+//	public IdentityBean updateIdentityConsent(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/replace_identity")
+//	public IdentityBean replaceIdentity(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//	
+//	@PostMapping("/api05/delete_identity")
+//	public IdentityBean deleteIdentity(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
 	 
 	// Input Beans
 	

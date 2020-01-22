@@ -1,8 +1,10 @@
 package it.giunti.chimera.api05;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.IdentityConsent;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
 public class BeanConverter {
@@ -15,7 +17,7 @@ public class BeanConverter {
 		return bean;
 	}
 	
-	public static IdentityBean toIdentityBean(Identity entity, List<IdentityConsent> consentArray) {
+	public static IdentityBean toIdentityBean(Identity entity) {
 		IdentityBean bean = new IdentityBean();
 		bean.setError(null);
 		bean.setAddressTown(entity.getAddressTown());
@@ -25,25 +27,32 @@ public class BeanConverter {
 		bean.setBirthDate(entity.getBirthDate());
 		bean.setChangeTime(entity.getChangeTime());
 		bean.setCodiceFiscale(entity.getCodiceFiscale());
-		bean.setConsent(entity.get);
 		bean.setEmail(entity.getEmail());
 		bean.setFirstName(entity.getFirstName());
 		bean.setIdentityUid(entity.getIdentityUid());
-		bean.setIdentityUidOld(entity.get);
-		bean.setInterest(entity.get);
-		bean.setJob(entity.get);
+		bean.setIdentityUidOld(entity.getIdentityUidOld());
+		bean.setInterest(entity.getInterest());
+		bean.setJob(entity.getJob());
 		bean.setLastName(entity.getLastName());
-		bean.setNlEdu(entity.get);
-		bean.setNlScuolaInfanzia(entity.get);
-		bean.setNlScuolaPrimaria(entity.get);
-		bean.setNlScuolaSecondaria1(entity.get);
-		bean.setNlScuolaSecondaria2(entity.get);
 		bean.setPartitaIva(entity.getPartitaIva());
-		bean.setSchool(entity.get);
+		bean.setSchool(entity.getSchool());
 		bean.setSex(entity.getSex());
 		bean.setTelephone(entity.getTelephone());
+		List<ConsentBean> beanList = new ArrayList<ConsentBean>();
+		for (IdentityConsent consent:entity.getIdentityConsentSet())
+			beanList.add(BeanConverter.toConsentBean(consent));
+		bean.setConsent(beanList);
 		return bean;
 	}
-	
+	public static ConsentBean toConsentBean(IdentityConsent entity) {
+		ConsentBean bean = new ConsentBean();
+		bean.setMarketing(entity.getMarketing());
+		bean.setMarketingDate(entity.getMarketingDate());
+		bean.setProfiling(entity.getProfiling());
+		bean.setRange(entity.getRange());
+		bean.setTos(entity.getTos());
+		bean.setTosDate(entity.getTosDate());
+		return bean;
+	}
 	
 }

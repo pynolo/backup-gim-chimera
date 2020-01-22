@@ -20,14 +20,14 @@ public class FederationController {
 	@Qualifier("identityService")
 	private IdentityService identityService;
 
-	@PostMapping("/api05/find_changed_identities")
-	public IdentityBean findChangedIdentities(@Valid @RequestBody IdentityInputBean input) {
-
-	}
-
-	@PostMapping("/api05/find_services")
-	public IdentityBean findServices(@Valid @RequestBody IdentityInputBean input) {
-
-	}
+//	@PostMapping("/api05/find_changed_identities")
+//	public IdentityBean findChangedIdentities(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
+//
+//	@PostMapping("/api05/find_services")
+//	public IdentityBean findServices(@Valid @RequestBody IdentityInputBean input) {
+//
+//	}
 	
 }
