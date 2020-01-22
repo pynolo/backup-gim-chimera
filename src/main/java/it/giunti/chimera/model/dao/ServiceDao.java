@@ -1,5 +1,6 @@
 package it.giunti.chimera.model.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -8,7 +9,6 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.entity.Service;
 
 @Repository("servicesDao")
@@ -44,10 +44,9 @@ public class ServiceDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Service> findByIdIdentity(Integer idIdentity) 
-			throws EmptyResultException {
+	public List<Service> findByIdIdentity(Integer idIdentity) {
 		String hql = "select serv "+
-				"from IdentityService as iserv, Service as serv where " +
+				"from IdentitySrvc as iserv, Service as serv where " +
 				"serv.id = iserv.idService and "+
 				"iserv.idIdentity = :id1 "+
 				"order by iserv.id ";
@@ -55,15 +54,13 @@ public class ServiceDao {
 		q.setParameter("id1", idIdentity);
 		List<Service> sList = (List<Service>) q.getResultList();
 		if (sList != null) {
-			if (sList.size() == 0) throw new EmptyResultException("No services found");
-		} else {
-			throw new EmptyResultException("No services found");
+			if (sList.size() > 0) return sList;
 		}
-		return sList;
+		return new ArrayList<Service>();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Service findByAccessKey(String accessKey) throws EmptyResultException {
+	public Service findByAccessKey(String accessKey) {
 		String hql = "from Service as serv where " +
 				"serv.accessKey = :s1 "+
 				"order by serv.id ";
@@ -71,25 +68,21 @@ public class ServiceDao {
 		q.setParameter("s1", accessKey);
 		List<Service> sList = (List<Service>) q.getResultList();
 		if (sList != null) {
-			if (sList.size() == 0) throw new EmptyResultException("No services found");
-		} else {
-			throw new EmptyResultException("No services found");
+			if (sList.size() > 0) return sList.get(0);
 		}
-		return sList.get(0);
+		return null;
 	}
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Service> findAll() throws EmptyResultException {
+	public List<Service> findAll() {
 		String hql = "from Service as s " +
 				"order by s.id ";
 		Query q = entityManager.createQuery(hql);
 		List<Service> pList = (List<Service>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() == 0) throw new EmptyResultException("No services found");
-		} else {
-			throw new EmptyResultException("No services found");
+			if (pList.size() > 0) return pList;
 		}
-		return pList;
+		return new ArrayList<Service>();
 	}
 }

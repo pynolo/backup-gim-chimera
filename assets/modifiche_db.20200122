@@ -1,0 +1,203 @@
+ALTER TABLE user_properties CHANGE COLUMN `user_name` `user_name` varchar(256) DEFAULT NULL;
+ALTER TABLE user_properties CHANGE COLUMN `province_code` `province_code` varchar(4) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `password_md5` varchar(64) NOT NULL DEFAULT "x";
+ALTER TABLE user_properties ADD COLUMN `first_name` varchar(32) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `last_name` varchar(64) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `sex` varchar(1) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `birth` date DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `address` varchar(64) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `zip` varchar(64) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `city` varchar(64) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `telephone` varchar(32) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `id_service` int(11) NOT NULL DEFAULT 2;
+
+***
+
+ALTER TABLE user_properties ADD COLUMN `giunti_card` varchar(16) DEFAULT NULL;
+
+***
+
+ALTER TABLE user_properties ADD COLUMN `giunti_card_mode` varchar(4) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `codice_fiscale` varchar(16) DEFAULT NULL;
+ALTER TABLE user_properties ADD COLUMN `partita_iva` varchar(16) DEFAULT NULL;
+
+***
+
+ALTER TABLE log_user_properties CHANGE COLUMN `last_modified` `last_modified` timestamp NOT NULL default CURRENT_TIMESTAMP COMMENT 'data ultima modifica';
+ALTER TABLE user_properties CHANGE COLUMN `last_modified` `last_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'data ultima modifica'
+ALTER TABLE log_user_properties ADD COLUMN `activity` varchar(256) DEFAULT NULL;
+update log_user_properties set activity = 'setUserData';
+CREATE TABLE `users` (
+  `id` int NOT NULL auto_increment,
+  `user_name` varchar(256) NOT NULL,
+  `password` varchar(256) DEFAULT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+
+***
+
+DROP TABLE IF EXISTS `identities`;
+CREATE TABLE identities ( 
+    id              	int(11) AUTO_INCREMENT NOT NULL,
+    last_modified   	timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'data ultima modifica',
+    user_uid        	varchar(32) NOT NULL,
+    user_name       	varchar(256) NULL,
+    email           	varchar(90) NULL,
+    province_code   	varchar(4) NULL,
+    password_md5    	varchar(64) NOT NULL DEFAULT 'x',
+    first_name      	varchar(32) NULL,
+    last_name       	varchar(64) NULL,
+    sex             	varchar(1) NULL,
+    birth           	date NULL,
+    address         	varchar(64) NULL,
+    zip             	varchar(64) NULL,
+    city            	varchar(64) NULL,
+    telephone       	varchar(32) NULL,
+    id_service      	int(11) NOT NULL DEFAULT '2',
+    giunti_card     	varchar(16) NULL,
+    giunti_card_mode	varchar(4) NULL,
+    codice_fiscale  	varchar(16) NULL,
+    partita_iva     	varchar(16) NULL,
+    PRIMARY KEY(id)
+);
+ALTER TABLE identities ADD CONSTRAINT user_uid_unique UNIQUE (user_uid);
+CREATE UNIQUE INDEX user_uid_key ON identities(user_uid);
+ALTER TABLE identities ADD CONSTRAINT email_unique UNIQUE (email);
+CREATE UNIQUE INDEX email_key ON identities(email);
+CREATE TABLE `identities_services` (
+  `id` int(11) NOT NULL auto_increment,
+  `id_identity` int(11) NOT NULL,
+  `id_service` int(11) NOT NULL,
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `identity_service_key` (`id_identity`,`id_service`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+INSERT INTO identities (id, last_modified, user_uid, user_name, email,
+		province_code, password_md5, first_name, last_name, sex,
+		birth, address, zip, city, telephone, id_service, giunti_card,
+		giunti_card_mode, codice_fiscale, partita_iva)
+	SELECT id, last_modified, user_uid, user_name, SUBSTRING(email, 1, 90),
+		province_code, password_md5, first_name, last_name, sex,
+		birth, address, zip, city, telephone, id_service, giunti_card,
+		giunti_card_mode, codice_fiscale, partita_iva FROM user_properties as up1
+	WHERE (select COUNT(up2.email) from user_properties as up2 WHERE up2.email=up1.email) = 1;
+
+select max(last_modified) from identities;
+INSERT INTO identities (id, last_modified, user_uid, user_name, email,
+		province_code, password_md5, first_name, last_name, sex,
+		birth, address, zip, city, telephone, id_service, giunti_card,
+		giunti_card_mode, codice_fiscale, partita_iva)
+	SELECT id, last_modified, user_uid, user_name, SUBSTRING(email, 1, 90),
+		province_code, password_md5, first_name, last_name, sex,
+		birth, address, zip, city, telephone, id_service, giunti_card,
+		giunti_card_mode, codice_fiscale, partita_iva FROM user_properties as up1
+	WHERE up1.last_modified > '2015-03-31' and 
+		(select COUNT(up2.email) from user_properties as up2 WHERE up2.email=up1.email) = 1;
+
+RENAME TABLE log_user_properties TO log_identities;
+
+***
+
+DROP TABLE IF EXISTS `provider_accounts`;
+DROP TABLE IF EXISTS `providers`;
+CREATE TABLE  `providers` (
+  `id` int NOT NULL auto_increment,
+  `cas_prefix` varchar(64) NOT NULL,
+  `name` varchar(256) NOT NULL COMMENT 'account provider name',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+insert into providers(cas_prefix,name) values('FacebookProfile','Facebook');
+insert into providers(cas_prefix,name) values('Google2Profile','Google+');
+insert into providers(cas_prefix,name) values('TwitterProfile','Twitter');
+insert into providers(cas_prefix,name) values('CasOAuthWrapperProfile','CentroStella');
+CREATE TABLE  `provider_accounts` (
+  `id` int NOT NULL auto_increment,
+  `id_identity` int NOT NULL,
+  `account_identifier` varchar(256) NOT NULL COMMENT 'id account presso il provider remoto',
+  `id_provider` int NOT NULL COMMENT 'provider remoto',
+  `last_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP COMMENT 'data ultima modifica',
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `identity_fk` FOREIGN KEY (`id_identity`) REFERENCES `identities` (`id`),
+  CONSTRAINT `provider_fk` FOREIGN KEY (`id_provider`) REFERENCES `providers` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+
+***
+
+ALTER TABLE `provider_accounts` ADD UNIQUE `unique_identity_provider`(`id_identity`, `id_provider`);
+
+###
+
+ALTER TABLE identities CHANGE COLUMN `password_md5` `password_md5` varchar(64) DEFAULT "x";
+ALTER TABLE log_identities CHANGE COLUMN `user_uid` `user_uid` varchar(16) DEFAULT NULL;
+ALTER TABLE log_identities CHANGE COLUMN `activity` `operation` varchar(256) DEFAULT NULL;
+ALTER TABLE log_identities ADD COLUMN `parameters` varchar(2024) DEFAULT NULL;
+ALTER TABLE log_identities ADD COLUMN `result` varchar(256) DEFAULT NULL;
+DROP TABLE IF EXISTS `user_properties`;
+
+###
+
+ALTER TABLE log_identities DROP FOREIGN KEY log_service_fk;
+
+###
+
+ALTER TABLE services ADD COLUMN `contact` varchar(256) DEFAULT NULL;
+
+###
+
+#Preparazione del db alle API 5.0
+UPDATE counters set ckey='identity_uid' where ckey='user_uid';
+ALTER TABLE identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL;
+ALTER TABLE log_identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL;
+
+ALTER TABLE identities ADD COLUMN `change_time` datetime NOT NULL;
+ALTER TABLE identities ADD COLUMN `change_type` varchar(8) NOT NULL;
+UPDATE identities set `change_time`=`last_modified`, `change_type`='update';
+ALTER TABLE identities CHANGE COLUMN `birth` `birth_date` date DEFAULT NULL;
+ALTER TABLE identities CHANGE COLUMN `address` `address_street` varchar(64) DEFAULT NULL;
+ALTER TABLE identities CHANGE COLUMN `province_code` `address_province_id` varchar(4) DEFAULT NULL;
+ALTER TABLE identities CHANGE COLUMN `zip` `address_zip` varchar(16) DEFAULT NULL;
+ALTER TABLE identities CHANGE COLUMN `city` `address_town` varchar(64) DEFAULT NULL;
+
+#DROP TABLE IF EXISTS `log_identities`;
+#CREATE TABLE log_identities (
+#   id int NOT NULL,
+#   last_modified timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+#   identity_uid varchar(32),
+#   id_service int NOT NULL,
+#   operation text,
+#   parameters text,
+#   result text,
+#   PRIMARY KEY  (`id`),
+#   UNIQUE KEY log_service_fk (`id_service`)
+#);
+
+###
+
+ALTER TABLE identities ADD COLUMN `replacement_identity_uid` varchar(32) DEFAULT NULL;
+ALTER TABLE identities ADD COLUMN `interest` *
+ALTER TABLE identities ADD COLUMN `job` *
+ALTER TABLE identities ADD COLUMN `school` *
+ALTER TABLE identities ADD COLUMN `nl_scuola_infanzia` bit DEFAULT NULL;
+ALTER TABLE identities ADD COLUMN `nl_scuola_primaria` bit DEFAULT NULL;
+ALTER TABLE identities ADD COLUMN `nl_scuola_secondaria_1` bit DEFAULT NULL;
+ALTER TABLE identities ADD COLUMN `nl_scuola_secondaria_2` bit DEFAULT NULL;
+ALTER TABLE identities ADD COLUMN `nl_edu` bit DEFAULT NULL;
+
+CREATE TABLE `gdpr_consent` (
+  `id` int NOT NULL auto_increment,
+  `id_identity` int NOT NULL,
+  `consent_tos_ge` bit DEFAULT NULL,
+  `consent_mkt_ge` bit DEFAULT NULL,
+  `consent_prf_ge` bit DEFAULT NULL,
+  `consent_tos_date_ge` date DEFAULT NULL,
+  `consent_mkt_date_ge` date DEFAULT NULL,
+  `consent_tos_gs` bit DEFAULT NULL,
+  `consent_mkt_gs` bit DEFAULT NULL,
+  `consent_prf_gs` bit DEFAULT NULL,
+  `consent_tos_date_gs` date DEFAULT NULL,
+  `consent_mkt_date_gs` date DEFAULT NULL,
+  *
+  PRIMARY KEY  (`id`),
+  CONSTRAINT `identity_fk` FOREIGN KEY (`id_identity`) REFERENCES `identities` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+
+

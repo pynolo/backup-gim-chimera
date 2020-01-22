@@ -16,7 +16,7 @@ public class IdentityBean {
 	private String addressStreet = null;
 	private String addressZip = null;
 	private String addressProvinceId = null;
-	private String addressLocality = null;
+	private String addressTown = null;
 	private String telephone = null;
 	private String codiceFiscale = null;
 	private String partitaIva = null;
@@ -102,11 +102,11 @@ public class IdentityBean {
 	public void setAddressProvinceId(String addressProvinceId) {
 		this.addressProvinceId = addressProvinceId;
 	}
-	public String getAddressLocality() {
-		return addressLocality;
+	public String getAddressTown() {
+		return addressTown;
 	}
-	public void setAddressLocality(String addressLocality) {
-		this.addressLocality = addressLocality;
+	public void setAddressTown(String addressTown) {
+		this.addressTown = addressTown;
 	}
 	public String getTelephone() {
 		return telephone;

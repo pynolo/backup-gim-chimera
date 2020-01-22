@@ -9,19 +9,49 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.giunti.chimera.model.entity.IdentityService;
+import it.giunti.chimera.DuplicateResultException;
+import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.Service;
+import it.giunti.chimera.srvc.IdentitySrvc;
+import it.giunti.chimera.srvc.ServiceSrvc;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class IdentityController {
 
 	@Autowired
-	@Qualifier("identityService")
-	private IdentityService identityService;
-
+	@Qualifier("identitySrvc")
+	private IdentitySrvc identitySrvc;
+	@Autowired
+	@Qualifier("serviceSrvc")
+	private ServiceSrvc serviceSrvc;
+	
 	@PostMapping("/api05/authenticate")
 	public IdentityBean authenticate(@Valid @RequestBody IdentityInputBean input) {
-
+		if (input != null) {
+			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
+			if (service != null) {
+				// ACCESS KEY EXISTS
+				ErrorBean error = null;
+				try {
+					Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
+					IdentityBean bean = BeanConverter
+				} catch (DuplicateResultException e) {
+					error = new ErrorBean();
+					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+					error.setMessage("Risultato non univoco per "+input.getEmail());
+				}
+			}
+			// ACCESS KEY FAILS
+		}
+		// NO INPUT
+		IdentityBean resultBean = new IdentityBean();
+		ErrorBean error = new ErrorBean();
+		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
+		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		resultBean.setError(error);
+		return resultBean;	
 	}
 
 	@PostMapping("/api05/get_identity")

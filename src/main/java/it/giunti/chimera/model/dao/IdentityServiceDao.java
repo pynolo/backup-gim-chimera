@@ -43,7 +43,7 @@ public class IdentityServiceDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<IdentityService> findByServicesAndIdentity(Integer idIdentity, Integer idService)  {
-		String hql = "from IdentityService as iserv where " +
+		String hql = "from IdentitySrvc as iserv where " +
 				"iserv.idIdentity = :id1 and "+
 				"iserv.idService = :id2 ";
 		Query q = entityManager.createQuery(hql);
