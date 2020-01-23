@@ -58,7 +58,7 @@ public class ProviderAccountDao {
 	
 	@SuppressWarnings("unchecked")
 	public ProviderAccount findByProviderIdentifier(String pac4jPrefix, String accountIdentifier) 
-			throws EmptyResultException, DuplicateResultException {
+			throws DuplicateResultException {
 		ProviderAccount result = null;
 		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
@@ -74,8 +74,6 @@ public class ProviderAccountDao {
 			if (pList.size() == 1) {
 				result = pList.get(0);
 			} else {
-				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in ProviderAccount corresponds to "+pac4jPrefix+"#"+accountIdentifier);
 				if (pList.size() > 1)
 					throw new DuplicateResultException("More rows in ProviderAccount corresponds to "+pac4jPrefix+"#"+accountIdentifier);
 			}

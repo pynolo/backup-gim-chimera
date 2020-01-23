@@ -13,7 +13,7 @@ public class ServiceSrvc {
 
 	@Autowired
 	@Qualifier("serviceDao")
-	ServiceDao serviceDao;
+	private ServiceDao serviceDao;
 	
 	@Transactional
 	public it.giunti.chimera.model.entity.Service findServiceByAccessKey(String accessKey) {

@@ -21,10 +21,10 @@ public class SocialSrvc {
 
 	@Autowired
 	@Qualifier("identityDao")
-	IdentityDao identityDao;
+	private IdentityDao identityDao;
 	@Autowired
 	@Qualifier("providerAccountDao")
-	ProviderAccountDao providerAccountDao;
+	private ProviderAccountDao providerAccountDao;
 	
 	public String getCasPrefixFromSocialId(String socialId) 
 			throws BusinessException {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.model.entity.Identity;
@@ -29,6 +30,7 @@ public class IdentityController {
 	private ServiceSrvc serviceSrvc;
 	
 	private ErrorBean checkInputBean(IdentityInputBean input) {
+		ErrorBean error = new ErrorBean();
 		if (input != null) {
 			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
 			if (service != null) {	
@@ -36,11 +38,13 @@ public class IdentityController {
 				return null;
 			}
 			// ACCESS KEY FAILS
+			error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
+			error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		} else {
+			// NO INPUT
+			error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
+			error.setMessage("La richiesta e' priva di contenuto");
 		}
-		// NO INPUT
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
 		return error;	
 	}
 	
@@ -118,11 +122,34 @@ public class IdentityController {
 		return resultBean;	
 	}
 	
-//	@PostMapping("/api05/get_identity_by_social_id")
-//	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityInputBean input) {
-//
-//	}
-//	
+	@PostMapping("/api05/get_identity_by_social_id")
+	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityInputBean input) {
+		IdentityBean resultBean = new IdentityBean();
+		ErrorBean error = checkInputBean(input);
+		if (error == null) {
+			try {
+				Identity entity = identitySrvc.getIdentityBySocialId(input.getSocialId());
+				if (entity != null) {
+					resultBean = BeanConverter.toIdentityBean(entity);
+					return resultBean;
+				}
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
+				error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
+			} catch (BusinessException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage(e.getMessage()+" ");
+			} catch (DuplicateResultException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
+			}
+		}
+		resultBean.setError(error);
+		return resultBean;	
+	}
+	
 //	@PostMapping("/api05/validate_identity_data")
 //	public IdentityBean validateIdentityData(@Valid @RequestBody IdentityInputBean input) {
 //
