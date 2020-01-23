@@ -28,71 +28,96 @@ public class IdentityController {
 	@Qualifier("serviceSrvc")
 	private ServiceSrvc serviceSrvc;
 	
-	@PostMapping("/api05/authenticate")
-	public IdentityBean authenticate(@Valid @RequestBody IdentityInputBean input) {
+	private ErrorBean checkInputBean(IdentityInputBean input) {
 		if (input != null) {
 			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
-			if (service != null) {
+			if (service != null) {	
 				// ACCESS KEY EXISTS
-				ErrorBean error = null;
-				try {
-					Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
-					if (entity != null) {
-						// Identity found
-						String passwordMd5 = PasswordUtil.md5(input.getPassword());
-						if (entity.getPasswordMd5().equals(passwordMd5)) {
-							IdentityBean bean = BeanConverter.toIdentityBean(entity);
-							return bean;
-						}
-						// Wrong password
-					} 
-					//Identity not found
-					error = new ErrorBean();
-					error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
-					error.setMessage("Le credenziali non sono corrette. ");
-				} catch (DuplicateResultException e) {
-					error = new ErrorBean();
-					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-					error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
-				}
+				return null;
 			}
 			// ACCESS KEY FAILS
 		}
 		// NO INPUT
-		IdentityBean resultBean = new IdentityBean();
 		ErrorBean error = new ErrorBean();
 		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		return error;	
+	}
+	
+	@PostMapping("/api05/authenticate")
+	public IdentityBean authenticate(@Valid @RequestBody IdentityInputBean input) {
+		IdentityBean resultBean = new IdentityBean();
+		ErrorBean error = checkInputBean(input);
+		if (error == null) {
+			//BODY
+			try {
+				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
+				if (entity != null) {
+					// Identity found
+					String passwordMd5 = PasswordUtil.md5(input.getPassword());
+					if (entity.getPasswordMd5().equals(passwordMd5)) {
+						resultBean = BeanConverter.toIdentityBean(entity);
+						return resultBean;
+					}
+					// Wrong password
+				} 
+				//Identity not found
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
+				error.setMessage("Le credenziali non sono corrette. ");
+			} catch (DuplicateResultException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
+			}
+		}
 		resultBean.setError(error);
-		return resultBean;	
+		return resultBean;
 	}
 
 	@PostMapping("/api05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody IdentityInputBean input) {
-		if (input != null) {
-			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
-			if (service != null) {
-				// ACCESS KEY EXISTS
-				Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
-				IdentityBean bean = BeanConverter.toIdentityBean(entity);
-				return bean;
-			}
-			// ACCESS KEY FAILS
-		}
-		// NO INPUT
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		ErrorBean error = checkInputBean(input);
+		if (error == null) {
+			//BODY
+			Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
+			if (entity != null) {
+				resultBean = BeanConverter.toIdentityBean(entity);
+				return resultBean;
+			}
+			error = new ErrorBean();
+			error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
+			error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
+		}
 		resultBean.setError(error);
 		return resultBean;	
 	}
 
-//	@PostMapping("/api05/get_identity_by_email")
-//	public IdentityBean getIdentityByEmail(@Valid @RequestBody IdentityInputBean input) {
-//
-//	}
-//	
+	@PostMapping("/api05/get_identity_by_email")
+	public IdentityBean getIdentityByEmail(@Valid @RequestBody IdentityInputBean input) {
+		IdentityBean resultBean = new IdentityBean();
+		ErrorBean error = checkInputBean(input);
+		if (error == null) {
+			try {
+				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
+				if (entity != null) {
+					resultBean = BeanConverter.toIdentityBean(entity);
+					return resultBean;
+				}
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
+				error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
+			} catch (DuplicateResultException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
+			}
+		}
+		resultBean.setError(error);
+		return resultBean;	
+	}
+	
 //	@PostMapping("/api05/get_identity_by_social_id")
 //	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityInputBean input) {
 //
@@ -127,60 +152,5 @@ public class IdentityController {
 //	public IdentityBean deleteIdentity(@Valid @RequestBody IdentityInputBean input) {
 //
 //	}
-	 
-	// Input Beans
-	
-	public class IdentityInputBean {
-		private String accessKey = null;
-		private String identityUid = null;
-		private String email = null;
-		private String password = null;
-		private String socialId = null;
-		private String redundantIdentityUid = null;
-		private String finalIdentityUid = null;
-		
-		public String getAccessKey() {
-			return accessKey;
-		}
-		public void setAccessKey(String accessKey) {
-			this.accessKey = accessKey;
-		}
-		public String getIdentityUid() {
-			return identityUid;
-		}
-		public void setIdentityUid(String identityUid) {
-			this.identityUid = identityUid;
-		}
-		public String getEmail() {
-			return email;
-		}
-		public void setEmail(String email) {
-			this.email = email;
-		}
-		public String getPassword() {
-			return password;
-		}
-		public void setPassword(String password) {
-			this.password = password;
-		}
-		public String getSocialId() {
-			return socialId;
-		}
-		public void setSocialId(String socialId) {
-			this.socialId = socialId;
-		}
-		public String getRedundantIdentityUid() {
-			return redundantIdentityUid;
-		}
-		public void setRedundantIdentityUid(String redundantIdentityUid) {
-			this.redundantIdentityUid = redundantIdentityUid;
-		}
-		public String getFinalIdentityUid() {
-			return finalIdentityUid;
-		}
-		public void setFinalIdentityUid(String finalIdentityUid) {
-			this.finalIdentityUid = finalIdentityUid;
-		}
-	}
-	
+
 }

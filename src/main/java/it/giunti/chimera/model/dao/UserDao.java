@@ -12,7 +12,7 @@ import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.entity.User;
 
-@Repository("usersDao")
+@Repository("userDao")
 public class UserDao {
 
 	@PersistenceContext

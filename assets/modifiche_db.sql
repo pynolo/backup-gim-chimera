@@ -21,31 +21,31 @@ DROP TABLE IF EXISTS `identities_newsletter`;
 CREATE TABLE `identities_newsletter` (
   `id` int(11) NOT NULL auto_increment,
   `id_identity` int(11) NOT NULL,
-  `name` varchar(64) NOT NULL
+  `id_newsletter` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `identity_range_key` (`id_identity`,`newsletter`)
+  UNIQUE KEY `identity_range_key` (`id_identity`,`id_newsletter`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS `lookup_newsletters`;
 CREATE TABLE `lookup_newsletters` (
-  `id` varchar(64) NOT NULL
+  `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS `lookup_interests`;
 CREATE TABLE `lookup_interests` (
-  `id` varchar(64) NOT NULL
+  `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS `lookup_jobs`;
 CREATE TABLE `lookup_jobs` (
-  `id` varchar(64) NOT NULL
+  `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS `lookup_schools`;
-CREATE TABLE `lookup_interests` (
-  `id` varchar(64) NOT NULL
+CREATE TABLE `lookup_schools` (
+  `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;

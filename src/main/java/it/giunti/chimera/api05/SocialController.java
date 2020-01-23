@@ -57,7 +57,7 @@ public class SocialController {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
 		ErrorBean error = new ErrorBean();
 		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
 		resultBean.setError(error);
 		List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
 		beanList.add(resultBean);
@@ -90,7 +90,7 @@ public class SocialController {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
 		ErrorBean error = new ErrorBean();
 		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
 		resultBean.setError(error);
 		return resultBean;	
 	}
@@ -121,37 +121,9 @@ public class SocialController {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = new ErrorBean();
 		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
 		resultBean.setError(error);
 		return resultBean;
 	}
 
-	
-	// Input Beans
-	
-	
-	public class SocialInputBean {
-		private String accessKey = null;
-		private String identityUid = null;
-		private String socialId = null;
-		
-		public String getAccessKey() {
-			return accessKey;
-		}
-		public void setAccessKey(String accessKey) {
-			this.accessKey = accessKey;
-		}
-		public String getIdentityUid() {
-			return identityUid;
-		}
-		public void setIdentityUid(String identityUid) {
-			this.identityUid = identityUid;
-		}
-		public String getSocialId() {
-			return socialId;
-		}
-		public void setSocialId(String socialId) {
-			this.socialId = socialId;
-		}
-	}
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.model.entity.Service;
 
-@Repository("servicesDao")
+@Repository("serviceDao")
 public class ServiceDao {
 
 	@PersistenceContext

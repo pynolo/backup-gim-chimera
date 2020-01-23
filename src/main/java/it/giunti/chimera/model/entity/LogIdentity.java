@@ -35,11 +35,11 @@ public class LogIdentity {
     @Basic(optional = false)
     @Column(name = "id_service", nullable = false)
     private Integer idService;
-    @Column(name = "operation", length = 256)
+    @Column(name = "operation", columnDefinition = "TEXT")
     private String operation;
-    @Column(name = "parameters", length = 2024)
+    @Column(name = "parameters", columnDefinition = "TEXT")
     private String parameters;
-    @Column(name = "result", length = 256)
+    @Column(name = "result", columnDefinition = "TEXT")
     private String result;
     
     @Transient
