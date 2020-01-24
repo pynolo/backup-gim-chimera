@@ -1,12 +1,12 @@
 package it.giunti.chimera.api05;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class ValidationBean {
 	
 	private ErrorBean error = null;
 	private Boolean successfulValidation = null;
-	private HashMap<String, String> warnings = null;
+	private Map<String, String> warnings = null;
 	
 	
 	public ErrorBean getError() {
@@ -21,10 +21,10 @@ public class ValidationBean {
 	public void setSuccessfulValidation(Boolean successfulValidation) {
 		this.successfulValidation = successfulValidation;
 	}
-	public HashMap<String, String> getWarnings() {
+	public Map<String, String> getWarnings() {
 		return warnings;
 	}
-	public void setWarnings(HashMap<String, String> warnings) {
+	public void setWarnings(Map<String, String> warnings) {
 		this.warnings = warnings;
 	}
 	 

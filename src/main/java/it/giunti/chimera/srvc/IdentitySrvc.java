@@ -50,4 +50,17 @@ public class IdentitySrvc {
 			return entity;
 		} else return null;
 	}
+
+	@Transactional
+	public Identity addOrUpdateIdentity(Identity identity, boolean isNew) {
+		Identity result = null;
+		if (identity != null) {
+			result = identityDao.insert(identity);
+		} else {
+			result = identityDao.update(identity);
+		}
+		return result;
+	}
+	
+	
 }

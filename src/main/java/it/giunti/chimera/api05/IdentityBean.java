@@ -5,6 +5,7 @@ import java.util.List;
 
 public class IdentityBean {
 	private ErrorBean error = null;
+	private String accessKey = null;
 	private String identityUid = null;
 	private String identityUidOld = null;
 	private Date changeTime = null;
@@ -35,6 +36,12 @@ public class IdentityBean {
 	}
 	public void setError(ErrorBean error) {
 		this.error = error;
+	}
+	public String getAccessKey() {
+		return accessKey;
+	}
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
 	}
 	public String getIdentityUid() {
 		return identityUid;

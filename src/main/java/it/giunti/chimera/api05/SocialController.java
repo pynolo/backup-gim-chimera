@@ -95,8 +95,8 @@ public class SocialController {
 		return resultBean;	
 	}
 	
-	@PostMapping("/api05/remove_provider_account")
-	public ValidationBean removeProviderAccount(@Valid @RequestBody SocialInputBean input) {
+	@PostMapping("/api05/delete_provider_account")
+	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		if (input != null) {
 			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
 			if (service != null) {

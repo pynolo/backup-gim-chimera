@@ -1,5 +1,7 @@
 package it.giunti.chimera.api05;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,21 +152,59 @@ public class IdentityController {
 		return resultBean;	
 	}
 	
-//	@PostMapping("/api05/validate_identity_data")
-//	public IdentityBean validateIdentityData(@Valid @RequestBody IdentityInputBean input) {
-//
-//	}
-//	
-//	@PostMapping("/api05/create_identity")
-//	public IdentityBean createIdentity(@Valid @RequestBody IdentityInputBean input) {
-//
-//	}
-//	
-//	@PostMapping("/api05/update_identity")
-//	public IdentityBean updateIdentity(@Valid @RequestBody IdentityInputBean input) {
-//
-//	}
-//	
+	@PostMapping("/api05/validate_updating_identity")
+	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
+		ValidationBean resultBean = new ValidationBean();
+		Map<String, String> errMap;
+		try {
+			errMap = BeanValidator.validateIdentityBean(input);
+			if (errMap.isEmpty()) {
+				resultBean.setSuccessfulValidation(true);
+			} else {
+				resultBean.setSuccessfulValidation(false);
+				resultBean.setWarnings(errMap);
+			}
+		} catch (BusinessException e) {
+			ErrorBean error = new ErrorBean();
+			error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+			error.setMessage(ErrorEnum.INTERNAL_ERROR.getErrorDescr());
+			resultBean.setError(error);
+		}
+		return resultBean;
+	}
+	
+	@PostMapping("/api05/validate_new_identity")
+	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
+		if (input.getIdentityUid() != null) {
+			ValidationBean resultBean = new ValidationBean();
+			ErrorBean error = new ErrorBean();
+			error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
+			error.setMessage("Una nuova identity non può avere identityUid");
+			resultBean.setError(error);
+		}
+		return validateUpdatingIdentity(input);
+	}
+	
+	@PostMapping("/api05/update_identity")
+	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
+		ValidationBean resultBean = validateUpdatingIdentity(input);
+		if (resultBean.getError() != null) {
+			Identity identity = BeanConverter.toIdentity(input);
+			identity = identitySrvc.addOrUpdateIdentity(identity, false);
+		}
+		return resultBean;
+	}
+
+	@PostMapping("/api05/add_identity")
+	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
+		ValidationBean resultBean = validateNewIdentity(input);
+		if (resultBean.getError() != null) {
+			Identity identity = BeanConverter.toIdentity(input);
+			identity = identitySrvc.addOrUpdateIdentity(identity, false);
+		}
+		return resultBean;
+	}
+	
 //	@PostMapping("/api05/update_identity_consent")
 //	public IdentityBean updateIdentityConsent(@Valid @RequestBody IdentityInputBean input) {
 //
