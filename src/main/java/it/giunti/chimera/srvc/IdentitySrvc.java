@@ -62,4 +62,26 @@ public class IdentitySrvc {
 		}
 		throw new BusinessException("Nessuna identità con identityUid='"+identityUid+"'");
 	}
+	
+	@Transactional
+	public Identity replaceIdentity(String redundantIdentityUid, String finalIdentityUid)
+			throws BusinessException {
+		Identity red = identityDao.findByIdentityUid(redundantIdentityUid);
+		Identity fin = identityDao.findByIdentityUid(finalIdentityUid);
+		if (red == null || fin == null) throw new BusinessException("Impossibile unire una Identity vuota");
+		//Non merge di: email, address, password
+		if (fin.getBirthDate() == null) fin.setBirthDate(red.getBirthDate());
+		if (fin.getCodiceFiscale() == null) fin.setCodiceFiscale(red.getCodiceFiscale());
+		if (fin.getFirstName() == null) fin.setFirstName(red.getFirstName());
+		if (fin.getInterest() == null) fin.setInterest(red.getInterest());
+		if (fin.getJob() == null) fin.setJob(red.getJob());
+		if (fin.getLastName() == null) fin.setLastName(red.getLastName());
+		if (fin.getPartitaIva() == null) fin.setPartitaIva(red.getPartitaIva());
+		if (fin.getSchool() == null) fin.setSchool(red.getSchool());
+		if (fin.getSex() == null) fin.setSex(red.getSex());
+		if (fin.getTelephone() == null) fin.setTelephone(red.getTelephone());
+		Identity result = identityDao.update(fin);
+		identityDao.delete(red.getId());
+		return result;
+	}
 }

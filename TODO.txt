@@ -2,3 +2,5 @@
 - implementare tabelle di lookup nella validazione (newsletters, job...)
 - implementare logging interno su tabella
 - salvare il identityUidOld nel merge
+- identity: impostare changeTime e changeType
+
