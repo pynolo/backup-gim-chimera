@@ -51,4 +51,15 @@ public class IdentitySrvc {
 		} else return null;
 	}
 	
+	@Transactional
+	public void deleteIdentity(String identityUid) throws BusinessException {
+		if (identityUid != null) {
+			if (identityUid.length() > 0) {
+				Identity identity = identityDao.findByIdentityUid(identityUid);
+				identityDao.delete(identity.getId());
+				return;
+			}
+		}
+		throw new BusinessException("Nessuna identità con identityUid='"+identityUid+"'");
+	}
 }

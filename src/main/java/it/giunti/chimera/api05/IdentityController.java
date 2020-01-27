@@ -20,6 +20,7 @@ import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.IdentityFinderBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
+import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.Service;
 import it.giunti.chimera.srvc.IdentitySrvc;
@@ -246,14 +247,27 @@ public class IdentityController {
 		return resultBean;
 	}
 	
+	@PostMapping("/api05/delete_identity")
+	public ValidationBean deleteIdentity(@Valid @RequestBody IdentityFinderBean input) {
+		ValidationBean resultBean = new ValidationBean();
+		ErrorBean error = checkKeyAndNull(input);
+		if (error != null) {
+			try {
+				identitySrvc.deleteIdentity(input.getIdentityUid());
+			} catch (BusinessException e) {
+				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
+				error.setMessage(e.getMessage());
+			}
+		}
+		resultBean.setError(error);
+		return resultBean;
+	}
+	
 //	@PostMapping("/api05/replace_identity")
 //	public IdentityBean replaceIdentity(@Valid @RequestBody IdentityFinderBean input) {
 //
 //	}
 //	
-//	@PostMapping("/api05/delete_identity")
-//	public IdentityBean deleteIdentity(@Valid @RequestBody IdentityFinderBean input) {
-//
-//	}
+
 
 }
