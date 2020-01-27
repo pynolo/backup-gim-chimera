@@ -8,8 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,9 +21,9 @@ public class IdentityConsent {
 	@Basic(optional = false)
 	@Column(name = "id", nullable = false)
 	private Integer id;
-    @JoinColumn(name = "id_identity", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false)
-    private Identity identity;
+	@Basic(optional = false)
+    @Column(name = "id_identity")
+    private Integer idIdentity;
 	@Basic(optional = false)
 	@Column(name = "range", nullable = false, length = 64)
 	private String range;
@@ -55,12 +53,12 @@ public class IdentityConsent {
 		this.id = id;
 	}
 
-	public Identity getIdentity() {
-		return identity;
+	public Integer getIdIdentity() {
+		return idIdentity;
 	}
 
-	public void setIdentity(Identity identity) {
-		this.identity = identity;
+	public void setIdIdentity(Integer idIdentity) {
+		this.idIdentity = idIdentity;
 	}
 
 	public String getRange() {

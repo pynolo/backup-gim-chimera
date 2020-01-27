@@ -1,9 +1,9 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api05.bean;
 
 import java.util.Date;
 import java.util.List;
 
-public class IdentityBean {
+public class IdentityBean implements IInputBean {
 	private ErrorBean error = null;
 	private String accessKey = null;
 	private String identityUid = null;
@@ -29,19 +29,21 @@ public class IdentityBean {
 	private Boolean nlScuolaSecondaria1 = null;
 	private Boolean nlScuolaSecondaria2 = null;
 	private Boolean nlEdu = null;
-	private List<ConsentBean> consent = null;
+	private List<IdentityConsentBean> consent = null;
 	
+	@Override
+	public String getAccessKey() {
+		return accessKey;
+	}
+	@Override
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
 	public ErrorBean getError() {
 		return error;
 	}
 	public void setError(ErrorBean error) {
 		this.error = error;
-	}
-	public String getAccessKey() {
-		return accessKey;
-	}
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
 	}
 	public String getIdentityUid() {
 		return identityUid;
@@ -181,10 +183,10 @@ public class IdentityBean {
 	public void setNlEdu(Boolean nlEdu) {
 		this.nlEdu = nlEdu;
 	}
-	public List<ConsentBean> getConsent() {
+	public List<IdentityConsentBean> getConsent() {
 		return consent;
 	}
-	public void setConsent(List<ConsentBean> consent) {
+	public void setConsent(List<IdentityConsentBean> consent) {
 		this.consent = consent;
 	}
 	

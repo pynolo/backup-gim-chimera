@@ -16,6 +16,10 @@ import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.api05.bean.ErrorBean;
+import it.giunti.chimera.api05.bean.ProviderAccountBean;
+import it.giunti.chimera.api05.bean.SocialInputBean;
+import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 import it.giunti.chimera.model.entity.Service;
@@ -37,6 +41,10 @@ public class SocialController {
 	@Qualifier("serviceSrvc")
 	private ServiceSrvc serviceSrvc;
 	
+	@Autowired
+	@Qualifier("converterApi05Srvc")
+	private ConverterApi05Srvc converterApi05Srvc;
+	
 	@PostMapping("/api05/find_provider_accounts")
 	public List<ProviderAccountBean> findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		if (input != null) {
@@ -46,7 +54,7 @@ public class SocialController {
 				if (input.getIdentityUid() != null) {
 					List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
 					List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
-					for (ProviderAccount entity:list) beanList.add(BeanConverter.toProviderAccountBean(entity));
+					for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
 					return beanList;
 				}
 				return new ArrayList<ProviderAccountBean>();
@@ -75,7 +83,7 @@ public class SocialController {
 				ProviderAccountBean resultBean = new ProviderAccountBean();
 				try {
 					ProviderAccount entity = socialSrvc.createProviderAccount(identity, input.getSocialId());
-					resultBean = BeanConverter.toProviderAccountBean(entity);
+					resultBean = converterApi05Srvc.toProviderAccountBean(entity);
 				} catch (BusinessException e) {
 					error = new ErrorBean();
 					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());

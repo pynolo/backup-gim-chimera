@@ -27,12 +27,12 @@ public class ProviderAccount {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
+	@Basic(optional = false)
+    @Column(name = "id_identity")
+    private Integer idIdentity;
     @Basic(optional = false)
     @Column(name = "account_identifier", nullable = false, length = 256)
     private String accountIdentifier;
-    @JoinColumn(name = "id_identity", referencedColumnName = "id", nullable = false)
-    @ManyToOne(optional = false)
-    private Identity identity;
     @JoinColumn(name = "id_provider", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
     private Provider provider;
@@ -60,12 +60,12 @@ public class ProviderAccount {
 		this.accountIdentifier = accountIdentifier;
 	}
 
-	public Identity getIdentity() {
-		return identity;
+	public Integer getIdIdentity() {
+		return idIdentity;
 	}
 
-	public void setIdentity(Identity identity) {
-		this.identity = identity;
+	public void setIdIdentity(Integer idIdentity) {
+		this.idIdentity = idIdentity;
 	}
 
 	public Provider getProvider() {

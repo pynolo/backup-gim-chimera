@@ -8,6 +8,8 @@ import java.util.Map;
 import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.IdentityPropertiesEnum;
+import it.giunti.chimera.api05.bean.IdentityBean;
+import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.model.entity.Identity;
 
 public class BeanValidator {
@@ -37,6 +39,8 @@ public class BeanValidator {
 								if (value.length() > property.getStringLength()) {
 									errMap.put(property.getOrmName(), "'"+property.getOrmName()+"' deve essere inferiore a "+property.getStringLength()+" caratteri");
 								}
+								//TODO
+								//verify against lookup tables
 							}
 						}
 					}
@@ -47,4 +51,24 @@ public class BeanValidator {
 		}
 		return errMap;
 	}
+	
+	public static Map<String,String> validateConsentBean(IdentityConsentBean bean) throws BusinessException {
+		Map<String,String> errMap = new HashMap<String, String>();
+		if (bean.getRange() == null) errMap.put("range", "Valore obbligatorio");
+		//TODO
+		//verify against lookup tables
+		if (bean.getTos() == null) {
+			errMap.put("tos", "Valore obbligatorio");
+		} else {
+			if (bean.getTosDate() == null) errMap.put("tosDate", "Valore obbligatorio");
+		}
+		if (bean.getMarketing() == null) {
+			errMap.put("marketing", "Valore obbligatorio");
+		} else {
+			if (bean.getMarketingDate() == null) errMap.put("marketingDate", "Valore obbligatorio");
+		}
+		if (bean.getProfiling() == null) errMap.put("profiling", "Valore obbligatorio");
+		return errMap;
+	}
+		
 }

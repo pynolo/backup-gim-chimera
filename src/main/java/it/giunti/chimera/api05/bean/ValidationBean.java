@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api05.bean;
 
 import java.util.Map;
 

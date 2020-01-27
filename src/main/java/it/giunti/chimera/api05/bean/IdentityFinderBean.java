@@ -1,6 +1,7 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api05.bean;
 
-public class IdentityInputBean {
+public class IdentityFinderBean implements IInputBean {
+	
 	private String accessKey = null;
 	private String identityUid = null;
 	private String email = null;
@@ -9,9 +10,11 @@ public class IdentityInputBean {
 	private String redundantIdentityUid = null;
 	private String finalIdentityUid = null;
 	
+	@Override
 	public String getAccessKey() {
 		return accessKey;
 	}
+	@Override
 	public void setAccessKey(String accessKey) {
 		this.accessKey = accessKey;
 	}

@@ -1,9 +1,11 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api05.bean;
 
 import java.util.Date;
 
-public class ConsentBean {
+public class IdentityConsentBean implements IInputBean {
 	
+	private String accessKey = null;
+	private String identityUid = null;
 	private String range = null;
 	private Boolean tos = null;
 	private Boolean marketing = null;
@@ -11,6 +13,20 @@ public class ConsentBean {
 	private Date tosDate = null;
 	private Date marketingDate = null;
 	
+	@Override
+	public String getAccessKey() {
+		return accessKey;
+	}
+	@Override
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+	public String getIdentityUid() {
+		return identityUid;
+	}
+	public void setIdentityUid(String identityUid) {
+		this.identityUid = identityUid;
+	}
 	public String getRange() {
 		return range;
 	}

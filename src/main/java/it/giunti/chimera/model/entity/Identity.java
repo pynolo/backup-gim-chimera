@@ -1,16 +1,13 @@
 package it.giunti.chimera.model.entity;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -88,11 +85,11 @@ public class Identity {
     @Column(name = "school", length = 256)
     private String school;
     
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
-	private Set<ProviderAccount> providerAccountSet;
+	//@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
+	//private Set<ProviderAccount> providerAccountSet;
     
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
-	private Set<IdentityConsent> identityConsentSet;
+	//@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
+	//private Set<IdentityConsent> identityConsentSet;
 	
     public Identity() {
     }
@@ -301,14 +298,6 @@ public class Identity {
 		this.school = school;
 	}
 
-	public Set<ProviderAccount> getProviderAccountSet() {
-		return providerAccountSet;
-	}
-
-	public void setProviderAccountSet(Set<ProviderAccount> providerAccountSet) {
-		this.providerAccountSet = providerAccountSet;
-	}
-
 	public Date getLastModified() {
 		return lastModified;
 	}
@@ -317,13 +306,21 @@ public class Identity {
 		this.lastModified = lastModified;
 	}
 
-	public Set<IdentityConsent> getIdentityConsentSet() {
-		return identityConsentSet;
-	}
-
-	public void setIdentityConsentSet(Set<IdentityConsent> identityConsentSet) {
-		this.identityConsentSet = identityConsentSet;
-	}
+	//public Set<ProviderAccount> getProviderAccountSet() {
+	//	return providerAccountSet;
+	//}
+	//
+	//public void setProviderAccountSet(Set<ProviderAccount> providerAccountSet) {
+	//	this.providerAccountSet = providerAccountSet;
+	//}
+	//
+	//public Set<IdentityConsent> getIdentityConsentSet() {
+	//	return identityConsentSet;
+	//}
+	//
+	//public void setIdentityConsentSet(Set<IdentityConsent> identityConsentSet) {
+	//	this.identityConsentSet = identityConsentSet;
+	//}
 
 	@Override
     public int hashCode() {

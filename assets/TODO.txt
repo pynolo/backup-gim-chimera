@@ -1,3 +1,0 @@
-- implementare tabelle di lookup e validazione (newsletters, job...)
-- implementare logging interno su tabella
-- salvare il identityUidOld nel merge

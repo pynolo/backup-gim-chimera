@@ -11,6 +11,7 @@ import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.model.entity.IdentityConsent;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
 @Service("identitySrvc")
@@ -62,5 +63,17 @@ public class IdentitySrvc {
 		return result;
 	}
 	
+	@Transactional
+	public IdentityConsent addOrUpdateConsent(IdentityConsent consent) {
+		boolean isNew = true;
+		if (consent.getId() != null || consent.) isNew = true;
+		Identity result = null;
+		if (identity != null) {
+			result = identityDao.insert(identity);
+		} else {
+			result = identityDao.update(identity);
+		}
+		return result;
+	}
 	
 }

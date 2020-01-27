@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api05.bean;
 
 public class SocialInputBean {
 	private String accessKey = null;
