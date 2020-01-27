@@ -21,7 +21,6 @@ import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.IdentityFinderBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.model.entity.IdentityConsent;
 import it.giunti.chimera.model.entity.Service;
 import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.srvc.ServiceSrvc;
@@ -205,8 +204,8 @@ public class IdentityController {
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = validateUpdatingIdentity(input);
 		if (resultBean.getError() != null) {
-			Identity updatedIdentity = converterApi05Srvc.mergeIntoIdentity(input);
-			identitySrvc.addOrUpdateIdentity(updatedIdentity, false);
+			/*Identity updatedIdentity =*/
+			converterApi05Srvc.persistIntoIdentity(input);
 		}
 		return resultBean;
 	}
@@ -215,8 +214,8 @@ public class IdentityController {
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = validateNewIdentity(input);
 		if (resultBean.getError() != null) {
-			Identity identity = converterApi05Srvc.toIdentity(input);
-			identity = identitySrvc.addOrUpdateIdentity(identity, false);
+			/*Identity identity =*/
+			converterApi05Srvc.persistIntoIdentity(input);
 		}
 		return resultBean;
 	}
@@ -232,8 +231,8 @@ public class IdentityController {
 				if (errMap.isEmpty()) {
 					resultBean.setSuccessfulValidation(true);
 					//Actually adds or updates
-					IdentityConsent updatedConsent = converterApi05Srvc.mergeIntoConsent(input);
-					identitySrvc.addOrUpdateConsent(updatedConsent);
+					/*IdentityConsent updatedConsent =*/
+					converterApi05Srvc.persistIntoConsent(input);
 				} else {
 					resultBean.setSuccessfulValidation(false);
 					resultBean.setWarnings(errMap);

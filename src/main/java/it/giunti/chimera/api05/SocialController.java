@@ -82,7 +82,7 @@ public class SocialController {
 				ErrorBean error = null;
 				ProviderAccountBean resultBean = new ProviderAccountBean();
 				try {
-					ProviderAccount entity = socialSrvc.createProviderAccount(identity, input.getSocialId());
+					ProviderAccount entity = socialSrvc.createProviderAccount(identity.getId(), input.getSocialId());
 					resultBean = converterApi05Srvc.toProviderAccountBean(entity);
 				} catch (BusinessException e) {
 					error = new ErrorBean();

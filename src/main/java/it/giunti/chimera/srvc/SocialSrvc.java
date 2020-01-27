@@ -67,7 +67,7 @@ public class SocialSrvc {
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
 		ProviderAccount account = providerAccountDao.findByProviderIdentifier(prefix, suffix);
-		if (account != null) result = account.getIdentity();
+		if (account != null) result = identityDao.selectById(account.getIdIdentity());
 		return result;
 	}
 	
@@ -98,12 +98,12 @@ public class SocialSrvc {
 	}
 	
 	@Transactional
-	public ProviderAccount createProviderAccount(Identity identity, String socialId)
+	public ProviderAccount createProviderAccount(Integer idIdentity, String socialId)
 			throws BusinessException {
 		ProviderAccount result = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
-		result = providerAccountDao.createProviderAccount(identity, prefix, suffix);
+		result = providerAccountDao.createProviderAccount(idIdentity, prefix, suffix);
 		return result;
 	}
 	

@@ -15,9 +15,8 @@ import org.springframework.stereotype.Repository;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.model.entity.ProviderAccount;
 import it.giunti.chimera.model.entity.Provider;
+import it.giunti.chimera.model.entity.ProviderAccount;
 import it.giunti.chimera.util.QueryUtil;
 
 @Repository("providerAccountDao")
@@ -41,7 +40,7 @@ public class ProviderAccountDao {
 	public ProviderAccount update(ProviderAccount item) {
 		ProviderAccount itemToUpdate = selectById(item.getId());
 		itemToUpdate.setAccountIdentifier(item.getAccountIdentifier());
-		itemToUpdate.setIdentity(item.getIdentity());
+		itemToUpdate.setIdIdentity(item.getIdIdentity());
 		itemToUpdate.setLastModified(item.getLastModified());
 		itemToUpdate.setProvider(item.getProvider());
 		entityManager.merge(itemToUpdate);
@@ -112,7 +111,7 @@ public class ProviderAccountDao {
 		return new ArrayList<ProviderAccount>();
 	}
 	
-	public ProviderAccount createProviderAccount(Identity identity, String pac4jPrefix, String accountIdentifier) 
+	public ProviderAccount createProviderAccount(Integer idIdentity, String pac4jPrefix, String accountIdentifier) 
 			throws BusinessException {
 		Provider provider;
 		try {
@@ -128,12 +127,12 @@ public class ProviderAccountDao {
 		//List<ProviderAccount> testList = findByProviderAndIdentifier(ses, pac4jPrefix, accountIdentifier);
 		//if (testList.size() > 0) throw new BusinessException("One or more ProviderAccount correspond to "+pac4jPrefix+"#"+accountIdentifier);
 		//TEST 2
-		List<ProviderAccount> testList = findByIdentityAndProvider(identity.getId(), pac4jPrefix);
-		if (testList.size() > 0) throw new BusinessException("A ProviderAccount for "+pac4jPrefix+" and user_uid "+identity.getIdentityUid()+" already exists");
+		List<ProviderAccount> testList = findByIdentityAndProvider(idIdentity, pac4jPrefix);
+		if (testList.size() > 0) throw new BusinessException("A ProviderAccount for "+pac4jPrefix+" and id_identity "+idIdentity+" already exists");
 		
 		ProviderAccount result = new ProviderAccount();
 		result.setAccountIdentifier(accountIdentifier);
-		result.setIdentity(identity);
+		result.setIdIdentity(idIdentity);
 		result.setLastModified(new Date());
 		result.setProvider(provider);
 		insert(result);

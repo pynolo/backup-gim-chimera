@@ -70,8 +70,6 @@ public class IdentityDao {
 		itemToUpdate.setLastName(item.getLastName());
 		itemToUpdate.setPartitaIva(item.getPartitaIva());
 		itemToUpdate.setPasswordMd5(item.getPasswordMd5());
-		itemToUpdate.setProviderAccountSet(item.getProviderAccountSet());
-		itemToUpdate.setIdentityConsentSet(item.getIdentityConsentSet());
 		itemToUpdate.setSex(item.getSex());
 		itemToUpdate.setTelephone(item.getTelephone());
 		itemToUpdate.setUserName(item.getUserName());
