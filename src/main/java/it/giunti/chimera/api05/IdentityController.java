@@ -144,22 +144,24 @@ public class IdentityController {
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
-		if (error != null) {
+		boolean success = false;
+		if (error == null) {
 			Map<String, String> errMap;
 			try {
 				errMap = BeanValidator.validateIdentityBean(input);
 				if (errMap.isEmpty()) {
-					resultBean.setSuccessfulValidation(true);
+					success = true;
 				} else {
-					resultBean.setSuccessfulValidation(false);
 					resultBean.setWarnings(errMap);
 				}
 			} catch (BusinessException e) {
+				error = new ErrorBean();
 				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
 				error.setMessage(ErrorEnum.INTERNAL_ERROR.getErrorDescr());
 			}
 		}
 		resultBean.setError(error);
+		resultBean.setSuccess(success);
 		return resultBean;
 	}
 	
@@ -167,35 +169,57 @@ public class IdentityController {
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
-		if (error != null) { 
-			if (input.getIdentityUid() != null) {
-				error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
-				error.setMessage("Una nuova identity non può avere identityUid");
-				resultBean.setError(error);
+		boolean success = false;
+		if (error == null) {
+			if (input != null) {
+				if (input.getIdentityUid() != null) {
+					error = new ErrorBean();
+					error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
+					error.setMessage("Una nuova identity non può avere identityUid");
+					resultBean.setError(error);
+				} else {
+					return validateUpdatingIdentity(input);
+				}
 			}
-			return validateUpdatingIdentity(input);
 		}
+		resultBean.setSuccess(success);
 		resultBean.setError(error);
 		return resultBean;
 	}
 	
 	@PostMapping("/api05/update_identity")
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
-		ValidationBean resultBean = validateUpdatingIdentity(input);
-		if (resultBean.getError() != null) {
-			/*Identity updatedIdentity =*/
-			converterApi05Srvc.persistIntoIdentity(input);
+		ValidationBean resultBean = new ValidationBean();
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		boolean success = false;
+		if (error == null) {
+			resultBean = validateUpdatingIdentity(input);
+			if (resultBean.getError() != null) {
+				/*Identity updatedIdentity =*/
+				converterApi05Srvc.persistIntoIdentity(input);
+				success = true;
+			}
 		}
+		resultBean.setSuccess(success);
+		resultBean.setError(error);
 		return resultBean;
 	}
 
 	@PostMapping("/api05/add_identity")
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
-		ValidationBean resultBean = validateNewIdentity(input);
-		if (resultBean.getError() != null) {
-			/*Identity identity =*/
-			converterApi05Srvc.persistIntoIdentity(input);
+		ValidationBean resultBean = new ValidationBean();
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		boolean success = false;
+		if (error == null) {
+			resultBean = validateNewIdentity(input);
+			if (resultBean.getError() != null) {
+				/*Identity identity =*/
+				converterApi05Srvc.persistIntoIdentity(input);
+				success = true;
+			}
 		}
+		resultBean.setSuccess(success);
+		resultBean.setError(error);
 		return resultBean;
 	}
 	
@@ -203,24 +227,26 @@ public class IdentityController {
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
-		if (error != null) { 
+		boolean success = false;
+		if (error == null) { 
 			Map<String, String> errMap;
 			try {
 				errMap = BeanValidator.validateConsentBean(input);
 				if (errMap.isEmpty()) {
-					resultBean.setSuccessfulValidation(true);
 					//Actually adds or updates
 					/*IdentityConsent updatedConsent =*/
 					converterApi05Srvc.persistIntoConsent(input);
+					success = true;
 				} else {
-					resultBean.setSuccessfulValidation(false);
 					resultBean.setWarnings(errMap);
 				}
 			} catch (BusinessException e) {
+				error = new ErrorBean();
 				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
 				error.setMessage(ErrorEnum.INTERNAL_ERROR.getErrorDescr());
 			}
 		}
+		resultBean.setSuccess(success);
 		resultBean.setError(error);
 		return resultBean;
 	}
@@ -229,14 +255,18 @@ public class IdentityController {
 	public ValidationBean deleteIdentity(@Valid @RequestBody IdentityFinderBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
-		if (error != null) {
+		boolean success = false;
+		if (error == null) {
 			try {
 				identitySrvc.deleteIdentity(input.getIdentityUid());
+				success = true;
 			} catch (BusinessException e) {
+				error = new ErrorBean();
 				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
 				error.setMessage(e.getMessage());
 			}
 		}
+		resultBean.setSuccess(success);
 		resultBean.setError(error);
 		return resultBean;
 	}
@@ -245,10 +275,11 @@ public class IdentityController {
 	public IdentityBean replaceIdentity(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
-		if (error != null) {
+		if (error == null) {
 			try {
 				identitySrvc.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
 			} catch (BusinessException e) {
+				error = new ErrorBean();
 				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
 				error.setMessage(e.getMessage());
 			}

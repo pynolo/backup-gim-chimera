@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.FederationBean;
 import it.giunti.chimera.api05.bean.IdentityFinderBean;
 import it.giunti.chimera.model.entity.Federation;
@@ -27,14 +28,20 @@ public class FederationController {
 	
 	@PostMapping("/api05/find_services")
 	public List<FederationBean> findServices(@Valid @RequestBody IdentityFinderBean input) {
-		List<Federation> fedList = federationSrvc.findAllFederations();
 		List<FederationBean> beanList = new ArrayList<FederationBean>();
-		for (Federation fed:fedList) {
-			FederationBean bean = new FederationBean();
-			bean.setName(fed.getName());
-			bean.setFederationUid(fed.getFederationUid());
-			beanList.add(bean);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		if (error == null) {
+			List<Federation> fedList = federationSrvc.findAllFederations();
+			for (Federation fed:fedList) {
+				FederationBean bean = new FederationBean();
+				bean.setName(fed.getName());
+				bean.setFederationUid(fed.getFederationUid());
+				beanList.add(bean);
+			}
+			return beanList;
 		}
+		FederationBean bean = new FederationBean();
+		bean.setError(error);
 		return beanList;
 	}
 	

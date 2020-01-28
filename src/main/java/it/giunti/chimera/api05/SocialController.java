@@ -85,17 +85,20 @@ public class SocialController {
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		boolean success = false;
 		if (error == null) {
 			try {
 				ProviderAccount entity = socialSrvc.getAccountByIdentityUidAndSocialId(
 						input.getIdentityUid(), input.getSocialId());
 				socialSrvc.deleteProviderAccount(entity);
+				success = true;
 			} catch (BusinessException | EmptyResultException | DuplicateResultException e) {
 				error = new ErrorBean();
 				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
 				error.setMessage("Errore nell'eliminazione dell'account social");
 			}
 		}
+		resultBean.setSuccess(success);
 		resultBean.setError(error);
 		return resultBean;
 	}

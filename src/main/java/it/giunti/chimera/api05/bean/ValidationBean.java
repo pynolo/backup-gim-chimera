@@ -5,7 +5,7 @@ import java.util.Map;
 public class ValidationBean {
 	
 	private ErrorBean error = null;
-	private Boolean successfulValidation = null;
+	private Boolean success = null;
 	private Map<String, String> warnings = null;
 	
 	
@@ -15,11 +15,11 @@ public class ValidationBean {
 	public void setError(ErrorBean error) {
 		this.error = error;
 	}
-	public Boolean getSuccessfulValidation() {
-		return successfulValidation;
+	public Boolean getSuccess() {
+		return success;
 	}
-	public void setSuccessfulValidation(Boolean successfulValidation) {
-		this.successfulValidation = successfulValidation;
+	public void setSuccess(Boolean success) {
+		this.success = success;
 	}
 	public Map<String, String> getWarnings() {
 		return warnings;
