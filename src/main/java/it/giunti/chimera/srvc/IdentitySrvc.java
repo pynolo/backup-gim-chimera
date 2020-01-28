@@ -69,6 +69,8 @@ public class IdentitySrvc {
 		Identity red = identityDao.findByIdentityUid(redundantIdentityUid);
 		Identity fin = identityDao.findByIdentityUid(finalIdentityUid);
 		if (red == null || fin == null) throw new BusinessException("Impossibile unire una Identity vuota");
+		// Save the redundant UID
+		fin.setIdentityUidOld(red.getIdentityUid());
 		//Non merge di: email, address, password
 		if (fin.getBirthDate() == null) fin.setBirthDate(red.getBirthDate());
 		if (fin.getCodiceFiscale() == null) fin.setCodiceFiscale(red.getCodiceFiscale());

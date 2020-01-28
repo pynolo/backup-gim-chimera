@@ -8,48 +8,48 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.model.entity.IdentityService;
+import it.giunti.chimera.model.entity.IdentityFederation;
 
 @Repository("identityServiceDao")
-public class IdentityServiceDao {
+public class IdentityFederationDao {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public IdentityService selectById(int id) {
-		return entityManager.find(IdentityService.class, id);
+	public IdentityFederation selectById(int id) {
+		return entityManager.find(IdentityFederation.class, id);
 	}
 	
-	public IdentityService insert(IdentityService item) {
+	public IdentityFederation insert(IdentityFederation item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public IdentityService update(IdentityService item) {
-		IdentityService itemToUpdate = selectById(item.getId());
+	public IdentityFederation update(IdentityFederation item) {
+		IdentityFederation itemToUpdate = selectById(item.getId());
 		itemToUpdate.setIdIdentity(item.getIdIdentity());
-		itemToUpdate.setIdService(item.getIdService());
+		itemToUpdate.setIdFederation(item.getIdFederation());
 		entityManager.merge(itemToUpdate);
 		entityManager.flush();
 		return item;
 	}
 
 	public void delete(int id) {
-		IdentityService item = selectById(id);
+		IdentityFederation item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IdentityService> findByServicesAndIdentity(Integer idIdentity, Integer idService)  {
+	public List<IdentityFederation> findByServicesAndIdentity(Integer idIdentity, Integer idService)  {
 		String hql = "from IdentitySrvc as iserv where " +
 				"iserv.idIdentity = :id1 and "+
 				"iserv.idService = :id2 ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", idIdentity);
 		q.setParameter("id2", idService);
-		List<IdentityService> sList = (List<IdentityService>) q.getResultList();
+		List<IdentityFederation> sList = (List<IdentityFederation>) q.getResultList();
 		return sList;
 	}
 	

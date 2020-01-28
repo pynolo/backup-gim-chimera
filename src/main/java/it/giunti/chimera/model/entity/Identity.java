@@ -38,9 +38,6 @@ public class Identity {
     @Basic(optional = false)
     @Column(name = "change_type", nullable = false, length = 8)
     private String changeType;
-    @Basic(optional = false)
-    @Column(name = "id_service", nullable = false)
-    private Integer idService;
     @Column(name = "last_modified")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified; // SOLA LETTURA
@@ -185,14 +182,6 @@ public class Identity {
 //	public Date getLastModified() {
 //		return lastModified;
 //	}
-
-	public Integer getIdService() {
-		return idService;
-	}
-
-	public void setIdService(Integer idService) {
-		this.idService = idService;
-	}
 
 	public Date getBirthDate() {
 		return birthDate;

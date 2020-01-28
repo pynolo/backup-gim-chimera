@@ -7,14 +7,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author paolo
  */
 @Entity
-@Table(name = "services")
-public class Service {
+@Table(name = "identities_federations",
+		uniqueConstraints = @UniqueConstraint(columnNames = {"id_identity", "id_federation"}))
+public class IdentityFederation {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,18 +24,16 @@ public class Service {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Basic(optional = false)
-    @Column(name = "name", nullable = false, length = 256)
-    private String name;
+    @Column(name = "id_identity", nullable = false)
+    private Integer idIdentity;
     @Basic(optional = false)
-    @Column(name = "access_key", nullable = false, length = 128)
-    private String accessKey;
-    @Column(name = "contact", length = 256)
-    private String contact;
-    
-    public Service() {
+    @Column(name = "id_federation", nullable = false)
+    private Integer idFederation;
+
+    public IdentityFederation() {
     }
 
-    public Integer getId() {
+	public Integer getId() {
 		return id;
 	}
 
@@ -41,28 +41,20 @@ public class Service {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Integer getIdIdentity() {
+		return idIdentity;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setIdIdentity(Integer idIdentity) {
+		this.idIdentity = idIdentity;
 	}
 
-	public String getAccessKey() {
-		return accessKey;
+	public Integer getIdFederation() {
+		return idFederation;
 	}
 
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
-
-	public String getContact() {
-		return contact;
-	}
-
-	public void setContact(String contact) {
-		this.contact = contact;
+	public void setIdFederation(Integer idFederation) {
+		this.idFederation = idFederation;
 	}
 
 	@Override
@@ -75,10 +67,10 @@ public class Service {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Service)) {
+        if (!(object instanceof IdentityFederation)) {
             return false;
         }
-        Service other = (Service) object;
+        IdentityFederation other = (IdentityFederation) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -87,7 +79,7 @@ public class Service {
 
     @Override
     public String toString() {
-        return "Service[id=" + id + "]";
+        return "IdentitySrvc[id=" + id + "]";
     }
 
 }

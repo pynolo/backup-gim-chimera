@@ -9,25 +9,25 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.model.entity.Service;
+import it.giunti.chimera.model.entity.Federation;
 
-@Repository("serviceDao")
-public class ServiceDao {
+@Repository("federationDao")
+public class FederationDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Service selectById(int id) {
-		return entityManager.find(Service.class, id);
+	public Federation selectById(int id) {
+		return entityManager.find(Federation.class, id);
 	}
 	
-	public Service insert(Service item) {
+	public Federation insert(Federation item) {
 		entityManager.persist(item);
 		return item;
 	}
 	
-	public Service update(Service item) {
-		Service itemToUpdate = selectById(item.getId());
+	public Federation update(Federation item) {
+		Federation itemToUpdate = selectById(item.getId());
 		itemToUpdate.setAccessKey(item.getAccessKey());
 		itemToUpdate.setContact(item.getContact());
 		itemToUpdate.setName(item.getName());
@@ -37,36 +37,36 @@ public class ServiceDao {
 	}
 
 	public void delete(int id) {
-		Service item = selectById(id);
+		Federation item = selectById(id);
 		entityManager.merge(item);
 		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Service> findByIdIdentity(Integer idIdentity) {
+	public List<Federation> findByIdIdentity(Integer idIdentity) {
 		String hql = "select serv "+
-				"from IdentitySrvc as iserv, Service as serv where " +
-				"serv.id = iserv.idService and "+
-				"iserv.idIdentity = :id1 "+
-				"order by iserv.id ";
+				"from IdentityFederation as ifed, Federation as fed where " +
+				"fed.id = ifed.idFederation and "+
+				"ifed.idIdentity = :id1 "+
+				"order by ifed.id ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", idIdentity);
-		List<Service> sList = (List<Service>) q.getResultList();
+		List<Federation> sList = (List<Federation>) q.getResultList();
 		if (sList != null) {
 			if (sList.size() > 0) return sList;
 		}
-		return new ArrayList<Service>();
+		return new ArrayList<Federation>();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Service findByAccessKey(String accessKey) {
-		String hql = "from Service as serv where " +
-				"serv.accessKey = :s1 "+
-				"order by serv.id ";
+	public Federation findByAccessKey(String accessKey) {
+		String hql = "from Federation as fed where " +
+				"fed.accessKey = :s1 "+
+				"order by fed.id ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("s1", accessKey);
-		List<Service> sList = (List<Service>) q.getResultList();
+		List<Federation> sList = (List<Federation>) q.getResultList();
 		if (sList != null) {
 			if (sList.size() > 0) return sList.get(0);
 		}
@@ -75,14 +75,14 @@ public class ServiceDao {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Service> findAll() {
-		String hql = "from Service as s " +
+	public List<Federation> findAll() {
+		String hql = "from Federation as s " +
 				"order by s.id ";
 		Query q = entityManager.createQuery(hql);
-		List<Service> pList = (List<Service>) q.getResultList();
+		List<Federation> pList = (List<Federation>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() > 0) return pList;
 		}
-		return new ArrayList<Service>();
+		return new ArrayList<Federation>();
 	}
 }

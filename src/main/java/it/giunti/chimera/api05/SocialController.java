@@ -20,11 +20,11 @@ import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
 import it.giunti.chimera.api05.bean.SocialInputBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
+import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.model.entity.Service;
 import it.giunti.chimera.srvc.IdentitySrvc;
-import it.giunti.chimera.srvc.ServiceSrvc;
+import it.giunti.chimera.srvc.FederationSrvc;
 import it.giunti.chimera.srvc.SocialSrvc;
 
 @RestController
@@ -38,8 +38,8 @@ public class SocialController {
 	@Qualifier("identitySrvc")
 	private IdentitySrvc identitySrvc;
 	@Autowired
-	@Qualifier("serviceSrvc")
-	private ServiceSrvc serviceSrvc;
+	@Qualifier("federationSrvc")
+	private FederationSrvc federationSrvc;
 	
 	@Autowired
 	@Qualifier("converterApi05Srvc")
@@ -48,7 +48,7 @@ public class SocialController {
 	@PostMapping("/api05/find_provider_accounts")
 	public List<ProviderAccountBean> findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		if (input != null) {
-			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
+			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
 			if (service != null) {
 				// ACCESS KEY EXISTS
 				if (input.getIdentityUid() != null) {
@@ -75,7 +75,7 @@ public class SocialController {
 	@PostMapping("/api05/add_provider_account")
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		if (input != null) {
-			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
+			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
 			if (service != null) {
 				// ACCESS KEY EXISTS
 				Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
@@ -106,7 +106,7 @@ public class SocialController {
 	@PostMapping("/api05/delete_provider_account")
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		if (input != null) {
-			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
+			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
 			if (service != null) {
 				// ACCESS KEY EXISTS
 				ErrorBean error = null;

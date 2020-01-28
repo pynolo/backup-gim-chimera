@@ -33,8 +33,8 @@ public class LogIdentity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
     @Basic(optional = false)
-    @Column(name = "id_service", nullable = false)
-    private Integer idService;
+    @Column(name = "id_federation", nullable = false)
+    private Integer idFederation;
     @Column(name = "operation", columnDefinition = "TEXT")
     private String operation;
     @Column(name = "parameters", columnDefinition = "TEXT")
@@ -64,12 +64,12 @@ public class LogIdentity {
 		this.lastModified = lastModified;
 	}
 
-	public Integer getIdService() {
-		return idService;
+	public Integer getIdFederation() {
+		return idFederation;
 	}
 
-	public void setIdService(Integer idService) {
-		this.idService = idService;
+	public void setIdFederation(Integer idFederation) {
+		this.idFederation = idFederation;
 	}
 
 	public String getServiceDescr() {

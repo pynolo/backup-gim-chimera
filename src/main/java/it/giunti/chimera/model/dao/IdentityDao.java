@@ -66,7 +66,6 @@ public class IdentityDao {
 		itemToUpdate.setFirstName(item.getFirstName());
 		itemToUpdate.setGiuntiCard(item.getGiuntiCard());
 		itemToUpdate.setGiuntiCardMode(item.getGiuntiCardMode());
-		itemToUpdate.setIdService(item.getIdService());
 		itemToUpdate.setLastName(item.getLastName());
 		itemToUpdate.setPartitaIva(item.getPartitaIva());
 		itemToUpdate.setPasswordMd5(item.getPasswordMd5());

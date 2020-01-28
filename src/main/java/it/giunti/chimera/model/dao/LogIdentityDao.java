@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.BusinessException;
+import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.LogIdentity;
-import it.giunti.chimera.model.entity.Service;
 
 @Repository("logIdentityDao")
 public class LogIdentityDao {
@@ -21,8 +21,8 @@ public class LogIdentityDao {
 	@PersistenceContext
 	private EntityManager entityManager;
     @Autowired
-    @Qualifier("serviceDao")
-    private ServiceDao serviceDao;
+    @Qualifier("federationDao")
+    private FederationDao federationDao;
     
 	public LogIdentity selectById(int id) {
 		return entityManager.find(LogIdentity.class, id);
@@ -36,7 +36,7 @@ public class LogIdentityDao {
 	public LogIdentity update(LogIdentity item) {
 		LogIdentity itemToUpdate = selectById(item.getId());
 		itemToUpdate.setIdentityUid(item.getIdentityUid());
-		itemToUpdate.setIdService(item.getIdService());
+		itemToUpdate.setIdFederation(item.getIdFederation());
 		itemToUpdate.setLastModified(item.getLastModified());
 		itemToUpdate.setOperation(item.getOperation());
 		itemToUpdate.setParameters(item.getParameters());
@@ -54,10 +54,10 @@ public class LogIdentityDao {
 		entityManager.flush();
 	}
 	
-	public void createLog(String identityUid, Integer idService, String operation, String parameters, String result) throws BusinessException {
-		if (idService == null) throw new BusinessException("Cannot create log without idService");
+	public void createLog(String identityUid, Integer idFederation, String operation, String parameters, String result) throws BusinessException {
+		if (idFederation == null) throw new BusinessException("Cannot create log without idService");
 		LogIdentity li = new LogIdentity();
-		li.setIdService(idService);
+		li.setIdFederation(idFederation);
 		li.setIdentityUid(identityUid);
 		li.setOperation(operation);
 		li.setParameters(parameters);
@@ -78,7 +78,7 @@ public class LogIdentityDao {
 		List<LogIdentity> lupList = (List<LogIdentity>) q.getResultList();
 		if (lupList != null) {
 			for (LogIdentity lup:lupList) {
-				Service s = serviceDao.selectById(lup.getIdService());
+				Federation s = federationDao.selectById(lup.getIdFederation());
 				lup.setServiceDescr(s.getName());
 			}
 		}

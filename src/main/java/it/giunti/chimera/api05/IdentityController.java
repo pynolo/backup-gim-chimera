@@ -20,10 +20,10 @@ import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.IdentityFinderBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
+import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.model.entity.Service;
 import it.giunti.chimera.srvc.IdentitySrvc;
-import it.giunti.chimera.srvc.ServiceSrvc;
+import it.giunti.chimera.srvc.FederationSrvc;
 import it.giunti.chimera.util.PasswordUtil;
 
 @RestController
@@ -34,8 +34,8 @@ public class IdentityController {
 	@Qualifier("identitySrvc")
 	private IdentitySrvc identitySrvc;
 	@Autowired
-	@Qualifier("serviceSrvc")
-	private ServiceSrvc serviceSrvc;
+	@Qualifier("federationSrvc")
+	private FederationSrvc federationSrvc;
 	@Autowired
 	@Qualifier("converterApi05Srvc")
 	private ConverterApi05Srvc converterApi05Srvc;
@@ -43,8 +43,8 @@ public class IdentityController {
 	private ErrorBean checkKeyAndNull(IInputBean input) {
 		ErrorBean error = new ErrorBean();
 		if (input != null) {
-			Service service = serviceSrvc.findServiceByAccessKey(input.getAccessKey());
-			if (service != null) {	
+			Federation fed = federationSrvc.findFederationByAccessKey(input.getAccessKey());
+			if (fed != null) {	
 				// ACCESS KEY EXISTS
 				return null;
 			}

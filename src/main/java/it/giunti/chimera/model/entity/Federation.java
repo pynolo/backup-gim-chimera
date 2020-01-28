@@ -7,16 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author paolo
  */
 @Entity
-@Table(name = "identities_services",
-		uniqueConstraints = @UniqueConstraint(columnNames = {"id_identity", "id_service"}))
-public class IdentityService {
+@Table(name = "federations")
+public class Federation {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +22,21 @@ public class IdentityService {
     @Column(name = "id", nullable = false)
     private Integer id;
     @Basic(optional = false)
-    @Column(name = "id_identity", nullable = false)
-    private Integer idIdentity;
+    @Column(name = "federation_uid", nullable = false, length = 32)
+    private String federationUid;
     @Basic(optional = false)
-    @Column(name = "id_service", nullable = false)
-    private Integer idService;
-
-    public IdentityService() {
+    @Column(name = "access_key", nullable = false, length = 128)
+    private String accessKey;
+    @Basic(optional = false)
+    @Column(name = "name", nullable = false, length = 128)
+    private String name;
+    @Column(name = "contact", length = 256)
+    private String contact;
+        
+    public Federation() {
     }
 
-	public Integer getId() {
+    public Integer getId() {
 		return id;
 	}
 
@@ -41,20 +44,36 @@ public class IdentityService {
 		this.id = id;
 	}
 
-	public Integer getIdIdentity() {
-		return idIdentity;
+	public String getName() {
+		return name;
 	}
 
-	public void setIdIdentity(Integer idIdentity) {
-		this.idIdentity = idIdentity;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Integer getIdService() {
-		return idService;
+	public String getAccessKey() {
+		return accessKey;
 	}
 
-	public void setIdService(Integer idService) {
-		this.idService = idService;
+	public void setAccessKey(String accessKey) {
+		this.accessKey = accessKey;
+	}
+
+	public String getContact() {
+		return contact;
+	}
+
+	public void setContact(String contact) {
+		this.contact = contact;
+	}
+	
+	public String getFederationUid() {
+		return federationUid;
+	}
+
+	public void setFederationUid(String federationUid) {
+		this.federationUid = federationUid;
 	}
 
 	@Override
@@ -67,10 +86,10 @@ public class IdentityService {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof IdentityService)) {
+        if (!(object instanceof Federation)) {
             return false;
         }
-        IdentityService other = (IdentityService) object;
+        Federation other = (Federation) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -79,7 +98,7 @@ public class IdentityService {
 
     @Override
     public String toString() {
-        return "IdentitySrvc[id=" + id + "]";
+        return "Federation[id=" + id + "]";
     }
 
 }
