@@ -59,7 +59,6 @@ public class FederationSrvc {
 		return error;	
 	}
 
-	
 	@Transactional
 	public List<Identity> findChangedIdentities(Long startTimestamp) {
 		Date startDt = new Date(startTimestamp);
