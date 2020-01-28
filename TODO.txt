@@ -4,3 +4,5 @@
 - salvare il identityUidOld nel merge
 - identity: impostare changeTime e changeType
 - tutti i controller devono verificare accessKey
+- identity: ad ogni modifica salvare le info di identity_federation
+- identity: ad ogni login salvare le info di identity_federation

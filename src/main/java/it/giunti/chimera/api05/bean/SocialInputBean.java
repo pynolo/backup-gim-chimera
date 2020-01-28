@@ -1,6 +1,6 @@
 package it.giunti.chimera.api05.bean;
 
-public class SocialInputBean {
+public class SocialInputBean implements IInputBean {
 	private String accessKey = null;
 	private String identityUid = null;
 	private String socialId = null;

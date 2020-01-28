@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.api05.bean.ErrorBean;
+import it.giunti.chimera.api05.bean.IInputBean;
 import it.giunti.chimera.model.dao.FederationDao;
 import it.giunti.chimera.model.entity.Federation;
 
@@ -23,11 +26,30 @@ public class FederationSrvc {
 		Federation service = federationDao.findByAccessKey(accessKey);
 		return service;
 	}
-	
 
 	@Transactional
 	public List<Federation> findAllFederations() {
 		List<Federation> list = federationDao.findAll();
 		return list;
+	}
+	
+	@Transactional
+	public ErrorBean checkAccessKeyAndNull(IInputBean input) {
+		ErrorBean error = new ErrorBean();
+		if (input != null) {
+			Federation fed = federationDao.findByAccessKey(input.getAccessKey());
+			if (fed != null) {
+				// ACCESS KEY EXISTS
+				return null;
+			}
+			// ACCESS KEY FAILS
+			error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
+			error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		} else {
+			// NO INPUT
+			error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
+			error.setMessage("La richiesta e' priva di contenuto");
+		}
+		return error;	
 	}
 }

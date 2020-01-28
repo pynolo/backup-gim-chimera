@@ -20,11 +20,10 @@ import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
 import it.giunti.chimera.api05.bean.SocialInputBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
-import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.srvc.FederationSrvc;
+import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.srvc.SocialSrvc;
 
 @RestController
@@ -47,89 +46,56 @@ public class SocialController {
 	
 	@PostMapping("/api05/find_provider_accounts")
 	public List<ProviderAccountBean> findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
-		if (input != null) {
-			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
-			if (service != null) {
-				// ACCESS KEY EXISTS
-				if (input.getIdentityUid() != null) {
-					List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
-					List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
-					for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
-					return beanList;
-				}
-				return new ArrayList<ProviderAccountBean>();
-			}
-			// ACCESS KEY FAILS
-		}
-		// NO INPUT
-		ProviderAccountBean resultBean = new ProviderAccountBean();
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
-		resultBean.setError(error);
 		List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
-		beanList.add(resultBean);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		if (error == null) {
+			if (input.getIdentityUid() != null) {
+				List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
+				for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
+				return beanList;
+			}
+			return new ArrayList<ProviderAccountBean>();
+		}
+		ProviderAccountBean bean = new ProviderAccountBean();
+		bean.setError(error);
+		beanList.add(bean);
 		return beanList;
 	}
 	
 	@PostMapping("/api05/add_provider_account")
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
-		if (input != null) {
-			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
-			if (service != null) {
-				// ACCESS KEY EXISTS
-				Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
-				ErrorBean error = null;
-				ProviderAccountBean resultBean = new ProviderAccountBean();
-				try {
-					ProviderAccount entity = socialSrvc.createProviderAccount(identity.getId(), input.getSocialId());
-					resultBean = converterApi05Srvc.toProviderAccountBean(entity);
-				} catch (BusinessException e) {
-					error = new ErrorBean();
-					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-					error.setMessage("Impossibile abbinare un nuovo account social");
-				}
-				resultBean.setError(error);
-				return resultBean;
-			}
-			// ACCESS KEY FAILS
-		}
-		// NO INPUT
 		ProviderAccountBean resultBean = new ProviderAccountBean();
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		if (error == null) {
+			Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
+			try {
+				ProviderAccount entity = socialSrvc.createProviderAccount(identity.getId(), input.getSocialId());
+				resultBean = converterApi05Srvc.toProviderAccountBean(entity);
+			} catch (BusinessException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage("Impossibile abbinare un nuovo account social");
+			}
+		}
 		resultBean.setError(error);
 		return resultBean;	
 	}
 	
 	@PostMapping("/api05/delete_provider_account")
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
-		if (input != null) {
-			Federation service = federationSrvc.findFederationByAccessKey(input.getAccessKey());
-			if (service != null) {
-				// ACCESS KEY EXISTS
-				ErrorBean error = null;
-				try {
-					ProviderAccount entity = socialSrvc.getAccountByIdentityUidAndSocialId(
-							input.getIdentityUid(), input.getSocialId());
-					socialSrvc.deleteProviderAccount(entity);
-				} catch (BusinessException | EmptyResultException | DuplicateResultException e) {
-					error = new ErrorBean();
-					error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-					error.setMessage("Errore nell'eliminazione dell'account social");
-				}
-				ValidationBean resultBean = new ValidationBean();
-				resultBean.setError(error);
-				return resultBean;
-			}
-			// ACCESS KEY FAILS
-		}
-		// NO INPUT
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-		error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		if (error == null) {
+			try {
+				ProviderAccount entity = socialSrvc.getAccountByIdentityUidAndSocialId(
+						input.getIdentityUid(), input.getSocialId());
+				socialSrvc.deleteProviderAccount(entity);
+			} catch (BusinessException | EmptyResultException | DuplicateResultException e) {
+				error = new ErrorBean();
+				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
+				error.setMessage("Errore nell'eliminazione dell'account social");
+			}
+		}
 		resultBean.setError(error);
 		return resultBean;
 	}

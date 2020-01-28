@@ -15,15 +15,13 @@ import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.api05.bean.ErrorBean;
-import it.giunti.chimera.api05.bean.IInputBean;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.IdentityFinderBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
-import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.srvc.FederationSrvc;
+import it.giunti.chimera.srvc.IdentitySrvc;
 import it.giunti.chimera.util.PasswordUtil;
 
 @RestController
@@ -40,29 +38,10 @@ public class IdentityController {
 	@Qualifier("converterApi05Srvc")
 	private ConverterApi05Srvc converterApi05Srvc;
 	
-	private ErrorBean checkKeyAndNull(IInputBean input) {
-		ErrorBean error = new ErrorBean();
-		if (input != null) {
-			Federation fed = federationSrvc.findFederationByAccessKey(input.getAccessKey());
-			if (fed != null) {	
-				// ACCESS KEY EXISTS
-				return null;
-			}
-			// ACCESS KEY FAILS
-			error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-			error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
-		} else {
-			// NO INPUT
-			error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
-			error.setMessage("La richiesta e' priva di contenuto");
-		}
-		return error;	
-	}
-	
 	@PostMapping("/api05/authenticate")
 	public IdentityBean authenticate(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error == null) {
 			//BODY
 			try {
@@ -93,7 +72,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error == null) {
 			//BODY
 			Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
@@ -112,7 +91,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_email")
 	public IdentityBean getIdentityByEmail(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error == null) {
 			try {
 				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
@@ -136,7 +115,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_social_id")
 	public IdentityBean getIdentityBySocialId(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error == null) {
 			try {
 				Identity entity = identitySrvc.getIdentityBySocialId(input.getSocialId());
@@ -164,7 +143,7 @@ public class IdentityController {
 	@PostMapping("/api05/validate_updating_identity")
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error != null) {
 			Map<String, String> errMap;
 			try {
@@ -187,7 +166,7 @@ public class IdentityController {
 	@PostMapping("/api05/validate_new_identity")
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error != null) { 
 			if (input.getIdentityUid() != null) {
 				error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
@@ -223,7 +202,7 @@ public class IdentityController {
 	@PostMapping("/api05/update_identity_consent")
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error != null) { 
 			Map<String, String> errMap;
 			try {
@@ -249,7 +228,7 @@ public class IdentityController {
 	@PostMapping("/api05/delete_identity")
 	public ValidationBean deleteIdentity(@Valid @RequestBody IdentityFinderBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error != null) {
 			try {
 				identitySrvc.deleteIdentity(input.getIdentityUid());
@@ -265,7 +244,7 @@ public class IdentityController {
 	@PostMapping("/api05/replace_identity")
 	public IdentityBean replaceIdentity(@Valid @RequestBody IdentityFinderBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = checkKeyAndNull(input);
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error != null) {
 			try {
 				identitySrvc.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
