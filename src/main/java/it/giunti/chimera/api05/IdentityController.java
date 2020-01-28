@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
@@ -41,7 +42,8 @@ public class IdentityController {
 	@PostMapping("/api05/authenticate")
 	public IdentityBean authenticate(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			//BODY
 			try {
@@ -51,6 +53,8 @@ public class IdentityController {
 					String passwordMd5 = PasswordUtil.md5(input.getPassword());
 					if (entity.getPasswordMd5().equals(passwordMd5)) {
 						resultBean = converterApi05Srvc.toIdentityBean(entity);
+						federationSrvc.addOrUpdateIdentityFederation(
+								entity.getId(), akBean.getFederation().getId());
 						return resultBean;
 					}
 					// Wrong password
@@ -72,7 +76,8 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			//BODY
 			Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
@@ -91,7 +96,8 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_email")
 	public IdentityBean getIdentityByEmail(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			try {
 				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
@@ -115,7 +121,8 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_social_id")
 	public IdentityBean getIdentityBySocialId(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			try {
 				Identity entity = identitySrvc.getIdentityBySocialId(input.getSocialId());
@@ -143,7 +150,8 @@ public class IdentityController {
 	@PostMapping("/api05/validate_updating_identity")
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			Map<String, String> errMap;
@@ -168,7 +176,8 @@ public class IdentityController {
 	@PostMapping("/api05/validate_new_identity")
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			if (input != null) {
@@ -190,7 +199,8 @@ public class IdentityController {
 	@PostMapping("/api05/update_identity")
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			resultBean = validateUpdatingIdentity(input);
@@ -208,12 +218,13 @@ public class IdentityController {
 	@PostMapping("/api05/add_identity")
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			resultBean = validateNewIdentity(input);
 			if (resultBean.getError() != null) {
-				/*Identity identity =*/
+				/*Identity identity */
 				converterApi05Srvc.persistIntoIdentity(input);
 				success = true;
 			}
@@ -226,7 +237,8 @@ public class IdentityController {
 	@PostMapping("/api05/update_identity_consent")
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) { 
 			Map<String, String> errMap;
@@ -254,7 +266,8 @@ public class IdentityController {
 	@PostMapping("/api05/delete_identity")
 	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			try {
@@ -274,7 +287,8 @@ public class IdentityController {
 	@PostMapping("/api05/replace_identity")
 	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			try {
 				identitySrvc.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());

@@ -46,8 +46,8 @@ CREATE TABLE `identities_federations` (
   `id` int(11) NOT NULL auto_increment,
   `id_identity` int(11) NOT NULL,
   `id_federation` int(11) NOT NULL,
-  `firstAccess` datetime DEFAULT NULL,
-  `lastAccess` datetime DEFAULT NULL,
+  `first_access` datetime DEFAULT NULL,
+  `last_access` datetime DEFAULT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `identity_federation_idx` (`id_identity`,`id_federation`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;

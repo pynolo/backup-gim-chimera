@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
+import it.giunti.chimera.model.dao.CounterDao;
 import it.giunti.chimera.model.dao.IdentityConsentDao;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.entity.Identity;
@@ -24,7 +25,9 @@ public class ConverterApi05Srvc {
 	@Autowired
 	@Qualifier("identityConsentDao")
 	private IdentityConsentDao identityConsentDao;
-	
+	@Autowired
+	@Qualifier("counterDao")
+	private CounterDao counterDao;
 	
 	public ProviderAccountBean toProviderAccountBean(ProviderAccount entity) {
 		ProviderAccountBean bean = new ProviderAccountBean();
@@ -67,9 +70,14 @@ public class ConverterApi05Srvc {
 	public Identity persistIntoIdentity(IdentityBean bean) {
 		Identity entity = new Identity();
 		if (bean.getIdentityUid() != null) {
+			//ESISTE
 			entity = identityDao.findByIdentityUid(bean.getIdentityUid());
+			entity.setIdentityUid(bean.getIdentityUid());
+		} else {
+			//NUOVO
+			String identityUid = counterDao.generateIdentityUid();
+			entity.setIdentityUid(identityUid);
 		}
-		if (bean.getIdentityUid() != null) entity.setIdentityUid(bean.getIdentityUid());
 		if (bean.getIdentityUidOld() != null) entity.setIdentityUidOld(bean.getIdentityUidOld());
 		if (bean.getAddressTown() != null) entity.setAddressTown(bean.getAddressTown());
 		if (bean.getAddressProvinceId() != null) entity.setAddressProvinceId(bean.getAddressProvinceId());

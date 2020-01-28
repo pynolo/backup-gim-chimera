@@ -42,15 +42,18 @@ public class IdentityFederationDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<IdentityFederation> findByServicesAndIdentity(Integer idIdentity, Integer idService)  {
-		String hql = "from IdentitySrvc as iserv where " +
-				"iserv.idIdentity = :id1 and "+
-				"iserv.idService = :id2 ";
+	public IdentityFederation findByIdentityAndFederation(Integer idIdentity, Integer idFederation)  {
+		String hql = "from IdentityFederation as ifed where " +
+				"ifed.idIdentity = :id1 and "+
+				"ifed.idFederation = :id2 ";
 		Query q = entityManager.createQuery(hql);
 		q.setParameter("id1", idIdentity);
-		q.setParameter("id2", idService);
-		List<IdentityFederation> sList = (List<IdentityFederation>) q.getResultList();
-		return sList;
+		q.setParameter("id2", idFederation);
+		List<IdentityFederation> ifedList = (List<IdentityFederation>) q.getResultList();
+		if (ifedList.size() > 0) {
+			return ifedList.get(0);
+		}
+		return null;
 	}
 	
 }

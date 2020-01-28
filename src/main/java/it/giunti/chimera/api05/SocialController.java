@@ -16,6 +16,7 @@ import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
 import it.giunti.chimera.api05.bean.SocialInputBean;
@@ -47,7 +48,8 @@ public class SocialController {
 	@PostMapping("/api05/find_provider_accounts")
 	public List<ProviderAccountBean> findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			if (input.getIdentityUid() != null) {
 				List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
@@ -65,7 +67,8 @@ public class SocialController {
 	@PostMapping("/api05/add_provider_account")
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
 			try {
@@ -84,7 +87,8 @@ public class SocialController {
 	@PostMapping("/api05/delete_provider_account")
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ValidationBean resultBean = new ValidationBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		boolean success = false;
 		if (error == null) {
 			try {

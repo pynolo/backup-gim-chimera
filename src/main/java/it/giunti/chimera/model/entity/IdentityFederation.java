@@ -1,5 +1,7 @@
 package it.giunti.chimera.model.entity;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -29,7 +33,13 @@ public class IdentityFederation {
     @Basic(optional = false)
     @Column(name = "id_federation", nullable = false)
     private Integer idFederation;
-
+    @Column(name = "first_access")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date firstAccess;
+    @Column(name = "last_access")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastAccess;
+    
     public IdentityFederation() {
     }
 
@@ -55,6 +65,22 @@ public class IdentityFederation {
 
 	public void setIdFederation(Integer idFederation) {
 		this.idFederation = idFederation;
+	}
+
+	public Date getFirstAccess() {
+		return firstAccess;
+	}
+
+	public void setFirstAccess(Date firstAccess) {
+		this.firstAccess = firstAccess;
+	}
+
+	public Date getLastAccess() {
+		return lastAccess;
+	}
+
+	public void setLastAccess(Date lastAccess) {
+		this.lastAccess = lastAccess;
 	}
 
 	@Override

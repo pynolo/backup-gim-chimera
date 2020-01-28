@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.giunti.chimera.ErrorEnum;
+import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ChangedIdentitiesBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.FederationListBean;
@@ -38,7 +39,8 @@ public class FederationController {
 	@PostMapping("/api05/find_federations")
 	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
 		FederationListBean resultBean = new FederationListBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			List<FederationListBean.FederationBean> beanList = 
 					new ArrayList<FederationListBean.FederationBean>();
@@ -60,7 +62,8 @@ public class FederationController {
 	public ChangedIdentitiesBean findChangedIdentities(@Valid @RequestBody ParametersBean input) {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();
-		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		ErrorBean error = akBean.getError();
 		if (error == null) {
 			if (input.getStartTimestamp() != null) {
 				try {
