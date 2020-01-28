@@ -55,7 +55,7 @@ public class LogIdentityDao {
 	}
 	
 	public void createLog(String identityUid, Integer idFederation, String operation, String parameters, String result) throws BusinessException {
-		if (idFederation == null) throw new BusinessException("Cannot create log without idService");
+		if (idFederation == null) throw new BusinessException("Cannot create log without idFederation");
 		LogIdentity li = new LogIdentity();
 		li.setIdFederation(idFederation);
 		li.setIdentityUid(identityUid);

@@ -1,12 +1,10 @@
 - IdentityBean deve essere popolato con gli array di Account e Consent
 - implementare tabelle di lookup nella validazione (newsletters, job...)
 - Azioni durante la modifica:
+  - verificare can_update e can_merge
   - implementare logging interno su tabella
   - identity: impostare changeTime e changeType
   - identity: ad ogni modifica salvare le info di identity_federation
-- Azioni durante login
-  - identity: ad ogni login salvare le info di identity_federation
-
 
 TEST
 - creare nuova identity

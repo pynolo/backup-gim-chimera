@@ -32,7 +32,13 @@ public class Federation {
     private String name;
     @Column(name = "contact", length = 256)
     private String contact;
-        
+	@Basic(optional = false)
+	@Column(name = "can_update", nullable = false)
+	private Boolean canUpdate;
+	@Basic(optional = false)
+	@Column(name = "can_merge", nullable = false)
+	private Boolean canMerge;
+	
     public Federation() {
     }
 
@@ -74,6 +80,22 @@ public class Federation {
 
 	public void setFederationUid(String federationUid) {
 		this.federationUid = federationUid;
+	}
+
+	public Boolean getCanUpdate() {
+		return canUpdate;
+	}
+
+	public void setCanUpdate(Boolean canUpdate) {
+		this.canUpdate = canUpdate;
+	}
+
+	public Boolean getCanMerge() {
+		return canMerge;
+	}
+
+	public void setCanMerge(Boolean canMerge) {
+		this.canMerge = canMerge;
 	}
 
 	@Override
