@@ -1,5 +1,6 @@
 package it.giunti.chimera.srvc;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -12,7 +13,9 @@ import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.IInputBean;
 import it.giunti.chimera.model.dao.FederationDao;
+import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.entity.Federation;
+import it.giunti.chimera.model.entity.Identity;
 
 @Service("serviceSrvc")
 public class FederationSrvc {
@@ -20,6 +23,9 @@ public class FederationSrvc {
 	@Autowired
 	@Qualifier("federationDao")
 	private FederationDao federationDao;
+	@Autowired
+	@Qualifier("identityDao")
+	private IdentityDao identityDao;
 	
 	@Transactional
 	public Federation findFederationByAccessKey(String accessKey) {
@@ -51,5 +57,13 @@ public class FederationSrvc {
 			error.setMessage("La richiesta e' priva di contenuto");
 		}
 		return error;	
+	}
+
+	
+	@Transactional
+	public List<Identity> findChangedIdentities(Long startTimestamp) {
+		Date startDt = new Date(startTimestamp);
+		List<Identity> identityList = identityDao.findByChangeTime(startDt);
+		return identityList;
 	}
 }

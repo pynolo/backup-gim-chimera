@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.api05.bean.ChangedIdentitiesBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.FederationListBean;
-import it.giunti.chimera.api05.bean.IdentityFinderBean;
+import it.giunti.chimera.api05.bean.IdentityBean;
+import it.giunti.chimera.api05.bean.ParametersBean;
 import it.giunti.chimera.model.entity.Federation;
+import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.srvc.FederationSrvc;
 
 @RestController
@@ -28,8 +31,12 @@ public class FederationController {
 	@Qualifier("federationSrvc")
 	private FederationSrvc federationSrvc;
 	
+	@Autowired
+	@Qualifier("converterApi05Srvc")
+	private ConverterApi05Srvc converterApi05Srvc;
+	
 	@PostMapping("/api05/find_federations")
-	public FederationListBean findServices(@Valid @RequestBody IdentityFinderBean input) {
+	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
 		FederationListBean resultBean = new FederationListBean();
 		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
 		if (error == null) {
@@ -50,11 +57,34 @@ public class FederationController {
 	}
 	
 	@PostMapping("/api05/find_changed_identities")
-	public ChangedIdentitiesBean findChangedIdentities(@Valid @RequestBody IdentityFinderBean input) {
+	public ChangedIdentitiesBean findChangedIdentities(@Valid @RequestBody ParametersBean input) {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();
-		resultBean.setCurrentTimestamp(currentTimestamp);
-		//TODO
+		ErrorBean error = federationSrvc.checkAccessKeyAndNull(input);
+		if (error == null) {
+			if (input.getStartTimestamp() != null) {
+				try {
+					Long start = Long.parseLong(input.getStartTimestamp());
+					List<Identity> iList = federationSrvc.findChangedIdentities(start);
+					List<IdentityBean> beanList = new ArrayList<IdentityBean>();
+					for (Identity identity:iList) {
+						IdentityBean bean = converterApi05Srvc.toIdentityBean(identity);
+						beanList.add(bean);
+					}
+					resultBean.setIdentities(beanList);
+					resultBean.setCurrentTimestamp(currentTimestamp);
+					return resultBean;
+				} catch (NumberFormatException e) {
+					error = new ErrorBean();
+					error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
+					error.setMessage("currentTimestamp non e' un numero");
+				}
+			}
+			error = new ErrorBean();
+			error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
+			error.setMessage("currentTimestamp non ha un valore");
+		}
+		resultBean.setError(error);
 		return resultBean;
 	}
 

@@ -1,6 +1,6 @@
 package it.giunti.chimera.api05.bean;
 
-public class IdentityFinderBean implements IInputBean {
+public class ParametersBean implements IInputBean {
 	
 	private String accessKey = null;
 	private String identityUid = null;
@@ -9,6 +9,7 @@ public class IdentityFinderBean implements IInputBean {
 	private String socialId = null;
 	private String redundantIdentityUid = null;
 	private String finalIdentityUid = null;
+	private String startTimestamp = null;
 	
 	@Override
 	public String getAccessKey() {
@@ -54,4 +55,11 @@ public class IdentityFinderBean implements IInputBean {
 	public void setFinalIdentityUid(String finalIdentityUid) {
 		this.finalIdentityUid = finalIdentityUid;
 	}
+	public String getStartTimestamp() {
+		return startTimestamp;
+	}
+	public void setStartTimestamp(String startTimestamp) {
+		this.startTimestamp = startTimestamp;
+	}
+	
 }
