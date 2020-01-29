@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.model.entity.IdentityFederation;
 
-@Repository("identityServiceDao")
+@Repository("identityFederationDao")
 public class IdentityFederationDao {
 	
 	@PersistenceContext
