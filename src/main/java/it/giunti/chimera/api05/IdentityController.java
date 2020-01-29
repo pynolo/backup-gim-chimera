@@ -234,6 +234,10 @@ public class IdentityController {
 		}
 		resultBean.setSuccess(success);
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/update_identity", input, error);
 		return resultBean;
 	}
 
@@ -259,6 +263,10 @@ public class IdentityController {
 		}
 		resultBean.setSuccess(success);
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/add_identity", input, error);
 		return resultBean;
 	}
 	
@@ -294,6 +302,10 @@ public class IdentityController {
 		}
 		resultBean.setSuccess(success);
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/update_identity_consent", input, error);
 		return resultBean;
 	}
 	
@@ -321,6 +333,10 @@ public class IdentityController {
 		}
 		resultBean.setSuccess(success);
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/delete_identity", input, error);
 		return resultBean;
 	}
 	
@@ -345,6 +361,10 @@ public class IdentityController {
 			}
 		}
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/replace_identity", input, error);
 		return resultBean;
 	}
 	

@@ -90,6 +90,10 @@ public class SocialController {
 			}
 		}
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/add_provider_account", input, error);
 		return resultBean;	
 	}
 	
@@ -119,6 +123,10 @@ public class SocialController {
 		}
 		resultBean.setSuccess(success);
 		resultBean.setError(error);
+		//LOG
+		if (input != null)
+			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+				"/api05/delete_provider_account", input, error);
 		return resultBean;
 	}
 

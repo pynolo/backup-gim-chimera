@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.DuplicateResultException;
+import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
@@ -94,7 +95,9 @@ public class IdentitySrvc {
 	
 	@Transactional
 	public void addLog(String identityUid, Integer idFederation,
-			String functionName, Object parameterBean, String result) {
+			String functionName, Object parameterBean, ErrorBean error) {
+		String result = "OK";
+		if (error != null) result = error.getMessage();
 		logIdentityDao.insertLog(identityUid, idFederation, functionName, parameterBean, result);	
 	}
 }
