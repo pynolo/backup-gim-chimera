@@ -55,7 +55,7 @@ public class IdentityDao {
 		return item;
 	}
 	
-	public Identity update(Identity item) {
+	public Identity update(Identity item, ChangeEnum changeType) {
 		Identity itemToUpdate = selectById(item.getId());
 		itemToUpdate.setIdentityUid(item.getIdentityUid());
 		itemToUpdate.setIdentityUidOld(item.getIdentityUidOld());
@@ -65,7 +65,7 @@ public class IdentityDao {
 		itemToUpdate.setAddressZip(item.getAddressZip());
 		itemToUpdate.setBirthDate(item.getBirthDate());
 		itemToUpdate.setChangeTime(new Date());
-		itemToUpdate.setChangeType(ChangeEnum.UPDATE.getName());
+		itemToUpdate.setChangeType(changeType.getName());
 		itemToUpdate.setCodiceFiscale(item.getCodiceFiscale());
 		itemToUpdate.setEmail(item.getEmail());
 		itemToUpdate.setFirstName(item.getFirstName());
@@ -85,7 +85,7 @@ public class IdentityDao {
 		return item;
 	}
 
-	public void logicDelete(int id) {
+	public void logicalDelete(int id) {
 		//Commented physical deletion
 		//Identity item = selectById(id);
 		//entityManager.merge(item);

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.giunti.chimera.BusinessException;
+import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
@@ -56,7 +57,7 @@ public class IdentitySrvc {
 		if (identityUid != null) {
 			if (identityUid.length() > 0) {
 				Identity identity = identityDao.findByIdentityUid(identityUid);
-				identityDao.delete(identity.getId());
+				identityDao.logicalDelete(identity.getId());
 				return;
 			}
 		}
@@ -82,8 +83,8 @@ public class IdentitySrvc {
 		if (fin.getSchool() == null) fin.setSchool(red.getSchool());
 		if (fin.getSex() == null) fin.setSex(red.getSex());
 		if (fin.getTelephone() == null) fin.setTelephone(red.getTelephone());
-		Identity result = identityDao.update(fin);
-		identityDao.delete(red.getId());
+		Identity result = identityDao.update(fin, ChangeEnum.MERGE);
+		identityDao.logicalDelete(red.getId());
 		return result;
 	}
 }

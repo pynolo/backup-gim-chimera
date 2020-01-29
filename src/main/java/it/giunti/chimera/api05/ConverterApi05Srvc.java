@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
@@ -97,7 +98,7 @@ public class ConverterApi05Srvc {
 		if (bean.getTelephone() != null) entity.setTelephone(bean.getTelephone());
 		if (entity.getId() != null) {
 			//UPDATE
-			entity = identityDao.update(entity);
+			entity = identityDao.update(entity, ChangeEnum.UPDATE);
 		} else {
 			//INSERT
 			entity = identityDao.insert(entity);
