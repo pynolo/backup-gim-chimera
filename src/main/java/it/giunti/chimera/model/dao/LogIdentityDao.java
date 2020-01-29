@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.BusinessException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.LogIdentity;
 
@@ -33,19 +35,19 @@ public class LogIdentityDao {
 		return item;
 	}
 	
-	public LogIdentity update(LogIdentity item) {
-		LogIdentity itemToUpdate = selectById(item.getId());
-		itemToUpdate.setIdentityUid(item.getIdentityUid());
-		itemToUpdate.setIdFederation(item.getIdFederation());
-		itemToUpdate.setLastModified(item.getLastModified());
-		itemToUpdate.setOperation(item.getOperation());
-		itemToUpdate.setParameters(item.getParameters());
-		itemToUpdate.setResult(item.getResult());
-		itemToUpdate.setServiceDescr(item.getServiceDescr());
-		entityManager.merge(itemToUpdate);
-		entityManager.flush();
-		return item;
-	}
+	//public LogIdentity update(LogIdentity item) {
+	//	LogIdentity itemToUpdate = selectById(item.getId());
+	//	itemToUpdate.setIdentityUid(item.getIdentityUid());
+	//	itemToUpdate.setIdFederation(item.getIdFederation());
+	//	itemToUpdate.setLastModified(item.getLastModified());
+	//	itemToUpdate.setFunction(item.getFunction());
+	//	itemToUpdate.setParameters(item.getParameters());
+	//	itemToUpdate.setResult(item.getResult());
+	//	itemToUpdate.setServiceDescr(item.getServiceDescr());
+	//	entityManager.merge(itemToUpdate);
+	//	entityManager.flush();
+	//	return item;
+	//}
 
 	public void delete(int id) {
 		LogIdentity item = selectById(id);
@@ -54,16 +56,31 @@ public class LogIdentityDao {
 		entityManager.flush();
 	}
 	
-	public void createLog(String identityUid, Integer idFederation, String operation, String parameters, String result) throws BusinessException {
-		if (idFederation == null) throw new BusinessException("Cannot create log without idFederation");
-		LogIdentity li = new LogIdentity();
-		li.setIdFederation(idFederation);
-		li.setIdentityUid(identityUid);
-		li.setOperation(operation);
-		li.setParameters(parameters);
-		li.setResult(result);
-		li.setLastModified(new Date());
-		insert(li);
+	public void insertLog(String identityUid, Integer idFederation,
+			String functionName, Object parameterBean, String result) {
+		ObjectMapper mapper = new ObjectMapper();
+		String parameterJson = "null"; 
+		if (parameterBean != null) {
+			try {
+				parameterJson = mapper.writeValueAsString(parameterBean);
+			} catch (JsonProcessingException e) {
+				parameterJson = "obj->json conversion error";
+			}
+		}
+		LogIdentity log = new LogIdentity();
+		log.setIdentityUid(identityUid);
+		log.setIdFederation(idFederation);
+		log.setLastModified(new Date());
+		log.setFunction(functionName);
+		log.setParameters(parameterJson);
+		if (result != null) {
+			if (result.length() <= 255) {
+				log.setResult(result);
+			} else {
+				log.setResult(result.substring(0, 255));
+			}
+		}
+		entityManager.persist(log);
 	}
 	
 	@SuppressWarnings("unchecked")

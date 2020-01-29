@@ -47,9 +47,7 @@ public class IdentityDao {
 	}
 	
 	public Identity insert(Identity item) {
-		Date now = new Date();
-		item.setChangeTime(now);
-		item.setLastModified(now);
+		item.setChangeTime(new Date());
 		item.setChangeType(ChangeEnum.INSERT.getName());
 		entityManager.persist(item);
 		return item;
@@ -91,7 +89,6 @@ public class IdentityDao {
 		//entityManager.merge(item);
 		//entityManager.remove(item);
 		//entityManager.flush();
-		Date now = new Date();
 		// LOGICAL DELETION
 		Identity item = selectById(id);
 		//item.setIdentityUid();
@@ -101,7 +98,7 @@ public class IdentityDao {
 		item.setAddressTown(null);
 		item.setAddressZip(null);
 		item.setBirthDate(null);
-		item.setChangeTime(now);
+		item.setChangeTime(new Date());
 		item.setChangeType(ChangeEnum.DELETE.getName());
 		item.setCodiceFiscale(null);
 		item.setEmail(null);
@@ -117,7 +114,6 @@ public class IdentityDao {
 		item.setInterest(null);
 		item.setJob(null);
 		item.setSchool(null);
-		item.setLastModified(now);
 		entityManager.merge(item);
 		entityManager.flush();
 	}

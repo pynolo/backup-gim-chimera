@@ -10,6 +10,7 @@ import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.model.dao.IdentityDao;
+import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
@@ -28,6 +29,9 @@ public class IdentitySrvc {
 	@Autowired
 	@Qualifier("providerAccountDao")
 	private ProviderAccountDao providerAccountDao;
+	@Autowired
+	@Qualifier("logIdentityDao")
+	private LogIdentityDao logIdentityDao;
 	
 	@Transactional
 	public Identity getIdentity(String identityUid) {
@@ -86,5 +90,11 @@ public class IdentitySrvc {
 		Identity result = identityDao.update(fin, ChangeEnum.MERGE);
 		identityDao.logicalDelete(red.getId());
 		return result;
+	}
+	
+	@Transactional
+	public void addLog(String identityUid, Integer idFederation,
+			String functionName, Object parameterBean, String result) {
+		logIdentityDao.insertLog(identityUid, idFederation, functionName, parameterBean, result);	
 	}
 }

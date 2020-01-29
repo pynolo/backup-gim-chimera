@@ -2,7 +2,6 @@
 - implementare tabelle di lookup nella validazione (newsletters, job...)
 - Azioni durante la modifica:
   - implementare logging interno su tabella
-  - identity: impostare changeTime e changeType
   - identity: ad ogni modifica salvare le info di identity_federation
 
 TEST

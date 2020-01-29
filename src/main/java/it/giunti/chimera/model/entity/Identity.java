@@ -38,10 +38,6 @@ public class Identity {
     @Basic(optional = false)
     @Column(name = "change_type", nullable = false, length = 8)
     private String changeType;
-    @Column(name = "last_modified")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastModified; // SOLA LETTURA
-    
     @Column(name = "user_name", length = 256)
     private String userName;
     @Basic(optional = false)
@@ -285,14 +281,6 @@ public class Identity {
 
 	public void setSchool(String school) {
 		this.school = school;
-	}
-
-	public Date getLastModified() {
-		return lastModified;
-	}
-
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
 	}
 
 	//public Set<ProviderAccount> getProviderAccountSet() {

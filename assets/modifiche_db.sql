@@ -1,3 +1,34 @@
+#Preparazione del db alle API 5.0
+
+#IDENTITIES ADD
+ALTER TABLE identities ADD COLUMN `change_time` datetime NOT NULL,
+ADD COLUMN `change_type` varchar(8) NOT NULL,
+ADD COLUMN `identity_uid_old` varchar(32) DEFAULT NULL,
+ADD COLUMN `interest` varchar(256) DEFAULT NULL,
+ADD COLUMN `job` varchar(256) DEFAULT NULL,
+ADD COLUMN `school` varchar(256) DEFAULT NULL;
+UPDATE identities set `change_time`=`last_modified`, `change_type`='update';
+#IDENTITIES CHANGE
+ALTER TABLE identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL,
+CHANGE COLUMN `birth` `birth_date` date DEFAULT NULL,
+CHANGE COLUMN `address` `address_street` varchar(64) DEFAULT NULL,
+CHANGE COLUMN `province_code` `address_province_id` varchar(4) DEFAULT NULL,
+CHANGE COLUMN `zip` `address_zip` varchar(16) DEFAULT NULL,
+CHANGE COLUMN `city` `address_town` varchar(64) DEFAULT NULL;
+#IDENTITIES DROP
+ALTER TABLE identities DROP COLUMN `id_service`,
+DROP COLUMN `last_modified`;
+
+#LOG
+ALTER TABLE log_identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL,
+CHANGE COLUMN `id_service` `id_federation` int(11) NOT NULL,
+CHANGE COLUMN `operation` `function` varchar(128) NOT NULL,
+CHANGE COLUMN `parameters` `parameters` TEXT DEFAULT NULL,
+CHANGE COLUMN `result` `result` varchar(256) NOT NULL;
+
+#COUNTERS
+UPDATE counters set ckey='identity_uid' where ckey='user_uid';
+
 DROP TABLE IF EXISTS `identities_consent`;
 CREATE TABLE `identities_consent` (
   `id` int(11) NOT NULL auto_increment,
@@ -11,11 +42,6 @@ CREATE TABLE `identities_consent` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `identity_range_key` (`id_identity`,`range`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
-
-ALTER TABLE identities ADD COLUMN `identity_uid_old` varchar(32) DEFAULT NULL,
-ADD COLUMN `interest` varchar(256) DEFAULT NULL,
-ADD COLUMN `job` varchar(256) DEFAULT NULL,
-ADD COLUMN `school` varchar(256) DEFAULT NULL;
 
 DROP TABLE IF EXISTS `federations`;
 CREATE TABLE `federations` (
@@ -55,9 +81,6 @@ CREATE TABLE `identities_federations` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 INSERT INTO `identities_federations` SELECT id,id_identity,id_service as id_federation,null,null FROM identities_services;
 #DROP TABLE `services`;
-
-ALTER TABLE log_identities CHANGE COLUMN `id_service` `id_federation` int(11) NOT NULL;
-ALTER TABLE identities DROP COLUMN `id_service`;
 
 DROP TABLE IF EXISTS `identities_newsletter`;
 CREATE TABLE `identities_newsletter` (

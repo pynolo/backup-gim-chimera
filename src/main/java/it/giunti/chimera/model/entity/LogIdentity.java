@@ -35,11 +35,11 @@ public class LogIdentity {
     @Basic(optional = false)
     @Column(name = "id_federation", nullable = false)
     private Integer idFederation;
-    @Column(name = "operation", columnDefinition = "TEXT")
-    private String operation;
+    @Column(name = "function", length = 128)
+    private String function;
     @Column(name = "parameters", columnDefinition = "TEXT")
     private String parameters;
-    @Column(name = "result", columnDefinition = "TEXT")
+    @Column(name = "result", length = 256)
     private String result;
     
     @Transient
@@ -88,12 +88,12 @@ public class LogIdentity {
 		this.parameters = parameters;
 	}
 
-	public String getOperation() {
-		return operation;
+	public String getFunction() {
+		return function;
 	}
 
-	public void setOperation(String operation) {
-		this.operation = operation;
+	public void setFunction(String function) {
+		this.function = function;
 	}
 
 	public String getIdentityUid() {
