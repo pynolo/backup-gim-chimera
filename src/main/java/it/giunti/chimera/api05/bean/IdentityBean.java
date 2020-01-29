@@ -9,6 +9,7 @@ public class IdentityBean implements IInputBean {
 	private String identityUid = null;
 	private String identityUidOld = null;
 	private Date changeTime = null;
+	private String changeType = null;
 	private String email = null;
 	private String lastName = null;
 	private String firstName = null;
@@ -62,6 +63,12 @@ public class IdentityBean implements IInputBean {
 	}
 	public void setChangeTime(Date changeTime) {
 		this.changeTime = changeTime;
+	}
+	public String getChangeType() {
+		return changeType;
+	}
+	public void setChangeType(String changeType) {
+		this.changeType = changeType;
 	}
 	public String getEmail() {
 		return email;

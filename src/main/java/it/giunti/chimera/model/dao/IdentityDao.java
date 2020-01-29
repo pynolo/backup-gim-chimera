@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.BusinessException;
+import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.GiuntiCardModeEnum;
 import it.giunti.chimera.IdentityPropertiesEnum;
@@ -46,6 +47,10 @@ public class IdentityDao {
 	}
 	
 	public Identity insert(Identity item) {
+		Date now = new Date();
+		item.setChangeTime(now);
+		item.setLastModified(now);
+		item.setChangeType(ChangeEnum.INSERT.getName());
 		entityManager.persist(item);
 		return item;
 	}
@@ -59,8 +64,8 @@ public class IdentityDao {
 		itemToUpdate.setAddressTown(item.getAddressTown());
 		itemToUpdate.setAddressZip(item.getAddressZip());
 		itemToUpdate.setBirthDate(item.getBirthDate());
-		itemToUpdate.setChangeTime(item.getChangeTime());
-		itemToUpdate.setChangeType(item.getChangeType());
+		itemToUpdate.setChangeTime(new Date());
+		itemToUpdate.setChangeType(ChangeEnum.UPDATE.getName());
 		itemToUpdate.setCodiceFiscale(item.getCodiceFiscale());
 		itemToUpdate.setEmail(item.getEmail());
 		itemToUpdate.setFirstName(item.getFirstName());
@@ -80,10 +85,40 @@ public class IdentityDao {
 		return item;
 	}
 
-	public void delete(int id) {
+	public void logicDelete(int id) {
+		//Commented physical deletion
+		//Identity item = selectById(id);
+		//entityManager.merge(item);
+		//entityManager.remove(item);
+		//entityManager.flush();
+		Date now = new Date();
+		// LOGICAL DELETION
 		Identity item = selectById(id);
+		//item.setIdentityUid();
+		//item.setIdentityUidOld();
+		item.setAddressProvinceId(null);
+		item.setAddressStreet(null);
+		item.setAddressTown(null);
+		item.setAddressZip(null);
+		item.setBirthDate(null);
+		item.setChangeTime(now);
+		item.setChangeType(ChangeEnum.DELETE.getName());
+		item.setCodiceFiscale(null);
+		item.setEmail(null);
+		item.setFirstName(null);
+		item.setGiuntiCard(null);
+		item.setGiuntiCardMode(null);
+		item.setLastName(null);
+		item.setPartitaIva(null);
+		item.setPasswordMd5(null);
+		item.setSex(null);
+		item.setTelephone(null);
+		item.setUserName(null);
+		item.setInterest(null);
+		item.setJob(null);
+		item.setSchool(null);
+		item.setLastModified(now);
 		entityManager.merge(item);
-		entityManager.remove(item);
 		entityManager.flush();
 	}
 	
