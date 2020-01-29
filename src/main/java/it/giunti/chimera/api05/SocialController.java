@@ -19,6 +19,7 @@ import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.ProviderAccountBean;
+import it.giunti.chimera.api05.bean.ProviderAccountListBean;
 import it.giunti.chimera.api05.bean.SocialInputBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
@@ -46,22 +47,23 @@ public class SocialController {
 	private ConverterApi05Srvc converterApi05Srvc;
 	
 	@PostMapping("/api05/find_provider_accounts")
-	public List<ProviderAccountBean> findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
-		List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
+	public ProviderAccountListBean findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
+		ProviderAccountListBean resultBean = new ProviderAccountListBean();
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
+			List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
 			if (input.getIdentityUid() != null) {
 				List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
 				for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
-				return beanList;
+				resultBean.setProviderAccounts(beanList);
+				return resultBean;
 			}
-			return new ArrayList<ProviderAccountBean>();
+			resultBean.setProviderAccounts(new ArrayList<ProviderAccountBean>());
+			return resultBean;
 		}
-		ProviderAccountBean bean = new ProviderAccountBean();
-		bean.setError(error);
-		beanList.add(bean);
-		return beanList;
+		resultBean.setError(error);
+		return resultBean;
 	}
 	
 	@PostMapping("/api05/add_provider_account")
