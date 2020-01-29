@@ -39,6 +39,7 @@ public class FederationController {
 	@PostMapping("/api05/find_federations")
 	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
 		FederationListBean resultBean = new FederationListBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -62,6 +63,7 @@ public class FederationController {
 	public ChangedIdentitiesBean findChangedIdentities(@Valid @RequestBody ParametersBean input) {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {

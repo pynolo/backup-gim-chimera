@@ -49,6 +49,7 @@ public class SocialController {
 	@PostMapping("/api05/find_provider_accounts")
 	public ProviderAccountListBean findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountListBean resultBean = new ProviderAccountListBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -69,8 +70,14 @@ public class SocialController {
 	@PostMapping("/api05/add_provider_account")
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		if (error == null) {
 			Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
 			try {
@@ -89,8 +96,14 @@ public class SocialController {
 	@PostMapping("/api05/delete_provider_account")
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			try {

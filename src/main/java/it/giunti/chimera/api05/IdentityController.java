@@ -42,6 +42,7 @@ public class IdentityController {
 	@PostMapping("/api05/authenticate")
 	public IdentityBean authenticate(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -76,6 +77,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -96,6 +98,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_email")
 	public IdentityBean getIdentityByEmail(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -121,6 +124,7 @@ public class IdentityController {
 	@PostMapping("/api05/get_identity_by_social_id")
 	public IdentityBean getIdentityBySocialId(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
@@ -150,8 +154,14 @@ public class IdentityController {
 	@PostMapping("/api05/validate_updating_identity")
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			Map<String, String> errMap;
@@ -176,8 +186,14 @@ public class IdentityController {
 	@PostMapping("/api05/validate_new_identity")
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			if (input != null) {
@@ -199,8 +215,14 @@ public class IdentityController {
 	@PostMapping("/api05/update_identity")
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			resultBean = validateUpdatingIdentity(input);
@@ -218,8 +240,14 @@ public class IdentityController {
 	@PostMapping("/api05/add_identity")
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			resultBean = validateNewIdentity(input);
@@ -237,8 +265,14 @@ public class IdentityController {
 	@PostMapping("/api05/update_identity_consent")
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) { 
 			Map<String, String> errMap;
@@ -266,8 +300,14 @@ public class IdentityController {
 	@PostMapping("/api05/delete_identity")
 	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) {
 		ValidationBean resultBean = new ValidationBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanUpdate()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		boolean success = false;
 		if (error == null) {
 			try {
@@ -287,8 +327,14 @@ public class IdentityController {
 	@PostMapping("/api05/replace_identity")
 	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
+		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
+		//Verifica diritti scrittura
+		if (!akBean.getFederation().getCanMerge()) {
+			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
+			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+		}
 		if (error == null) {
 			try {
 				identitySrvc.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
