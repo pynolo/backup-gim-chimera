@@ -11,8 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.AppConstants;
@@ -23,7 +21,6 @@ import it.giunti.chimera.GiuntiCardModeEnum;
 import it.giunti.chimera.IdentityPropertiesEnum;
 import it.giunti.chimera.ValidationException;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.model.entity.Province;
 import it.giunti.chimera.util.PasswordUtil;
 import it.giunti.chimera.util.QueryUtil;
 import it.giunti.chimera.util.ValidationUtil;
@@ -34,13 +31,11 @@ public class IdentityDao {
 	private static final String emailRegExp = "^([\\w_!#\\$%&'\\*\\+\\-/=\\?\\^`\\{\\|\\}~\\.])+@([\\w\\-\\.]+\\.)+[\\w]{2,8}$";
 	//private static final String emailRegExp = "^([a-zA-Z0-9_\\-\\.])+@([\\w\\-\\.]+\\.)+[A-Z]{2,6}$";
 	private static final Pattern emailPattern = Pattern.compile(emailRegExp, Pattern.CASE_INSENSITIVE);
+	private static final String provinciaRegExp = "^[A-Z]{2}$";
+	private static final Pattern provinciaPattern = Pattern.compile(provinciaRegExp, Pattern.CASE_INSENSITIVE);
 	
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	@Autowired
-	@Qualifier("provinceDao")
-	ProvinceDao provinceDao;
 	
 	public Identity selectById(int id) {
 		return entityManager.find(Identity.class, id);
@@ -258,11 +253,9 @@ public class IdentityDao {
 		}
 		//COD_PROVINCIA
 		if (property.equals(IdentityPropertiesEnum.COD_PROVINCIA)) {
-			Province found = provinceDao.findByCode(stringValue.toUpperCase());
-			if (found != null) {
-				result = found.getCode();
-			} else {
-				throw new ValidationException("La provincia "+stringValue.toUpperCase()+" non esiste");
+			Matcher matcher = provinciaPattern.matcher(stringValue);
+			if (!matcher.matches()) {
+				throw new ValidationException("Provincia non valida");
 			}
 		}
 		//NASVITA

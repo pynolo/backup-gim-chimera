@@ -1,5 +1,7 @@
 #Preparazione del db alle API 5.0
 
+DROP TABLE provinces;
+
 #IDENTITIES ADD
 ALTER TABLE identities ADD COLUMN `change_time` datetime NOT NULL,
 ADD COLUMN `change_type` varchar(8) NOT NULL,
