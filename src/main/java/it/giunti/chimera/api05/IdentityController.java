@@ -1,5 +1,7 @@
 package it.giunti.chimera.api05;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -18,6 +20,7 @@ import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
+import it.giunti.chimera.api05.bean.LoginOutputBean;
 import it.giunti.chimera.api05.bean.ParametersBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
@@ -40,8 +43,8 @@ public class IdentityController {
 	private ConverterApi05Srvc converterApi05Srvc;
 	
 	@PostMapping("/api05/authenticate")
-	public IdentityBean authenticate(@Valid @RequestBody ParametersBean input) {
-		IdentityBean resultBean = new IdentityBean();
+	public LoginOutputBean authenticate(@Valid @RequestBody ParametersBean input) {
+		LoginOutputBean resultBean = new LoginOutputBean();
 		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
@@ -53,7 +56,16 @@ public class IdentityController {
 					// Identity found
 					String passwordMd5 = PasswordUtil.md5(input.getPassword());
 					if (entity.getPasswordMd5().equals(passwordMd5)) {
-						resultBean = converterApi05Srvc.toIdentityBean(entity);
+						resultBean.setAuthenticated(true);
+						//Returns identityUid
+						resultBean.setIdentityUid(entity.getIdentityUid());
+						//Returns old uid's list
+						List<Identity> replacedList = identitySrvc
+								.findIdentityByReplacingUid(entity.getIdentityUid());
+						List<String> uidList = new ArrayList<String>();
+						for (Identity replaced:replacedList) uidList.add(replaced.getIdentityUid());
+						resultBean.setReplacedIdentityUids(uidList);
+						//Updates federation info
 						federationSrvc.addOrUpdateIdentityFederation(
 								entity.getId(), akBean.getFederation().getId());
 						return resultBean;
@@ -70,6 +82,7 @@ public class IdentityController {
 				error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
 			}
 		}
+		resultBean.setAuthenticated(false);
 		resultBean.setError(error);
 		return resultBean;
 	}

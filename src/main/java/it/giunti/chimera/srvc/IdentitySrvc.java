@@ -1,5 +1,6 @@
 package it.giunti.chimera.srvc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -57,6 +58,15 @@ public class IdentitySrvc {
 			Identity entity = identityDao.selectById(account.getIdIdentity());
 			return entity;
 		} else return null;
+	}
+	
+	@Transactional
+	public List<Identity> findIdentityByReplacingUid(String identityUid) {
+		List<Identity> resultList = new ArrayList<Identity>();
+		if (identityUid != null) {
+			resultList = identityDao.findByReplacingUid(identityUid);
+		}
+		return resultList;
 	}
 	
 	@Transactional
