@@ -88,7 +88,7 @@ public class IdentitySrvc {
 		if (fin.getSchool() == null) fin.setSchool(red.getSchool());
 		if (fin.getSex() == null) fin.setSex(red.getSex());
 		if (fin.getTelephone() == null) fin.setTelephone(red.getTelephone());
-		Identity result = identityDao.update(fin, ChangeEnum.MERGE);
+		Identity result = identityDao.update(fin, ChangeEnum.REPLACE);
 		identityDao.logicalDelete(red.getId());
 		return result;
 	}

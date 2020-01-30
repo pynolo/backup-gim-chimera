@@ -4,7 +4,7 @@ public enum ChangeEnum {
 	INSERT("insert"),
 	UPDATE("update"),
 	DELETE("delete"),
-	MERGE("merge");
+	REPLACE("replace");
 	
 	private String name;
 	
