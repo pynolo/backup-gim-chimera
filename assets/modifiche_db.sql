@@ -5,7 +5,7 @@ DROP TABLE provinces;
 #IDENTITIES ADD
 ALTER TABLE identities ADD COLUMN `change_time` datetime NOT NULL,
 ADD COLUMN `change_type` varchar(8) NOT NULL,
-ADD COLUMN `identity_uid_old` varchar(32) DEFAULT NULL,
+ADD COLUMN `replaced_by_uid` varchar(32) DEFAULT NULL,
 ADD COLUMN `interest` varchar(256) DEFAULT NULL,
 ADD COLUMN `job` varchar(256) DEFAULT NULL,
 ADD COLUMN `school` varchar(256) DEFAULT NULL;

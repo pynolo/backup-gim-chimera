@@ -29,8 +29,8 @@ public class Identity {
     @Column(name = "identity_uid", nullable = false, length = 32)
     private String identityUid;
     @Basic(optional = false)
-    @Column(name = "identity_uid_old", nullable = false, length = 32)
-    private String identityUidOld;
+    @Column(name = "replaced_by_uid", nullable = false, length = 32)
+    private String replacedByUid;
     @Basic(optional = false)
     @Column(name = "change_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -251,12 +251,12 @@ public class Identity {
 		this.partitaIva = partitaIva;
 	}
 
-	public String getIdentityUidOld() {
-		return identityUidOld;
+	public String getReplacedByUid() {
+		return replacedByUid;
 	}
 
-	public void setIdentityUidOld(String identityUidOld) {
-		this.identityUidOld = identityUidOld;
+	public void setReplacedByUid(String replacedByUid) {
+		this.replacedByUid = replacedByUid;
 	}
 
 	public String getInterest() {

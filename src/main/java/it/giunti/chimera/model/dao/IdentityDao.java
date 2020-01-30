@@ -51,7 +51,7 @@ public class IdentityDao {
 	public Identity update(Identity item, ChangeEnum changeType) {
 		Identity itemToUpdate = selectById(item.getId());
 		itemToUpdate.setIdentityUid(item.getIdentityUid());
-		itemToUpdate.setIdentityUidOld(item.getIdentityUidOld());
+		itemToUpdate.setReplacedByUid(item.getReplacedByUid());
 		itemToUpdate.setAddressProvinceId(item.getAddressProvinceId());
 		itemToUpdate.setAddressStreet(item.getAddressStreet());
 		itemToUpdate.setAddressTown(item.getAddressTown());
@@ -87,7 +87,7 @@ public class IdentityDao {
 		// LOGICAL DELETION
 		Identity item = selectById(id);
 		//item.setIdentityUid();
-		//item.setIdentityUidOld();
+		//item.setReplacedByUid(replacedByUid); KEEPS replacedByUid value!!
 		item.setAddressProvinceId(null);
 		item.setAddressStreet(null);
 		item.setAddressTown(null);
@@ -131,6 +131,18 @@ public class IdentityDao {
 			}
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Identity> findByReplacingUid(String replacedByUid) {
+		String hql = "from Identity as idt where " +
+				"idt.replacedByUid = :uid1 " +
+				"order by idt.id asc";
+		Query q = entityManager.createQuery(hql);
+		replacedByUid = QueryUtil.escapeParam(replacedByUid);
+		q.setParameter("uid1", replacedByUid);
+		List<Identity> idtList = (List<Identity>) q.getResultList();
+		return idtList;
 	}
 	
 	@SuppressWarnings("unchecked")

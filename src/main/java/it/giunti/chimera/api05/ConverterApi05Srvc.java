@@ -47,7 +47,7 @@ public class ConverterApi05Srvc {
 		IdentityBean bean = new IdentityBean();
 		bean.setError(null);
 		bean.setIdentityUid(entity.getIdentityUid());
-		bean.setIdentityUidOld(entity.getIdentityUidOld());
+		bean.setReplacedByUid(entity.getReplacedByUid());
 		bean.setAddressTown(entity.getAddressTown());
 		bean.setAddressProvinceId(entity.getAddressProvinceId());
 		bean.setAddressStreet(entity.getAddressStreet());
@@ -79,7 +79,7 @@ public class ConverterApi05Srvc {
 			String identityUid = counterDao.generateIdentityUid();
 			entity.setIdentityUid(identityUid);
 		}
-		if (bean.getIdentityUidOld() != null) entity.setIdentityUidOld(bean.getIdentityUidOld());
+		if (bean.getReplacedByUid() != null) entity.setReplacedByUid(bean.getReplacedByUid());
 		if (bean.getAddressTown() != null) entity.setAddressTown(bean.getAddressTown());
 		if (bean.getAddressProvinceId() != null) entity.setAddressProvinceId(bean.getAddressProvinceId());
 		if (bean.getAddressStreet() != null) entity.setAddressStreet(bean.getAddressStreet());

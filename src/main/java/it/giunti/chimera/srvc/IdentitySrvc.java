@@ -1,5 +1,7 @@
 package it.giunti.chimera.srvc;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +77,18 @@ public class IdentitySrvc {
 		Identity red = identityDao.findByIdentityUid(redundantIdentityUid);
 		Identity fin = identityDao.findByIdentityUid(finalIdentityUid);
 		if (red == null || fin == null) throw new BusinessException("Impossibile unire una Identity vuota");
-		// Save the redundant UID
-		fin.setIdentityUidOld(red.getIdentityUid());
-		//Non merge di: email, address, password
+		// Redundant identity is marked as replaced by the final one
+		red.setReplacedByUid(finalIdentityUid);
+		identityDao.update(red, ChangeEnum.REPLACE);
+		// Cycles all identities that had been replaced by the redundant one,
+		// marking them as replaced by the final one instead
+		List<Identity> deletedList = identityDao.findByReplacingUid(redundantIdentityUid);
+		for (Identity delIdt:deletedList) {
+			delIdt.setReplacedByUid(finalIdentityUid);
+			identityDao.update(delIdt, ChangeEnum.REPLACE);
+		}
+		//Replaces empty property if redundant has info
+		//Not to be merged: email, address, password
 		if (fin.getBirthDate() == null) fin.setBirthDate(red.getBirthDate());
 		if (fin.getCodiceFiscale() == null) fin.setCodiceFiscale(red.getCodiceFiscale());
 		if (fin.getFirstName() == null) fin.setFirstName(red.getFirstName());
@@ -88,6 +99,8 @@ public class IdentitySrvc {
 		if (fin.getSchool() == null) fin.setSchool(red.getSchool());
 		if (fin.getSex() == null) fin.setSex(red.getSex());
 		if (fin.getTelephone() == null) fin.setTelephone(red.getTelephone());
+		if (fin.getGiuntiCard() == null) fin.setGiuntiCard(red.getGiuntiCard());
+		if (fin.getGiuntiCardMode() == null) fin.setGiuntiCardMode(red.getGiuntiCardMode());
 		Identity result = identityDao.update(fin, ChangeEnum.REPLACE);
 		identityDao.logicalDelete(red.getId());
 		return result;

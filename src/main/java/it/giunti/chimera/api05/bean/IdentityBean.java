@@ -7,7 +7,7 @@ public class IdentityBean implements IInputBean {
 	private ErrorBean error = null;
 	private String accessKey = null;
 	private String identityUid = null;
-	private String identityUidOld = null;
+	private String replacedByUid = null;
 	private Date changeTime = null;
 	private String changeType = null;
 	private String email = null;
@@ -52,11 +52,11 @@ public class IdentityBean implements IInputBean {
 	public void setIdentityUid(String identityUid) {
 		this.identityUid = identityUid;
 	}
-	public String getIdentityUidOld() {
-		return identityUidOld;
+	public String getReplacedByUid() {
+		return replacedByUid;
 	}
-	public void setIdentityUidOld(String identityUidOld) {
-		this.identityUidOld = identityUidOld;
+	public void setReplacedByUid(String replacedByUid) {
+		this.replacedByUid = replacedByUid;
 	}
 	public Date getChangeTime() {
 		return changeTime;
