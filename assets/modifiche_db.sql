@@ -53,23 +53,24 @@ CREATE TABLE `federations` (
   `name` varchar(128) NOT NULL,
   `contact` varchar(256) DEFAULT NULL,
   `can_update` bit(1) NOT NULL,
-  `can_merge` bit(1) NOT NULL,
+  `can_delete` bit(1) NOT NULL,
+  `can_replace` bit(1) NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `uid_idx` (`federation_uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (1,'WWWSCUSTO','GE5K38I2','www.scuolastore.it','Di Marzo',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (2,'WWWGIUSCU','GS23LY880','www.giuntiscuola.it','Di Marzo',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (3,'WWWGIUAPU','EGS76X9W','www.giuntialpunto.it','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (4,'APPIOSGAP','IO67GP31','Giunti Al Punto - App iOS (now)','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (5,'APPADRGAP','AN30GP11','Giunti Al Punto - App Android','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (6,'APPWINGAP','WN97GP26','Giunti Al Punto - App Windows','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (7,'APPIOS2GAP','IO99PM87','Giunti Al Punto - App iOS (2.0)','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (8,'WWWGAPEBK','GEO47D33','ebookomaggio.giuntialpunto.it','Congiu',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (10,'WWWGIUABB','GAB34203','www.giuntiabbonamenti.it','Federici',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (11,'WWWGIUPSY','OS290223','GiuntiOS','Salsetta',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (12,'CRM','PFV21CRM','crmgiunti','Gianassi',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (13,'GESTIONESITI','LVX32J65','Gestione siti Giunti (Livia)','Federici',true,true);
-INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_merge) VALUES (14,'WWWGIUEDU','EDU66K9T71','www.giuntiedu.it','Salsetta e Biasioli',true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (1,'WWWSCUSTO','GE5K38I2','www.scuolastore.it','Di Marzo',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (2,'WWWGIUSCU','GS23LY880','www.giuntiscuola.it','Di Marzo',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (3,'WWWGIUAPU','EGS76X9W','www.giuntialpunto.it','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (4,'APPIOSGAP','IO67GP31','Giunti Al Punto - App iOS (now)','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (5,'APPADRGAP','AN30GP11','Giunti Al Punto - App Android','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (6,'APPWINGAP','WN97GP26','Giunti Al Punto - App Windows','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (7,'APPIOS2GAP','IO99PM87','Giunti Al Punto - App iOS (2.0)','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (8,'WWWGAPEBK','GEO47D33','ebookomaggio.giuntialpunto.it','Congiu',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (10,'WWWGIUABB','GAB34203','www.giuntiabbonamenti.it','Federici',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (11,'WWWGIUPSY','OS290223','GiuntiOS','Salsetta',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (12,'CRM','PFV21CRM','crmgiunti','Gianassi',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (13,'GESTIONESITI','LVX32J65','Gestione siti Giunti (Livia)','Federici',true,true,true);
+INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (14,'WWWGIUEDU','EDU66K9T71','www.giuntiedu.it','Salsetta e Biasioli',true,true,true);
 
 DROP TABLE IF EXISTS `identities_federations`;
 CREATE TABLE `identities_federations` (

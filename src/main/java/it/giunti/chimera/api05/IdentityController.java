@@ -316,7 +316,7 @@ public class IdentityController {
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
-		if (!akBean.getFederation().getCanUpdate()) {
+		if (!akBean.getFederation().getCanDelete()) {
 			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
 			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
 		}
@@ -347,7 +347,7 @@ public class IdentityController {
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
-		if (!akBean.getFederation().getCanMerge()) {
+		if (!akBean.getFederation().getCanReplace()) {
 			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
 			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
 		}

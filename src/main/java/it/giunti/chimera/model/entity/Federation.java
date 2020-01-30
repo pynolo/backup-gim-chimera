@@ -36,8 +36,11 @@ public class Federation {
 	@Column(name = "can_update", nullable = false)
 	private Boolean canUpdate;
 	@Basic(optional = false)
-	@Column(name = "can_merge", nullable = false)
-	private Boolean canMerge;
+	@Column(name = "can_delete", nullable = false)
+	private Boolean canDelete;
+	@Basic(optional = false)
+	@Column(name = "can_replace", nullable = false)
+	private Boolean canReplace;
 	
     public Federation() {
     }
@@ -90,12 +93,20 @@ public class Federation {
 		this.canUpdate = canUpdate;
 	}
 
-	public Boolean getCanMerge() {
-		return canMerge;
+	public Boolean getCanDelete() {
+		return canDelete;
 	}
 
-	public void setCanMerge(Boolean canMerge) {
-		this.canMerge = canMerge;
+	public void setCanDelete(Boolean canDelete) {
+		this.canDelete = canDelete;
+	}
+
+	public Boolean getCanReplace() {
+		return canReplace;
+	}
+
+	public void setCanReplace(Boolean canReplace) {
+		this.canReplace = canReplace;
 	}
 
 	@Override
