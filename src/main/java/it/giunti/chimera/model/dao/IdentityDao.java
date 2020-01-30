@@ -102,7 +102,7 @@ public class IdentityDao {
 		item.setGiuntiCardMode(null);
 		item.setLastName(null);
 		item.setPartitaIva(null);
-		item.setPasswordMd5(null);
+		item.setPasswordMd5("x");
 		item.setSex(null);
 		item.setTelephone(null);
 		item.setUserName(null);

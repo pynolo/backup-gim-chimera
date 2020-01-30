@@ -1,5 +1,6 @@
 - IdentityBean deve essere popolato con gli array di Account e Consent
 - implementare tabelle di lookup nella validazione (newsletters, job...)
+-data eliminazione
 
 TEST
 - creare nuova identity

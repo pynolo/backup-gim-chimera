@@ -20,7 +20,7 @@ import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
 import it.giunti.chimera.api05.bean.ErrorBean;
 import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.IdentityConsentBean;
-import it.giunti.chimera.api05.bean.LoginOutputBean;
+import it.giunti.chimera.api05.bean.IdentityHistoryBean;
 import it.giunti.chimera.api05.bean.ParametersBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
@@ -42,9 +42,17 @@ public class IdentityController {
 	@Qualifier("converterApi05Srvc")
 	private ConverterApi05Srvc converterApi05Srvc;
 	
+	private List<String> findUidHistory(String identityUid) {
+		List<Identity> replacedList = identitySrvc
+				.findIdentityByReplacingUid(identityUid);
+		List<String> uidList = new ArrayList<String>();
+		for (Identity replaced:replacedList) uidList.add(replaced.getIdentityUid());
+		return uidList;
+	}
+	
 	@PostMapping("/api05/authenticate")
-	public LoginOutputBean authenticate(@Valid @RequestBody ParametersBean input) {
-		LoginOutputBean resultBean = new LoginOutputBean();
+	public IdentityHistoryBean authenticate(@Valid @RequestBody ParametersBean input) {
+		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
@@ -56,15 +64,11 @@ public class IdentityController {
 					// Identity found
 					String passwordMd5 = PasswordUtil.md5(input.getPassword());
 					if (entity.getPasswordMd5().equals(passwordMd5)) {
-						resultBean.setAuthenticated(true);
 						//Returns identityUid
 						resultBean.setIdentityUid(entity.getIdentityUid());
 						//Returns old uid's list
-						List<Identity> replacedList = identitySrvc
-								.findIdentityByReplacingUid(entity.getIdentityUid());
-						List<String> uidList = new ArrayList<String>();
-						for (Identity replaced:replacedList) uidList.add(replaced.getIdentityUid());
-						resultBean.setReplacedIdentityUids(uidList);
+						resultBean.setReplacedIdentityUids(
+								findUidHistory(entity.getIdentityUid()));
 						//Updates federation info
 						federationSrvc.addOrUpdateIdentityFederation(
 								entity.getId(), akBean.getFederation().getId());
@@ -82,7 +86,6 @@ public class IdentityController {
 				error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
 			}
 		}
-		resultBean.setAuthenticated(false);
 		resultBean.setError(error);
 		return resultBean;
 	}
@@ -108,9 +111,9 @@ public class IdentityController {
 		return resultBean;	
 	}
 
-	@PostMapping("/api05/get_identity_by_email")
-	public IdentityBean getIdentityByEmail(@Valid @RequestBody ParametersBean input) {
-		IdentityBean resultBean = new IdentityBean();
+	@PostMapping("/api05/find_identity_uid_by_email")
+	public IdentityHistoryBean findIdentityUidByEmail(@Valid @RequestBody ParametersBean input) {
+		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
@@ -118,7 +121,14 @@ public class IdentityController {
 			try {
 				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
 				if (entity != null) {
-					resultBean = converterApi05Srvc.toIdentityBean(entity);
+					//Returns identityUid
+					resultBean.setIdentityUid(entity.getIdentityUid());
+					//Returns old uid's list
+					resultBean.setReplacedIdentityUids(
+							findUidHistory(entity.getIdentityUid()));
+					//Updates federation info
+					federationSrvc.addOrUpdateIdentityFederation(
+							entity.getId(), akBean.getFederation().getId());
 					return resultBean;
 				}
 				error = new ErrorBean();
@@ -134,9 +144,9 @@ public class IdentityController {
 		return resultBean;	
 	}
 	
-	@PostMapping("/api05/get_identity_by_social_id")
-	public IdentityBean getIdentityBySocialId(@Valid @RequestBody ParametersBean input) {
-		IdentityBean resultBean = new IdentityBean();
+	@PostMapping("/api05/find_identity_uid_by_social_id")
+	public IdentityHistoryBean findIdentityUidBySocialId(@Valid @RequestBody ParametersBean input) {
+		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
 		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
@@ -144,7 +154,14 @@ public class IdentityController {
 			try {
 				Identity entity = identitySrvc.getIdentityBySocialId(input.getSocialId());
 				if (entity != null) {
-					resultBean = converterApi05Srvc.toIdentityBean(entity);
+					//Returns identityUid
+					resultBean.setIdentityUid(entity.getIdentityUid());
+					//Returns old uid's list
+					resultBean.setReplacedIdentityUids(
+							findUidHistory(entity.getIdentityUid()));
+					//Updates federation info
+					federationSrvc.addOrUpdateIdentityFederation(
+							entity.getId(), akBean.getFederation().getId());
 					return resultBean;
 				}
 				error = new ErrorBean();
