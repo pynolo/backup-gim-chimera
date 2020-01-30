@@ -73,12 +73,14 @@ public class IdentityDao {
 		itemToUpdate.setInterest(item.getInterest());
 		itemToUpdate.setJob(item.getJob());
 		itemToUpdate.setSchool(item.getSchool());
+		itemToUpdate.setDeletionTime(item.getDeletionTime());
 		entityManager.merge(itemToUpdate);
 		entityManager.flush();
 		return item;
 	}
 
 	public void logicalDelete(int id) {
+		Date now = new Date();
 		//Commented physical deletion
 		//Identity item = selectById(id);
 		//entityManager.merge(item);
@@ -93,7 +95,7 @@ public class IdentityDao {
 		item.setAddressTown(null);
 		item.setAddressZip(null);
 		item.setBirthDate(null);
-		item.setChangeTime(new Date());
+		item.setChangeTime(now);
 		item.setChangeType(ChangeEnum.DELETE.getName());
 		item.setCodiceFiscale(null);
 		item.setEmail(null);
@@ -109,6 +111,7 @@ public class IdentityDao {
 		item.setInterest(null);
 		item.setJob(null);
 		item.setSchool(null);
+		item.setDeletionTime(now);
 		entityManager.merge(item);
 		entityManager.flush();
 	}

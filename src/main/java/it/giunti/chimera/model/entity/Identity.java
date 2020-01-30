@@ -77,6 +77,9 @@ public class Identity {
     private String job;
     @Column(name = "school", length = 256)
     private String school;
+    @Column(name = "deletion_time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date deletionTime;
     
 	//@OneToMany(fetch = FetchType.EAGER, mappedBy = "identity")
 	//private Set<ProviderAccount> providerAccountSet;
@@ -281,6 +284,14 @@ public class Identity {
 
 	public void setSchool(String school) {
 		this.school = school;
+	}
+
+	public Date getDeletionTime() {
+		return deletionTime;
+	}
+
+	public void setDeletionTime(Date deletionTime) {
+		this.deletionTime = deletionTime;
 	}
 
 	//public Set<ProviderAccount> getProviderAccountSet() {

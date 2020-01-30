@@ -9,7 +9,7 @@ ADD COLUMN `replaced_by_uid` varchar(32) DEFAULT NULL,
 ADD COLUMN `interest` varchar(256) DEFAULT NULL,
 ADD COLUMN `job` varchar(256) DEFAULT NULL,
 ADD COLUMN `school` varchar(256) DEFAULT NULL,
-ADD COLUMN `deletion_date` date DEFAULT NULL;
+ADD COLUMN `deletion_time` date DEFAULT NULL;
 ALTER TABLE identities ADD INDEX `replaced_by_idx` (replaced_by_uid);
 UPDATE identities set `change_time`=`last_modified`, `change_type`='update';
 #IDENTITIES CHANGE
@@ -119,3 +119,12 @@ CREATE TABLE `lookup_schools` (
   `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
+
+
+#TEMP
+ALTER TABLE identities 
+CHANGE COLUMN `user_uid_old` `replaced_by_uid` varchar(32) DEFAULT NULL,
+ADD COLUMN `deletion_time` date DEFAULT NULL;
+
+
+
