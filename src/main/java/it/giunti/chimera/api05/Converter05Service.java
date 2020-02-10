@@ -17,8 +17,8 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.IdentityConsent;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
-@Service("converterApi05Srvc")
-public class ConverterApi05Srvc {
+@Service("converter05Service")
+public class Converter05Service {
 
 	@Autowired
 	@Qualifier("identityDao")

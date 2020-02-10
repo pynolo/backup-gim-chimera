@@ -20,7 +20,7 @@ import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.IdentityFederation;
 
-@Service("federationSrvc")
+@Service("federationService")
 public class FederationService {
 
 	@Autowired

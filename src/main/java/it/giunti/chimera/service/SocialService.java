@@ -16,7 +16,7 @@ import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
-@Service("socialSrvc")
+@Service("socialService")
 public class SocialService {
 
 	@Autowired

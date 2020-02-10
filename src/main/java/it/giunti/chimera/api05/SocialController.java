@@ -43,8 +43,8 @@ public class SocialController {
 	private FederationService federationService;
 	
 	@Autowired
-	@Qualifier("converterApi05Srvc")
-	private ConverterApi05Srvc converterApi05Srvc;
+	@Qualifier("converter05Service")
+	private Converter05Service converter05Service;
 	
 	@PostMapping("/api05/find_provider_accounts")
 	public ProviderAccountListBean findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
@@ -56,7 +56,7 @@ public class SocialController {
 			List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
 			if (input.getIdentityUid() != null) {
 				List<ProviderAccount> list = socialService.findAccountsByIdentityUid(input.getIdentityUid());
-				for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
+				for (ProviderAccount entity:list) beanList.add(converter05Service.toProviderAccountBean(entity));
 				resultBean.setProviderAccounts(beanList);
 				return resultBean;
 			}
@@ -82,7 +82,7 @@ public class SocialController {
 			Identity identity = identityService.getIdentity(input.getIdentityUid());
 			try {
 				ProviderAccount entity = socialService.createProviderAccount(identity.getId(), input.getSocialId());
-				resultBean = converterApi05Srvc.toProviderAccountBean(entity);
+				resultBean = converter05Service.toProviderAccountBean(entity);
 			} catch (BusinessException e) {
 				error = new ErrorBean();
 				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());

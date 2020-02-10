@@ -19,7 +19,7 @@ import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
-@Service("identitySrvc")
+@Service("identityService")
 public class IdentityService {
 
 

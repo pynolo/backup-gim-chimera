@@ -39,8 +39,8 @@ public class IdentityController {
 	@Qualifier("federationService")
 	private FederationService federationService;
 	@Autowired
-	@Qualifier("converterApi05Srvc")
-	private ConverterApi05Srvc converterApi05Srvc;
+	@Qualifier("converter05Service")
+	private Converter05Service converter05Service;
 	
 	private List<String> findUidHistory(String identityUid) {
 		List<Identity> replacedList = identityService
@@ -100,7 +100,7 @@ public class IdentityController {
 			//BODY
 			Identity entity = identityService.getIdentity(input.getIdentityUid());
 			if (entity != null) {
-				resultBean = converterApi05Srvc.toIdentityBean(entity);
+				resultBean = converter05Service.toIdentityBean(entity);
 				return resultBean;
 			}
 			error = new ErrorBean();
@@ -258,7 +258,7 @@ public class IdentityController {
 			resultBean = validateUpdatingIdentity(input);
 			if (resultBean.getError() != null) {
 				/*Identity updatedIdentity =*/
-				converterApi05Srvc.persistIntoIdentity(input);
+				converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
 		}
@@ -287,7 +287,7 @@ public class IdentityController {
 			resultBean = validateNewIdentity(input);
 			if (resultBean.getError() != null) {
 				/*Identity identity */
-				converterApi05Srvc.persistIntoIdentity(input);
+				converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
 		}
@@ -319,7 +319,7 @@ public class IdentityController {
 				if (errMap.isEmpty()) {
 					//Actually adds or updates
 					/*IdentityConsent updatedConsent =*/
-					converterApi05Srvc.persistIntoConsent(input);
+					converter05Service.persistIntoConsent(input);
 					success = true;
 				} else {
 					resultBean.setWarnings(errMap);

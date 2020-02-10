@@ -33,8 +33,8 @@ public class FederationController {
 	private FederationService federationService;
 	
 	@Autowired
-	@Qualifier("converterApi05Srvc")
-	private ConverterApi05Srvc converterApi05Srvc;
+	@Qualifier("converter05Service")
+	private Converter05Service converter05Service;
 	
 	@PostMapping("/api05/find_federations")
 	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
@@ -73,7 +73,7 @@ public class FederationController {
 					List<Identity> iList = federationService.findChangedIdentities(start);
 					List<IdentityBean> beanList = new ArrayList<IdentityBean>();
 					for (Identity identity:iList) {
-						IdentityBean bean = converterApi05Srvc.toIdentityBean(identity);
+						IdentityBean bean = converter05Service.toIdentityBean(identity);
 						beanList.add(bean);
 					}
 					resultBean.setIdentities(beanList);
