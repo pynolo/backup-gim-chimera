@@ -22,15 +22,15 @@ import it.giunti.chimera.api05.bean.IdentityBean;
 import it.giunti.chimera.api05.bean.ParametersBean;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.srvc.FederationSrvc;
+import it.giunti.chimera.service.FederationService;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class FederationController {
 	
 	@Autowired
-	@Qualifier("federationSrvc")
-	private FederationSrvc federationSrvc;
+	@Qualifier("federationService")
+	private FederationService federationService;
 	
 	@Autowired
 	@Qualifier("converterApi05Srvc")
@@ -40,12 +40,12 @@ public class FederationController {
 	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
 		FederationListBean resultBean = new FederationListBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			List<FederationListBean.FederationBean> beanList = 
 					new ArrayList<FederationListBean.FederationBean>();
-			List<Federation> fedList = federationSrvc.findAllFederations();
+			List<Federation> fedList = federationService.findAllFederations();
 			for (Federation fed:fedList) {
 				FederationListBean.FederationBean bean = resultBean.new FederationBean();
 				bean.setName(fed.getName());
@@ -64,13 +64,13 @@ public class FederationController {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			if (input.getStartTimestamp() != null) {
 				try {
 					Long start = Long.parseLong(input.getStartTimestamp());
-					List<Identity> iList = federationSrvc.findChangedIdentities(start);
+					List<Identity> iList = federationService.findChangedIdentities(start);
 					List<IdentityBean> beanList = new ArrayList<IdentityBean>();
 					for (Identity identity:iList) {
 						IdentityBean bean = converterApi05Srvc.toIdentityBean(identity);

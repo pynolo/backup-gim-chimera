@@ -105,7 +105,7 @@ public class IdentityFederation {
 
     @Override
     public String toString() {
-        return "IdentitySrvc[id=" + id + "]";
+        return "IdentityService[id=" + id + "]";
     }
 
 }

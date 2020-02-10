@@ -1,4 +1,4 @@
-package it.giunti.chimera.srvc;
+package it.giunti.chimera.service;
 
 import java.util.Date;
 import java.util.List;
@@ -21,7 +21,7 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.IdentityFederation;
 
 @Service("federationSrvc")
-public class FederationSrvc {
+public class FederationService {
 
 	@Autowired
 	@Qualifier("federationDao")

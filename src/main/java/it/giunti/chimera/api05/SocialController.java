@@ -24,23 +24,23 @@ import it.giunti.chimera.api05.bean.SocialInputBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.srvc.FederationSrvc;
-import it.giunti.chimera.srvc.IdentitySrvc;
-import it.giunti.chimera.srvc.SocialSrvc;
+import it.giunti.chimera.service.FederationService;
+import it.giunti.chimera.service.IdentityService;
+import it.giunti.chimera.service.SocialService;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class SocialController {
 
 	@Autowired
-	@Qualifier("socialSrvc")
-	private SocialSrvc socialSrvc;
+	@Qualifier("socialService")
+	private SocialService socialService;
 	@Autowired
-	@Qualifier("identitySrvc")
-	private IdentitySrvc identitySrvc;
+	@Qualifier("identityService")
+	private IdentityService identityService;
 	@Autowired
-	@Qualifier("federationSrvc")
-	private FederationSrvc federationSrvc;
+	@Qualifier("federationService")
+	private FederationService federationService;
 	
 	@Autowired
 	@Qualifier("converterApi05Srvc")
@@ -50,12 +50,12 @@ public class SocialController {
 	public ProviderAccountListBean findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountListBean resultBean = new ProviderAccountListBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			List<ProviderAccountBean> beanList = new ArrayList<ProviderAccountBean>();
 			if (input.getIdentityUid() != null) {
-				List<ProviderAccount> list = socialSrvc.findAccountsByIdentityUid(input.getIdentityUid());
+				List<ProviderAccount> list = socialService.findAccountsByIdentityUid(input.getIdentityUid());
 				for (ProviderAccount entity:list) beanList.add(converterApi05Srvc.toProviderAccountBean(entity));
 				resultBean.setProviderAccounts(beanList);
 				return resultBean;
@@ -71,7 +71,7 @@ public class SocialController {
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -79,9 +79,9 @@ public class SocialController {
 			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
 		}
 		if (error == null) {
-			Identity identity = identitySrvc.getIdentity(input.getIdentityUid());
+			Identity identity = identityService.getIdentity(input.getIdentityUid());
 			try {
-				ProviderAccount entity = socialSrvc.createProviderAccount(identity.getId(), input.getSocialId());
+				ProviderAccount entity = socialService.createProviderAccount(identity.getId(), input.getSocialId());
 				resultBean = converterApi05Srvc.toProviderAccountBean(entity);
 			} catch (BusinessException e) {
 				error = new ErrorBean();
@@ -92,7 +92,7 @@ public class SocialController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/add_provider_account", input, error);
 		return resultBean;	
 	}
@@ -101,7 +101,7 @@ public class SocialController {
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -111,9 +111,9 @@ public class SocialController {
 		boolean success = false;
 		if (error == null) {
 			try {
-				ProviderAccount entity = socialSrvc.getAccountByIdentityUidAndSocialId(
+				ProviderAccount entity = socialService.getAccountByIdentityUidAndSocialId(
 						input.getIdentityUid(), input.getSocialId());
-				socialSrvc.deleteProviderAccount(entity);
+				socialService.deleteProviderAccount(entity);
 				success = true;
 			} catch (BusinessException | EmptyResultException | DuplicateResultException e) {
 				error = new ErrorBean();
@@ -125,7 +125,7 @@ public class SocialController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/delete_provider_account", input, error);
 		return resultBean;
 	}

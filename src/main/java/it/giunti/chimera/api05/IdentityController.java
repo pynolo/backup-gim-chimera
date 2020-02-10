@@ -24,8 +24,8 @@ import it.giunti.chimera.api05.bean.IdentityHistoryBean;
 import it.giunti.chimera.api05.bean.ParametersBean;
 import it.giunti.chimera.api05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.srvc.FederationSrvc;
-import it.giunti.chimera.srvc.IdentitySrvc;
+import it.giunti.chimera.service.FederationService;
+import it.giunti.chimera.service.IdentityService;
 import it.giunti.chimera.util.PasswordUtil;
 
 @RestController
@@ -33,17 +33,17 @@ import it.giunti.chimera.util.PasswordUtil;
 public class IdentityController {
 
 	@Autowired
-	@Qualifier("identitySrvc")
-	private IdentitySrvc identitySrvc;
+	@Qualifier("identityService")
+	private IdentityService identityService;
 	@Autowired
-	@Qualifier("federationSrvc")
-	private FederationSrvc federationSrvc;
+	@Qualifier("federationService")
+	private FederationService federationService;
 	@Autowired
 	@Qualifier("converterApi05Srvc")
 	private ConverterApi05Srvc converterApi05Srvc;
 	
 	private List<String> findUidHistory(String identityUid) {
-		List<Identity> replacedList = identitySrvc
+		List<Identity> replacedList = identityService
 				.findIdentityByReplacingUid(identityUid);
 		List<String> uidList = new ArrayList<String>();
 		for (Identity replaced:replacedList) uidList.add(replaced.getIdentityUid());
@@ -54,12 +54,12 @@ public class IdentityController {
 	public IdentityHistoryBean authenticate(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			//BODY
 			try {
-				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
+				Identity entity = identityService.getIdentityByEmail(input.getEmail());
 				if (entity != null) {
 					// Identity found
 					String passwordMd5 = PasswordUtil.md5(input.getPassword());
@@ -70,7 +70,7 @@ public class IdentityController {
 						resultBean.setReplacedIdentityUids(
 								findUidHistory(entity.getIdentityUid()));
 						//Updates federation info
-						federationSrvc.addOrUpdateIdentityFederation(
+						federationService.addOrUpdateIdentityFederation(
 								entity.getId(), akBean.getFederation().getId());
 						return resultBean;
 					}
@@ -94,11 +94,11 @@ public class IdentityController {
 	public IdentityBean getIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			//BODY
-			Identity entity = identitySrvc.getIdentity(input.getIdentityUid());
+			Identity entity = identityService.getIdentity(input.getIdentityUid());
 			if (entity != null) {
 				resultBean = converterApi05Srvc.toIdentityBean(entity);
 				return resultBean;
@@ -115,11 +115,11 @@ public class IdentityController {
 	public IdentityHistoryBean findIdentityUidByEmail(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			try {
-				Identity entity = identitySrvc.getIdentityByEmail(input.getEmail());
+				Identity entity = identityService.getIdentityByEmail(input.getEmail());
 				if (entity != null) {
 					//Returns identityUid
 					resultBean.setIdentityUid(entity.getIdentityUid());
@@ -127,7 +127,7 @@ public class IdentityController {
 					resultBean.setReplacedIdentityUids(
 							findUidHistory(entity.getIdentityUid()));
 					//Updates federation info
-					federationSrvc.addOrUpdateIdentityFederation(
+					federationService.addOrUpdateIdentityFederation(
 							entity.getId(), akBean.getFederation().getId());
 					return resultBean;
 				}
@@ -148,11 +148,11 @@ public class IdentityController {
 	public IdentityHistoryBean findIdentityUidBySocialId(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		if (error == null) {
 			try {
-				Identity entity = identitySrvc.getIdentityBySocialId(input.getSocialId());
+				Identity entity = identityService.getIdentityBySocialId(input.getSocialId());
 				if (entity != null) {
 					//Returns identityUid
 					resultBean.setIdentityUid(entity.getIdentityUid());
@@ -160,7 +160,7 @@ public class IdentityController {
 					resultBean.setReplacedIdentityUids(
 							findUidHistory(entity.getIdentityUid()));
 					//Updates federation info
-					federationSrvc.addOrUpdateIdentityFederation(
+					federationService.addOrUpdateIdentityFederation(
 							entity.getId(), akBean.getFederation().getId());
 					return resultBean;
 				}
@@ -185,7 +185,7 @@ public class IdentityController {
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -217,7 +217,7 @@ public class IdentityController {
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -246,7 +246,7 @@ public class IdentityController {
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -266,7 +266,7 @@ public class IdentityController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/update_identity", input, error);
 		return resultBean;
 	}
@@ -275,7 +275,7 @@ public class IdentityController {
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -295,7 +295,7 @@ public class IdentityController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/add_identity", input, error);
 		return resultBean;
 	}
@@ -304,7 +304,7 @@ public class IdentityController {
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanUpdate()) {
@@ -334,7 +334,7 @@ public class IdentityController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/update_identity_consent", input, error);
 		return resultBean;
 	}
@@ -343,7 +343,7 @@ public class IdentityController {
 	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanDelete()) {
@@ -353,7 +353,7 @@ public class IdentityController {
 		boolean success = false;
 		if (error == null) {
 			try {
-				identitySrvc.deleteIdentity(input.getIdentityUid());
+				identityService.deleteIdentity(input.getIdentityUid());
 				success = true;
 			} catch (BusinessException e) {
 				error = new ErrorBean();
@@ -365,7 +365,7 @@ public class IdentityController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/delete_identity", input, error);
 		return resultBean;
 	}
@@ -374,7 +374,7 @@ public class IdentityController {
 	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
 		//Verifica accessKey
-		AccessKeyValidationBean akBean = federationSrvc.checkAccessKeyAndNull(input);
+		AccessKeyValidationBean akBean = federationService.checkAccessKeyAndNull(input);
 		ErrorBean error = akBean.getError();
 		//Verifica diritti scrittura
 		if (!akBean.getFederation().getCanReplace()) {
@@ -383,7 +383,7 @@ public class IdentityController {
 		}
 		if (error == null) {
 			try {
-				identitySrvc.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
+				identityService.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
 			} catch (BusinessException e) {
 				error = new ErrorBean();
 				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
@@ -393,7 +393,7 @@ public class IdentityController {
 		resultBean.setError(error);
 		//LOG
 		if (input != null)
-			identitySrvc.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
+			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
 				"/api05/replace_identity", input, error);
 		return resultBean;
 	}

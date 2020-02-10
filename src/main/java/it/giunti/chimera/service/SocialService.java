@@ -1,4 +1,4 @@
-package it.giunti.chimera.srvc;
+package it.giunti.chimera.service;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
 @Service("socialSrvc")
-public class SocialSrvc {
+public class SocialService {
 
 	@Autowired
 	@Qualifier("identityDao")

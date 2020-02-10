@@ -1,4 +1,4 @@
-package it.giunti.chimera.srvc;
+package it.giunti.chimera.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +20,12 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 
 @Service("identitySrvc")
-public class IdentitySrvc {
+public class IdentityService {
 
 
 	@Autowired
-	@Qualifier("socialSrvc")
-	private SocialSrvc socialSrvc;
+	@Qualifier("socialService")
+	private SocialService socialService;
 	
 	@Autowired
 	@Qualifier("identityDao")
@@ -51,8 +51,8 @@ public class IdentitySrvc {
 	
 	@Transactional
 	public Identity getIdentityBySocialId(String socialId) throws BusinessException, DuplicateResultException {
-		String pac4jPrefix = socialSrvc.getCasPrefixFromSocialId(socialId);
-		String accountIdentifier = socialSrvc.getIdentifierFromSocialId(socialId);
+		String pac4jPrefix = socialService.getCasPrefixFromSocialId(socialId);
+		String accountIdentifier = socialService.getIdentifierFromSocialId(socialId);
 		ProviderAccount account = providerAccountDao.findByProviderIdentifier(pac4jPrefix, accountIdentifier);
 		if (account != null) {
 			Identity entity = identityDao.selectById(account.getIdIdentity());
