@@ -29,9 +29,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		Federation fed = federationService.findFederationByUid(username);
 		
-		if (fed.getAccessKey().equals(password)) {
-			return new UsernamePasswordAuthenticationToken(
-					fed.getFederationUid(), fed.getAccessKey(), Collections.EMPTY_LIST);
+		if (fed != null) {
+			if (fed.getAccessKey().equals(password)) {
+				return new UsernamePasswordAuthenticationToken(
+						fed.getFederationUid(), fed.getAccessKey(), Collections.EMPTY_LIST);
+			}
 		}
 		throw new BadCredentialsException("Invalid username or password");
 	}
