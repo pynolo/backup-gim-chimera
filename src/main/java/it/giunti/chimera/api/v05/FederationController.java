@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api.v05;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
-import it.giunti.chimera.api05.bean.ChangedIdentitiesBean;
-import it.giunti.chimera.api05.bean.ErrorBean;
-import it.giunti.chimera.api05.bean.FederationListBean;
-import it.giunti.chimera.api05.bean.IdentityBean;
-import it.giunti.chimera.api05.bean.ParametersBean;
+import it.giunti.chimera.api.v05.bean.AccessKeyValidationBean;
+import it.giunti.chimera.api.v05.bean.ChangedIdentitiesBean;
+import it.giunti.chimera.api.v05.bean.ErrorBean;
+import it.giunti.chimera.api.v05.bean.FederationListBean;
+import it.giunti.chimera.api.v05.bean.IdentityBean;
+import it.giunti.chimera.api.v05.bean.ParametersBean;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.service.FederationService;
@@ -36,7 +36,7 @@ public class FederationController {
 	@Qualifier("converter05Service")
 	private Converter05Service converter05Service;
 	
-	@PostMapping("/api05/find_federations")
+	@PostMapping("/api/05/find_federations")
 	public FederationListBean findServices(@Valid @RequestBody ParametersBean input) {
 		FederationListBean resultBean = new FederationListBean();
 		//Verifica accessKey
@@ -59,7 +59,7 @@ public class FederationController {
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/find_changed_identities")
+	@PostMapping("/api/05/find_changed_identities")
 	public ChangedIdentitiesBean findChangedIdentities(@Valid @RequestBody ParametersBean input) {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();

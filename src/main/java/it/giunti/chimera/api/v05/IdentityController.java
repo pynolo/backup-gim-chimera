@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api.v05;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
-import it.giunti.chimera.api05.bean.ErrorBean;
-import it.giunti.chimera.api05.bean.IdentityBean;
-import it.giunti.chimera.api05.bean.IdentityConsentBean;
-import it.giunti.chimera.api05.bean.IdentityHistoryBean;
-import it.giunti.chimera.api05.bean.ParametersBean;
-import it.giunti.chimera.api05.bean.ValidationBean;
+import it.giunti.chimera.api.v05.bean.AccessKeyValidationBean;
+import it.giunti.chimera.api.v05.bean.ErrorBean;
+import it.giunti.chimera.api.v05.bean.IdentityBean;
+import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
+import it.giunti.chimera.api.v05.bean.IdentityHistoryBean;
+import it.giunti.chimera.api.v05.bean.ParametersBean;
+import it.giunti.chimera.api.v05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.service.FederationService;
 import it.giunti.chimera.service.IdentityService;
@@ -50,7 +50,7 @@ public class IdentityController {
 		return uidList;
 	}
 	
-	@PostMapping("/api05/authenticate")
+	@PostMapping("/api/05/authenticate")
 	public IdentityHistoryBean authenticate(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
@@ -90,7 +90,7 @@ public class IdentityController {
 		return resultBean;
 	}
 
-	@PostMapping("/api05/get_identity")
+	@PostMapping("/api/05/get_identity")
 	public IdentityBean getIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
 		//Verifica accessKey
@@ -111,7 +111,7 @@ public class IdentityController {
 		return resultBean;	
 	}
 
-	@PostMapping("/api05/find_identity_uid_by_email")
+	@PostMapping("/api/05/find_identity_uid_by_email")
 	public IdentityHistoryBean findIdentityUidByEmail(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
@@ -144,7 +144,7 @@ public class IdentityController {
 		return resultBean;	
 	}
 	
-	@PostMapping("/api05/find_identity_uid_by_social_id")
+	@PostMapping("/api/05/find_identity_uid_by_social_id")
 	public IdentityHistoryBean findIdentityUidBySocialId(@Valid @RequestBody ParametersBean input) {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		//Verifica accessKey
@@ -181,7 +181,7 @@ public class IdentityController {
 		return resultBean;	
 	}
 	
-	@PostMapping("/api05/validate_updating_identity")
+	@PostMapping("/api/05/validate_updating_identity")
 	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -213,7 +213,7 @@ public class IdentityController {
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/validate_new_identity")
+	@PostMapping("/api/05/validate_new_identity")
 	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -242,7 +242,7 @@ public class IdentityController {
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/update_identity")
+	@PostMapping("/api/05/update_identity")
 	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -267,11 +267,11 @@ public class IdentityController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/update_identity", input, error);
+				"/api/05/update_identity", input, error);
 		return resultBean;
 	}
 
-	@PostMapping("/api05/add_identity")
+	@PostMapping("/api/05/add_identity")
 	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -296,11 +296,11 @@ public class IdentityController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/add_identity", input, error);
+				"/api/05/add_identity", input, error);
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/update_identity_consent")
+	@PostMapping("/api/05/update_identity_consent")
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -335,11 +335,11 @@ public class IdentityController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/update_identity_consent", input, error);
+				"/api/05/update_identity_consent", input, error);
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/delete_identity")
+	@PostMapping("/api/05/delete_identity")
 	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -366,11 +366,11 @@ public class IdentityController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/delete_identity", input, error);
+				"/api/05/delete_identity", input, error);
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/replace_identity")
+	@PostMapping("/api/05/replace_identity")
 	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) {
 		IdentityBean resultBean = new IdentityBean();
 		//Verifica accessKey
@@ -394,7 +394,7 @@ public class IdentityController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/replace_identity", input, error);
+				"/api/05/replace_identity", input, error);
 		return resultBean;
 	}
 	

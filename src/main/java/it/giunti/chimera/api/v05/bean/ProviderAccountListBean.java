@@ -1,11 +1,11 @@
-package it.giunti.chimera.api05.bean;
+package it.giunti.chimera.api.v05.bean;
 
 import java.util.List;
 
-public class FederationListBean {
+public class ProviderAccountListBean {
 
 	private ErrorBean error = null;
-	private List<FederationBean> federations = null;
+	private List<ProviderAccountBean> providerAccounts = null;
 	
 	public ErrorBean getError() {
 		return error;
@@ -13,12 +13,12 @@ public class FederationListBean {
 	public void setError(ErrorBean error) {
 		this.error = error;
 	}
-	
-	public List<FederationBean> getFederations() {
-		return federations;
+
+	public List<ProviderAccountBean> getProviderAccounts() {
+		return providerAccounts;
 	}
-	public void setFederations(List<FederationBean> federations) {
-		this.federations = federations;
+	public void setProviderAccounts(List<ProviderAccountBean> providerAccounts) {
+		this.providerAccounts = providerAccounts;
 	}
 
 

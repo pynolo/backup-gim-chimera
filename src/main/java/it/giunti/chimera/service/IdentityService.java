@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.api05.bean.ErrorBean;
+import it.giunti.chimera.api.v05.bean.ErrorBean;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;

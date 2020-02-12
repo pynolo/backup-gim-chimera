@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05.bean;
+package it.giunti.chimera.api.v05.bean;
 
 public interface IInputBean {
 

@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api.v05;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,8 +8,8 @@ import java.util.Map;
 import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.IdentityPropertiesEnum;
-import it.giunti.chimera.api05.bean.IdentityBean;
-import it.giunti.chimera.api05.bean.IdentityConsentBean;
+import it.giunti.chimera.api.v05.bean.IdentityBean;
+import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
 import it.giunti.chimera.model.entity.Identity;
 
 public class BeanValidator {

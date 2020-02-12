@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api.v05;
 
 import javax.transaction.Transactional;
 
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.giunti.chimera.ChangeEnum;
-import it.giunti.chimera.api05.bean.IdentityBean;
-import it.giunti.chimera.api05.bean.IdentityConsentBean;
-import it.giunti.chimera.api05.bean.ProviderAccountBean;
+import it.giunti.chimera.api.v05.bean.IdentityBean;
+import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
+import it.giunti.chimera.api.v05.bean.ProviderAccountBean;
 import it.giunti.chimera.model.dao.CounterDao;
 import it.giunti.chimera.model.dao.IdentityConsentDao;
 import it.giunti.chimera.model.dao.IdentityDao;

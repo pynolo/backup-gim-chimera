@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05.bean;
+package it.giunti.chimera.api.v05.bean;
 
 import it.giunti.chimera.model.entity.Federation;
 

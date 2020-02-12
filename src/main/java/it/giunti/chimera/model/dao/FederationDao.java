@@ -60,6 +60,20 @@ public class FederationDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Federation findByUid(String uid) {
+		String hql = "from Federation as fed where " +
+				"fed.federationUid = :s1 "+
+				"order by fed.id ";
+		Query q = entityManager.createQuery(hql);
+		q.setParameter("s1", uid);
+		List<Federation> sList = (List<Federation>) q.getResultList();
+		if (sList != null) {
+			if (sList.size() > 0) return sList.get(0);
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Federation findByAccessKey(String accessKey) {
 		String hql = "from Federation as fed where " +
 				"fed.accessKey = :s1 "+
@@ -72,7 +86,6 @@ public class FederationDao {
 		}
 		return null;
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<Federation> findAll() {

@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
-import it.giunti.chimera.api05.bean.ErrorBean;
-import it.giunti.chimera.api05.bean.IInputBean;
+import it.giunti.chimera.api.v05.bean.AccessKeyValidationBean;
+import it.giunti.chimera.api.v05.bean.ErrorBean;
+import it.giunti.chimera.api.v05.bean.IInputBean;
 import it.giunti.chimera.model.dao.FederationDao;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.IdentityFederationDao;
@@ -34,11 +34,17 @@ public class FederationService {
 	private IdentityFederationDao identityFederationDao;
 	
 	@Transactional
+	public Federation findFederationByUid(String uid) {
+		Federation service = federationDao.findByUid(uid);
+		return service;
+	}
+
+	@Transactional
 	public Federation findFederationByAccessKey(String accessKey) {
 		Federation service = federationDao.findByAccessKey(accessKey);
 		return service;
 	}
-
+	
 	@Transactional
 	public List<Federation> findAllFederations() {
 		List<Federation> list = federationDao.findAll();

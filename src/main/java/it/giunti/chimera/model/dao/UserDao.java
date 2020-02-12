@@ -8,8 +8,6 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.entity.User;
 
 @Repository("userDao")
@@ -44,8 +42,7 @@ public class UserDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public User findByUserName(String userName) 
-			throws EmptyResultException, DuplicateResultException {
+	public User findByUserName(String userName) {
 		User result = null;
 		String hql = "from User as u where " +
 				"u.userName = :s1 ";
@@ -53,15 +50,19 @@ public class UserDao {
 		q.setParameter("s1", userName);
 		List<User> pList = (List<User>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() == 1) {
+			if (pList.size() > 1) {
 				result = pList.get(0);
 			} else {
-				if (pList.size() == 0)
-					throw new EmptyResultException("No user having code="+userName);
-				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in User have the same code="+userName);
+				return null;
 			}
 		}
 		return result;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> selectAll() {
+		Query query = entityManager.createQuery("from User as user order by user.userName");
+		return (List<User>) query.getResultList();
+	}
+	
 }

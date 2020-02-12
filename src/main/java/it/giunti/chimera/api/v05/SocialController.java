@@ -1,4 +1,4 @@
-package it.giunti.chimera.api05;
+package it.giunti.chimera.api.v05;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +16,12 @@ import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api05.bean.AccessKeyValidationBean;
-import it.giunti.chimera.api05.bean.ErrorBean;
-import it.giunti.chimera.api05.bean.ProviderAccountBean;
-import it.giunti.chimera.api05.bean.ProviderAccountListBean;
-import it.giunti.chimera.api05.bean.SocialInputBean;
-import it.giunti.chimera.api05.bean.ValidationBean;
+import it.giunti.chimera.api.v05.bean.AccessKeyValidationBean;
+import it.giunti.chimera.api.v05.bean.ErrorBean;
+import it.giunti.chimera.api.v05.bean.ProviderAccountBean;
+import it.giunti.chimera.api.v05.bean.ProviderAccountListBean;
+import it.giunti.chimera.api.v05.bean.SocialInputBean;
+import it.giunti.chimera.api.v05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
 import it.giunti.chimera.service.FederationService;
@@ -46,7 +46,7 @@ public class SocialController {
 	@Qualifier("converter05Service")
 	private Converter05Service converter05Service;
 	
-	@PostMapping("/api05/find_provider_accounts")
+	@PostMapping("/api/05/find_provider_accounts")
 	public ProviderAccountListBean findProviderAccounts(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountListBean resultBean = new ProviderAccountListBean();
 		//Verifica accessKey
@@ -67,7 +67,7 @@ public class SocialController {
 		return resultBean;
 	}
 	
-	@PostMapping("/api05/add_provider_account")
+	@PostMapping("/api/05/add_provider_account")
 	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
 		//Verifica accessKey
@@ -93,11 +93,11 @@ public class SocialController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/add_provider_account", input, error);
+				"/api/05/add_provider_account", input, error);
 		return resultBean;	
 	}
 	
-	@PostMapping("/api05/delete_provider_account")
+	@PostMapping("/api/05/delete_provider_account")
 	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
 		ValidationBean resultBean = new ValidationBean();
 		//Verifica accessKey
@@ -126,7 +126,7 @@ public class SocialController {
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), akBean.getFederation().getId(),
-				"/api05/delete_provider_account", input, error);
+				"/api/05/delete_provider_account", input, error);
 		return resultBean;
 	}
 
