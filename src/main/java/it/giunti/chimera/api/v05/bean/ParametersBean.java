@@ -1,8 +1,7 @@
 package it.giunti.chimera.api.v05.bean;
 
-public class ParametersBean implements IInputBean {
+public class ParametersBean {
 	
-	private String accessKey = null;
 	private String identityUid = null;
 	private String email = null;
 	private String password = null;
@@ -11,14 +10,6 @@ public class ParametersBean implements IInputBean {
 	private String finalIdentityUid = null;
 	private String startTimestamp = null;
 	
-	@Override
-	public String getAccessKey() {
-		return accessKey;
-	}
-	@Override
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
 	public String getIdentityUid() {
 		return identityUid;
 	}

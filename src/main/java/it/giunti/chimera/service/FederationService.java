@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api.v05.bean.AccessKeyValidationBean;
-import it.giunti.chimera.api.v05.bean.ErrorBean;
-import it.giunti.chimera.api.v05.bean.IInputBean;
 import it.giunti.chimera.model.dao.FederationDao;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.IdentityFederationDao;
@@ -51,31 +47,6 @@ public class FederationService {
 		return list;
 	}
 	
-	@Transactional
-	public AccessKeyValidationBean checkAccessKeyAndNull(IInputBean input) {
-		AccessKeyValidationBean resultBean = new AccessKeyValidationBean();
-		ErrorBean error = null;
-		if (input != null) {
-			Federation fed = federationDao.findByAccessKey(input.getAccessKey());
-			if (fed != null) {
-				// ACCESS KEY EXISTS
-				resultBean.setFederation(fed);
-				return resultBean;
-			}
-			// ACCESS KEY FAILS
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.WRONG_ACCESS_KEY.getErrorCode());
-			error.setMessage(ErrorEnum.WRONG_ACCESS_KEY.getErrorDescr());
-		} else {
-			// NO INPUT
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
-			error.setMessage("La richiesta e' priva di contenuto");
-		}
-		resultBean.setError(error);
-		return resultBean;	
-	}
-
 	@Transactional
 	public List<Identity> findChangedIdentities(Long startTimestamp) {
 		Date startDt = new Date(startTimestamp);

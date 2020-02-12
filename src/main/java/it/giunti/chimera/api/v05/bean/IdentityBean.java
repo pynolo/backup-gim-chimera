@@ -3,9 +3,8 @@ package it.giunti.chimera.api.v05.bean;
 import java.util.Date;
 import java.util.List;
 
-public class IdentityBean implements IInputBean {
+public class IdentityBean {
 	private ErrorBean error = null;
-	private String accessKey = null;
 	private String identityUid = null;
 	private String replacedByUid = null;
 	private Date changeTime = null;
@@ -32,14 +31,6 @@ public class IdentityBean implements IInputBean {
 	private Boolean nlEdu = null;
 	private List<IdentityConsentBean> consent = null;
 	
-	@Override
-	public String getAccessKey() {
-		return accessKey;
-	}
-	@Override
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
 	public ErrorBean getError() {
 		return error;
 	}

@@ -1,20 +1,11 @@
 package it.giunti.chimera.api.v05.bean;
 
-public class ProviderAccountBean implements IInputBean {
+public class ProviderAccountBean {
 
-	private String accessKey = null;
 	private ErrorBean error = null;
 	private String identityUid = null;
 	private String socialId = null;
 	
-	@Override
-	public String getAccessKey() {
-		return accessKey;
-	}
-	@Override
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
 	public ErrorBean getError() {
 		return error;
 	}
