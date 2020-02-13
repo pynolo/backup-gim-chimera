@@ -38,7 +38,7 @@ public class SocialService {
 				String prefix = socialId.substring(0, pos);
 				return prefix;
 			} else {
-				throw new UnprocessableEntity422Exception("socialId doesn't contain a provider prefix");
+				throw new UnprocessableEntity422Exception("socialId non contiene il prefisso del provider");
 			}
 		}
 	}
@@ -55,7 +55,7 @@ public class SocialService {
 				String suffix = socialId.substring(pos+3);
 				return suffix;
 			} else {
-				throw new UnprocessableEntity422Exception("socialId doesn't contain an identifier");
+				throw new UnprocessableEntity422Exception("socialId non contiene un identificativo");
 			}
 		}
 	}
@@ -90,9 +90,9 @@ public class SocialService {
 			account = pList.get(0);
 		} else {
 			if (pList.size() == 0)
-				throw new NotFound404Exception("No rows in ProviderAccount correspond to "+prefix);
+				throw new NotFound404Exception("Nessuna corrispondenza con "+prefix);
 			if (pList.size() > 1)
-				throw new Conflict409Exception("More rows in ProviderAccount correspond to "+prefix);
+				throw new Conflict409Exception("Piu' di una corrispondenza con "+prefix);
 		}
 		return account;
 	}
@@ -112,7 +112,7 @@ public class SocialService {
 		if (pa != null) {
 			providerAccountDao.delete(pa.getId());
 		} else {
-			throw new NotFound404Exception("ProviderAccount to delete is null");
+			throw new NotFound404Exception("L'account da eliminare e' null");
 		}
 	}
 }

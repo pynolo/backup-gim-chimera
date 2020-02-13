@@ -87,7 +87,8 @@ public class IdentityService {
 			throws UnprocessableEntity422Exception {
 		Identity red = identityDao.findByIdentityUid(redundantIdentityUid);
 		Identity fin = identityDao.findByIdentityUid(finalIdentityUid);
-		if (red == null || fin == null) throw new UnprocessableEntity422Exception("Impossibile unire una Identity vuota");
+		if (red == null || fin == null) 
+			throw new UnprocessableEntity422Exception("Impossibile unire una Identity vuota");
 		// Redundant identity is marked as replaced by the final one
 		red.setReplacedByUid(finalIdentityUid);
 		identityDao.update(red, ChangeEnum.REPLACE);

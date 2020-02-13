@@ -79,7 +79,6 @@ public class IdentityController {
 						entity.getId(), fed.getId());
 				return resultBean;
 			}
-			// Wrong password
 		}
 		throw new Unauthorized401Exception("Le credenziali non sono corrette. ");
 	}
@@ -88,8 +87,7 @@ public class IdentityController {
 	public IdentityBean getIdentity(@PathVariable(value = "identityUid") String identityUid) 
 			throws NotFound404Exception {
 		IdentityBean resultBean = new IdentityBean();
-	
-		//BODY
+		
 		Identity entity = identityService.getIdentity(identityUid);
 		if (entity != null) {
 			resultBean = converter05Service.toIdentityBean(entity);

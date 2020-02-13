@@ -34,7 +34,7 @@ public class FederationController {
 	@GetMapping("/api/05/find_federations")
 	public FederationListBean findServices() {
 		FederationListBean resultBean = new FederationListBean();
-		//Verifica accessKey
+		
 		List<FederationListBean.FederationBean> beanList = 
 				new ArrayList<FederationListBean.FederationBean>();
 		List<Federation> fedList = federationService.findAllFederations();
@@ -67,10 +67,10 @@ public class FederationController {
 				resultBean.setCurrentTimestamp(currentTimestamp);
 				return resultBean;
 			} catch (NumberFormatException e) {
-				throw new UnprocessableEntity422Exception("currentTimestamp non e' un numero");
+				throw new UnprocessableEntity422Exception("startTimestamp non e' un numero");
 			}
 		}
-		throw new UnprocessableEntity422Exception("currentTimestamp non ha un valore");
+		throw new UnprocessableEntity422Exception("startTimestamp non ha un valore");
 	}
 
 }
