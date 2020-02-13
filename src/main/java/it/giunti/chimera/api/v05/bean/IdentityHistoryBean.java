@@ -4,16 +4,9 @@ import java.util.List;
 
 public class IdentityHistoryBean {
 
-	private ErrorBean error = null;
 	private String identityUid = null;
 	private List<String> replacedIdentityUids = null;
 	
-	public ErrorBean getError() {
-		return error;
-	}
-	public void setError(ErrorBean error) {
-		this.error = error;
-	}
 	public String getIdentityUid() {
 		return identityUid;
 	}

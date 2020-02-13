@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.ChangeEnum;
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.api.v05.bean.ErrorBean;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.mvc.Conflict409Exception;
+import it.giunti.chimera.mvc.NotFound404Exception;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 
 @Service("identityService")
 public class IdentityService {
@@ -43,14 +43,15 @@ public class IdentityService {
 	}
 	
 	@Transactional
-	public Identity getIdentityByEmail(String email) throws DuplicateResultException {
+	public Identity getIdentityByEmail(String email) {
 		Identity entity = identityDao.findByEmail(email);
 		if (entity == null) entity = identityDao.findByUserName(email);
 		return entity;
 	}
 	
 	@Transactional
-	public Identity getIdentityBySocialId(String socialId) throws BusinessException, DuplicateResultException {
+	public Identity getIdentityBySocialId(String socialId) 
+			throws UnprocessableEntity422Exception, Conflict409Exception {
 		String pac4jPrefix = socialService.getCasPrefixFromSocialId(socialId);
 		String accountIdentifier = socialService.getIdentifierFromSocialId(socialId);
 		ProviderAccount account = providerAccountDao.findByProviderIdentifier(pac4jPrefix, accountIdentifier);
@@ -70,7 +71,7 @@ public class IdentityService {
 	}
 	
 	@Transactional
-	public void deleteIdentity(String identityUid) throws BusinessException {
+	public void deleteIdentity(String identityUid) throws NotFound404Exception {
 		if (identityUid != null) {
 			if (identityUid.length() > 0) {
 				Identity identity = identityDao.findByIdentityUid(identityUid);
@@ -78,15 +79,15 @@ public class IdentityService {
 				return;
 			}
 		}
-		throw new BusinessException("Nessuna identità con identityUid='"+identityUid+"'");
+		throw new NotFound404Exception("Nessuna identità con identityUid='"+identityUid+"'");
 	}
 	
 	@Transactional
 	public Identity replaceIdentity(String redundantIdentityUid, String finalIdentityUid)
-			throws BusinessException {
+			throws UnprocessableEntity422Exception {
 		Identity red = identityDao.findByIdentityUid(redundantIdentityUid);
 		Identity fin = identityDao.findByIdentityUid(finalIdentityUid);
-		if (red == null || fin == null) throw new BusinessException("Impossibile unire una Identity vuota");
+		if (red == null || fin == null) throw new UnprocessableEntity422Exception("Impossibile unire una Identity vuota");
 		// Redundant identity is marked as replaced by the final one
 		red.setReplacedByUid(finalIdentityUid);
 		identityDao.update(red, ChangeEnum.REPLACE);
@@ -118,9 +119,9 @@ public class IdentityService {
 	
 	@Transactional
 	public void addLog(String identityUid, Integer idFederation,
-			String functionName, Object parameterBean, ErrorBean error) {
+			String functionName, Object parameterBean, String errorMsg) {
 		String result = "OK";
-		if (error != null) result = error.getMessage();
+		if (errorMsg != null) result = errorMsg;
 		logIdentityDao.insertLog(identityUid, idFederation, functionName, parameterBean, result);	
 	}
 }

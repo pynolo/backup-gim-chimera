@@ -17,10 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.giunti.chimera.BusinessException;
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api.v05.bean.ErrorBean;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
 import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
 import it.giunti.chimera.api.v05.bean.IdentityHistoryBean;
@@ -28,6 +24,11 @@ import it.giunti.chimera.api.v05.bean.ParametersBean;
 import it.giunti.chimera.api.v05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.mvc.Conflict409Exception;
+import it.giunti.chimera.mvc.Internal418Exception;
+import it.giunti.chimera.mvc.NotFound404Exception;
+import it.giunti.chimera.mvc.Unauthorized401Exception;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 import it.giunti.chimera.service.FederationService;
 import it.giunti.chimera.service.IdentityService;
 import it.giunti.chimera.util.PasswordUtil;
@@ -55,45 +56,37 @@ public class IdentityController {
 	}
 	
 	@PostMapping("/api/05/authenticate")
-	public IdentityHistoryBean authenticate(@Valid @RequestBody ParametersBean input) {
+	public IdentityHistoryBean authenticate(@Valid @RequestBody ParametersBean input) 
+			throws Unauthorized401Exception {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = new ErrorBean();
 		//BODY
-		try {
-			Identity entity = identityService.getIdentityByEmail(input.getEmail());
-			if (entity != null) {
-				// Identity found
-				String passwordMd5 = PasswordUtil.md5(input.getPassword());
-				if (entity.getPasswordMd5().equals(passwordMd5)) {
-					//Returns identityUid
-					resultBean.setIdentityUid(entity.getIdentityUid());
-					//Returns old uid's list
-					resultBean.setReplacedIdentityUids(
-							findUidHistory(entity.getIdentityUid()));
-					//Updates federation info
-					federationService.addOrUpdateIdentityFederation(
-							entity.getId(), fed.getId());
-					return resultBean;
-				}
-				// Wrong password
-			} 
-			//Identity not found
-			error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
-			error.setMessage("Le credenziali non sono corrette. ");
-		} catch (DuplicateResultException e) {
-			error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-			error.setMessage("Risultato non univoco per "+input.getEmail()+". ");
+		Identity entity = identityService.getIdentityByEmail(input.getEmail());
+		if (entity != null) {
+			// Identity found
+			String passwordMd5 = PasswordUtil.md5(input.getPassword());
+			if (entity.getPasswordMd5().equals(passwordMd5)) {
+				//Returns identityUid
+				resultBean.setIdentityUid(entity.getIdentityUid());
+				//Returns old uid's list
+				resultBean.setReplacedIdentityUids(
+						findUidHistory(entity.getIdentityUid()));
+				//Updates federation info
+				federationService.addOrUpdateIdentityFederation(
+						entity.getId(), fed.getId());
+				return resultBean;
+			}
+			// Wrong password
 		}
-		resultBean.setError(error);
-		return resultBean;
+		throw new Unauthorized401Exception("Le credenziali non sono corrette. ");
 	}
 
 	@GetMapping("/api/05/get_identity/{identityUid}")
-	public IdentityBean getIdentity(@PathVariable(value = "identityUid") String identityUid) {
+	public IdentityBean getIdentity(@PathVariable(value = "identityUid") String identityUid) 
+			throws NotFound404Exception {
 		IdentityBean resultBean = new IdentityBean();
 	
 		//BODY
@@ -102,319 +95,257 @@ public class IdentityController {
 			resultBean = converter05Service.toIdentityBean(entity);
 			return resultBean;
 		}
-		ErrorBean error = new ErrorBean();
-		error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
-		error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
-		resultBean.setError(error);
-		return resultBean;	
+		throw new NotFound404Exception("Non trovato");
 	}
 
 	@GetMapping("/api/05/find_identity_uid_by_email/{email}")
-	public IdentityHistoryBean findIdentityUidByEmail(@PathVariable(value = "email") String email) {
+	public IdentityHistoryBean findIdentityUidByEmail(@PathVariable(value = "email") String email) 
+			throws NotFound404Exception {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
-		try {
-			Identity entity = identityService.getIdentityByEmail(email);
-			if (entity != null) {
-				//Returns identityUid
-				resultBean.setIdentityUid(entity.getIdentityUid());
-				//Returns old uid's list
-				resultBean.setReplacedIdentityUids(
-						findUidHistory(entity.getIdentityUid()));
-				//Updates federation info
-				federationService.addOrUpdateIdentityFederation(
-						entity.getId(), fed.getId());
-				return resultBean;
-			}
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
-			error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
-		} catch (DuplicateResultException e) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-			error.setMessage("Risultato non univoco per "+email);
+		Identity entity = identityService.getIdentityByEmail(email);
+		if (entity != null) {
+			//Returns identityUid
+			resultBean.setIdentityUid(entity.getIdentityUid());
+			//Returns old uid's list
+			resultBean.setReplacedIdentityUids(
+					findUidHistory(entity.getIdentityUid()));
+			//Updates federation info
+			federationService.addOrUpdateIdentityFederation(
+					entity.getId(), fed.getId());
+			return resultBean;
 		}
-		resultBean.setError(error);
-		return resultBean;	
+		throw new NotFound404Exception("Non trovato");
 	}
 	
 	@GetMapping("/api/05/find_identity_uid_by_social_id/{socialId}")
-	public IdentityHistoryBean findIdentityUidBySocialId(@PathVariable(value = "socialId") String socialId) {
+	public IdentityHistoryBean findIdentityUidBySocialId(@PathVariable(value = "socialId") String socialId) 
+			throws NotFound404Exception, Conflict409Exception, UnprocessableEntity422Exception {
 		IdentityHistoryBean resultBean = new IdentityHistoryBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
-		try {
-			Identity entity = identityService.getIdentityBySocialId(socialId);
-			if (entity != null) {
-				//Returns identityUid
-				resultBean.setIdentityUid(entity.getIdentityUid());
-				//Returns old uid's list
-				resultBean.setReplacedIdentityUids(
-						findUidHistory(entity.getIdentityUid()));
-				//Updates federation info
-				federationService.addOrUpdateIdentityFederation(
-						entity.getId(), fed.getId());
-				return resultBean;
-			}
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
-			error.setMessage(ErrorEnum.DATA_NOT_FOUND.getErrorDescr());
-		} catch (BusinessException e) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-			error.setMessage(e.getMessage()+" ");
-		} catch (DuplicateResultException e) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-			error.setMessage("Risultato non univoco per "+socialId);
+		Identity entity = identityService.getIdentityBySocialId(socialId);
+		if (entity != null) {
+			//Returns identityUid
+			resultBean.setIdentityUid(entity.getIdentityUid());
+			//Returns old uid's list
+			resultBean.setReplacedIdentityUids(
+					findUidHistory(entity.getIdentityUid()));
+			//Updates federation info
+			federationService.addOrUpdateIdentityFederation(
+					entity.getId(), fed.getId());
+			return resultBean;
 		}
-		resultBean.setError(error);
-		return resultBean;	
+		throw new NotFound404Exception("Non trovato");
 	}
 	
 	@PostMapping("/api/05/validate_updating_identity")
-	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) {
+	public ValidationBean validateUpdatingIdentity(@Valid @RequestBody IdentityBean input) 
+			throws Unauthorized401Exception, Internal418Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
-			Map<String, String> errMap;
-			try {
-				errMap = BeanValidator.validateIdentityBean(input);
-				if (errMap.isEmpty()) {
-					success = true;
-				} else {
-					resultBean.setWarnings(errMap);
-				}
-			} catch (BusinessException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-				error.setMessage(ErrorEnum.INTERNAL_ERROR.getErrorDescr());
-			}
+		Map<String, String> errMap;
+		errMap = BeanValidator.validateIdentityBean(input);
+		if (errMap.isEmpty()) {
+			success = true;
+		} else {
+			resultBean.setWarnings(errMap);
 		}
-		resultBean.setError(error);
 		resultBean.setSuccess(success);
 		return resultBean;
 	}
 	
 	@PostMapping("/api/05/validate_new_identity")
-	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) {
+	public ValidationBean validateNewIdentity(@Valid @RequestBody IdentityBean input) 
+			throws Unauthorized401Exception, UnprocessableEntity422Exception, Internal418Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
-			if (input != null) {
-				if (input.getIdentityUid() != null) {
-					error = new ErrorBean();
-					error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
-					error.setMessage("Una nuova identity non può avere identityUid");
-					resultBean.setError(error);
-				} else {
-					return validateUpdatingIdentity(input);
-				}
+		if (input != null) {
+			if (input.getIdentityUid() != null) {
+				throw new UnprocessableEntity422Exception("Una nuova identity non può avere identityUid");
 			}
+			return validateUpdatingIdentity(input);
 		}
 		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		return resultBean;
 	}
 	
 	@PostMapping("/api/05/update_identity")
-	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) {
+	public ValidationBean updateIdentity(@Valid @RequestBody IdentityBean input) 
+			throws Unauthorized401Exception, Internal418Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		//Verifica accessKey
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
+		try {
 			resultBean = validateUpdatingIdentity(input);
-			if (resultBean.getError() != null) {
+			if (resultBean.getSuccess()) {
 				/*Identity updatedIdentity =*/
 				converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
+			resultBean.setSuccess(success);
+		} catch (Internal418Exception e) {
+			identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/update_identity", input, e.getMessage());
+			throw e;
 		}
-		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/update_identity", input, error);
+				"/api/05/update_identity", input, null);
 		return resultBean;
 	}
 
 	@PostMapping("/api/05/add_identity")
-	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) {
+	public ValidationBean addIdentity(@Valid @RequestBody IdentityBean input) 
+			throws Unauthorized401Exception, Internal418Exception, UnprocessableEntity422Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
+		try {
 			resultBean = validateNewIdentity(input);
-			if (resultBean.getError() != null) {
+			if (resultBean.getSuccess()) {
 				/*Identity identity */
 				converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
+			resultBean.setSuccess(success);
+		} catch (Exception e) {
+			identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/add_identity", input, e.getMessage());
+			throw e;
 		}
-		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/add_identity", input, error);
+				"/api/05/add_identity", input, null);
 		return resultBean;
 	}
 	
 	@PostMapping("/api/05/update_identity_consent")
-	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) {
+	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) 
+			throws Unauthorized401Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) { 
-			Map<String, String> errMap;
-			try {
-				errMap = BeanValidator.validateConsentBean(input);
-				if (errMap.isEmpty()) {
-					//Actually adds or updates
-					/*IdentityConsent updatedConsent =*/
-					converter05Service.persistIntoConsent(input);
-					success = true;
-				} else {
-					resultBean.setWarnings(errMap);
-				}
-			} catch (BusinessException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-				error.setMessage(ErrorEnum.INTERNAL_ERROR.getErrorDescr());
+		Map<String, String> errMap;
+		try {
+			errMap = BeanValidator.validateConsentBean(input);
+			if (errMap.isEmpty()) {
+				//Actually adds or updates
+				/*IdentityConsent updatedConsent =*/
+				converter05Service.persistIntoConsent(input);
+				success = true;
+			} else {
+				resultBean.setWarnings(errMap);
 			}
+			resultBean.setSuccess(success);
+		} catch (Exception e) {
+			identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/update_identity_consent", input, e.getMessage());
+			throw e;
 		}
-		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/update_identity_consent", input, error);
+				"/api/05/update_identity_consent", input, null);
 		return resultBean;
 	}
 	
 	@PostMapping("/api/05/delete_identity")
-	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) {
+	public ValidationBean deleteIdentity(@Valid @RequestBody ParametersBean input) 
+			throws Unauthorized401Exception, NotFound404Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanDelete()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
-			try {
-				identityService.deleteIdentity(input.getIdentityUid());
-				success = true;
-			} catch (BusinessException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
-				error.setMessage(e.getMessage());
-			}
+		try {
+			identityService.deleteIdentity(input.getIdentityUid());
+			success = true;
+		} catch (Exception e) {
+			identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/delete_identity", input, e.getMessage());
+			throw e;
 		}
 		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/delete_identity", input, error);
+				"/api/05/delete_identity", input, null);
 		return resultBean;
 	}
 	
 	@PostMapping("/api/05/replace_identity")
-	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) {
+	public IdentityBean replaceIdentity(@Valid @RequestBody ParametersBean input) 
+			throws Unauthorized401Exception, UnprocessableEntity422Exception {
 		IdentityBean resultBean = new IdentityBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanReplace()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
-		if (error == null) {
-			try {
-				identityService.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
-			} catch (BusinessException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.DATA_NOT_FOUND.getErrorCode());
-				error.setMessage(e.getMessage());
-			}
+		try {
+			identityService.replaceIdentity(input.getRedundantIdentityUid(), input.getFinalIdentityUid());
+		} catch (Exception e) {
+			identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/replace_identity", input, e.getMessage());
+			throw e;
 		}
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/replace_identity", input, error);
+				"/api/05/replace_identity", input, null);
 		return resultBean;
 	}
 	

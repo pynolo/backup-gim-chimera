@@ -4,16 +4,8 @@ import java.util.List;
 
 public class FederationListBean {
 
-	private ErrorBean error = null;
 	private List<FederationBean> federations = null;
-	
-	public ErrorBean getError() {
-		return error;
-	}
-	public void setError(ErrorBean error) {
-		this.error = error;
-	}
-	
+		
 	public List<FederationBean> getFederations() {
 		return federations;
 	}

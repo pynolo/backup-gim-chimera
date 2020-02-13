@@ -2,16 +2,9 @@ package it.giunti.chimera.api.v05.bean;
 
 public class ProviderAccountBean {
 
-	private ErrorBean error = null;
 	private String identityUid = null;
 	private String socialId = null;
 	
-	public ErrorBean getError() {
-		return error;
-	}
-	public void setError(ErrorBean error) {
-		this.error = error;
-	}
 	public String getIdentityUid() {
 		return identityUid;
 	}

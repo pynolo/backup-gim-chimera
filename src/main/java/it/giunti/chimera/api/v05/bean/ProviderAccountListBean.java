@@ -4,16 +4,8 @@ import java.util.List;
 
 public class ProviderAccountListBean {
 
-	private ErrorBean error = null;
 	private List<ProviderAccountBean> providerAccounts = null;
 	
-	public ErrorBean getError() {
-		return error;
-	}
-	public void setError(ErrorBean error) {
-		this.error = error;
-	}
-
 	public List<ProviderAccountBean> getProviderAccounts() {
 		return providerAccounts;
 	}

@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.giunti.chimera.ErrorEnum;
 import it.giunti.chimera.api.v05.bean.ChangedIdentitiesBean;
-import it.giunti.chimera.api.v05.bean.ErrorBean;
 import it.giunti.chimera.api.v05.bean.FederationListBean;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 import it.giunti.chimera.service.FederationService;
 
 @RestController
@@ -50,11 +49,11 @@ public class FederationController {
 	}
 	
 	@GetMapping("/api/05/find_changed_identities/{startTimestamp}")
-	public ChangedIdentitiesBean findChangedIdentities(@PathVariable(value = "startTimestamp") String startTimestamp) {
+	public ChangedIdentitiesBean findChangedIdentities(@PathVariable(value = "startTimestamp") String startTimestamp) 
+			throws UnprocessableEntity422Exception {
 		String currentTimestamp = new Long(new Date().getTime()).toString();
 		ChangedIdentitiesBean resultBean = new ChangedIdentitiesBean();
 		
-		ErrorBean error = new ErrorBean();
 		if (startTimestamp != null) {
 			try {
 				Long start = Long.parseLong(startTimestamp);
@@ -68,14 +67,10 @@ public class FederationController {
 				resultBean.setCurrentTimestamp(currentTimestamp);
 				return resultBean;
 			} catch (NumberFormatException e) {
-				error.setCode(ErrorEnum.WRONG_PARAMETER_VALUE.getErrorCode());
-				error.setMessage("currentTimestamp non e' un numero");
+				throw new UnprocessableEntity422Exception("currentTimestamp non e' un numero");
 			}
 		}
-		error.setCode(ErrorEnum.EMPTY_PARAMETER.getErrorCode());
-		error.setMessage("currentTimestamp non ha un valore");
-		resultBean.setError(error);
-		return resultBean;
+		throw new UnprocessableEntity422Exception("currentTimestamp non ha un valore");
 	}
 
 }

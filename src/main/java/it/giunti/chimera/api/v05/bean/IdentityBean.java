@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class IdentityBean {
-	private ErrorBean error = null;
+	
 	private String identityUid = null;
 	private String replacedByUid = null;
 	private Date changeTime = null;
@@ -31,12 +31,6 @@ public class IdentityBean {
 	private Boolean nlEdu = null;
 	private List<IdentityConsentBean> consent = null;
 	
-	public ErrorBean getError() {
-		return error;
-	}
-	public void setError(ErrorBean error) {
-		this.error = error;
-	}
 	public String getIdentityUid() {
 		return identityUid;
 	}

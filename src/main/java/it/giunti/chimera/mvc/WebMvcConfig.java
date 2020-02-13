@@ -1,4 +1,4 @@
-package it.giunti.chimera;
+package it.giunti.chimera.mvc;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;

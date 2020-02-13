@@ -14,13 +14,11 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import it.giunti.chimera.AppConstants;
-import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.ChangeEnum;
-import it.giunti.chimera.DuplicateResultException;
 import it.giunti.chimera.GiuntiCardModeEnum;
 import it.giunti.chimera.IdentityPropertiesEnum;
-import it.giunti.chimera.ValidationException;
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 import it.giunti.chimera.util.PasswordUtil;
 import it.giunti.chimera.util.QueryUtil;
 import it.giunti.chimera.util.ValidationUtil;
@@ -149,7 +147,7 @@ public class IdentityDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Identity findByEmail(String email) throws DuplicateResultException {
+	public Identity findByEmail(String email) {
 		Identity result = null;
 		String hql = "from Identity as up where " +
 				"up.email like :s1 " +
@@ -159,19 +157,15 @@ public class IdentityDao {
 		q.setParameter("s1", email);
 		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
-			if (upList.size() == 1) {
+			if (upList.size() >= 1) {
 				result = upList.get(0);
-			} else {
-				if (upList.size() > 1)
-					throw new DuplicateResultException("More rows in Identity have the same email");
-			}
+			} 
 		}
 		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Identity findByUserName(String userName) 
-			throws DuplicateResultException {
+	public Identity findByUserName(String userName) {
 		Identity result = null;
 		String hql = "from Identity as up where " +
 				"up.userName like :s1 " +
@@ -181,11 +175,8 @@ public class IdentityDao {
 		q.setParameter("s1", userName);
 		List<Identity> upList = (List<Identity>) q.getResultList();
 		if (upList != null) {
-			if (upList.size() == 1) {
+			if (upList.size() >= 1) {
 				result = upList.get(0);
-			} else {
-				if (upList.size() > 1)
-					throw new DuplicateResultException("More rows in Identity have the same userName");
 			}
 		}
 		return result;
@@ -220,13 +211,13 @@ public class IdentityDao {
 	
 	public Object validateAndCast(IdentityPropertiesEnum property,
 			String stringValue, String identityUid, boolean verification)
-			throws BusinessException, ValidationException {
+			throws UnprocessableEntity422Exception {
 		if (stringValue == null) stringValue = "";
 		Object result = null;
 		//Is mandatory
 		if (stringValue.length() == 0) {
 			if (property.isMandatory())	{
-				throw new ValidationException("Campo obbligatorio");
+				throw new UnprocessableEntity422Exception("Campo obbligatorio");
 			} else {
 				return null;
 			}
@@ -235,7 +226,7 @@ public class IdentityDao {
 		if (property.getType().equals(AppConstants.PROPERTY_TYPE_STRING)) {
 			stringValue = stringValue.trim();
 			if (stringValue.length() > property.getStringLength()) {
-				throw new ValidationException("Il campo supera i "+
+				throw new UnprocessableEntity422Exception("Il campo supera i "+
 						property.getStringLength()+" caratteri");
 			}
 		}
@@ -270,7 +261,7 @@ public class IdentityDao {
 		if (property.equals(IdentityPropertiesEnum.COD_PROVINCIA)) {
 			Matcher matcher = provinciaPattern.matcher(stringValue);
 			if (!matcher.matches()) {
-				throw new ValidationException("Provincia non valida");
+				throw new UnprocessableEntity422Exception("Provincia non valida");
 			}
 		}
 		//NASVITA
@@ -278,7 +269,7 @@ public class IdentityDao {
 			try {
 				result = (Date) AppConstants.FORMAT_DATE_JSON.parse(stringValue);
 			} catch (ParseException e) {
-				throw new ValidationException("Data di nascita non valida");
+				throw new UnprocessableEntity422Exception("Data di nascita non valida");
 			}
 		}
 		//TELEFONO
@@ -297,7 +288,7 @@ public class IdentityDao {
 				mode = GiuntiCardModeEnum.valueOf(stringValue.toUpperCase());
 				result = mode.name();
 			} catch (Exception e) {
-				throw new ValidationException("Modalita' card non valida");
+				throw new UnprocessableEntity422Exception("Modalita' card non valida");
 			}				
 		}
 		//CODICE_FISCALE
@@ -316,33 +307,27 @@ public class IdentityDao {
 		return result;
 	}
 	
-	public String validateEmail(String email) throws ValidationException {
+	public String validateEmail(String email) throws UnprocessableEntity422Exception {
 		return validateEmail(null, email);
 	}
 	
 	public String validateEmail(String identityUid, String email)
-			throws ValidationException {
+			throws UnprocessableEntity422Exception {
 		if (email == null) {
-			new ValidationException("Email non valida");
-		} else if (email.equals("")) new ValidationException("Email non valida");
+			new UnprocessableEntity422Exception("Email non valida");
+		} else if (email.equals("")) new UnprocessableEntity422Exception("Email non valida");
 		Matcher matcher = emailPattern.matcher(email);
 		if (!matcher.matches()) {
-			throw new ValidationException("Email non valida");
+			throw new UnprocessableEntity422Exception("Email non valida");
 		}
 		//Uniqueness verification
-		Identity uProp = null;
-		try {
-			uProp = findByEmail(email);
-		} catch (DuplicateResultException e) {
-			//There are already many lines with that email!!
-			throw new ValidationException("Email gia' assegnata", e);
-		}
+		Identity uProp = findByEmail(email);
 		if (uProp != null) {
 			if (identityUid == null) {
-				throw new ValidationException("Email gia' assegnata");// a "+uProp.getIdentityUid()+" ");
+				throw new UnprocessableEntity422Exception("Email gia' assegnata");// a "+uProp.getIdentityUid()+" ");
 			} else {
 				if (!uProp.getIdentityUid().equalsIgnoreCase(identityUid)) {
-					throw new ValidationException("Email gia' assegnata");// a "+uProp.getIdentityUid()+" ");
+					throw new UnprocessableEntity422Exception("Email gia' assegnata");// a "+uProp.getIdentityUid()+" ");
 				}
 			}
 		}

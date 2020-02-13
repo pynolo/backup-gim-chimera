@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import it.giunti.chimera.BusinessException;
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.mvc.Conflict409Exception;
+import it.giunti.chimera.mvc.NotFound404Exception;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 
 @Service("socialService")
 public class SocialService {
@@ -27,7 +27,7 @@ public class SocialService {
 	private ProviderAccountDao providerAccountDao;
 	
 	public String getCasPrefixFromSocialId(String socialId) 
-			throws BusinessException {
+			throws UnprocessableEntity422Exception {
 		int pos = socialId.indexOf("#");
 		if (pos >= 0) {
 			String prefix = socialId.substring(0, pos);
@@ -38,13 +38,13 @@ public class SocialService {
 				String prefix = socialId.substring(0, pos);
 				return prefix;
 			} else {
-				throw new BusinessException("socialId doesn't contain a provider prefix");
+				throw new UnprocessableEntity422Exception("socialId doesn't contain a provider prefix");
 			}
 		}
 	}
 	
 	public String getIdentifierFromSocialId(String socialId) 
-			throws BusinessException {
+			throws UnprocessableEntity422Exception {
 		int pos = socialId.indexOf("#");
 		if (pos >= 0) {
 			String suffix = socialId.substring(pos+1);
@@ -55,14 +55,14 @@ public class SocialService {
 				String suffix = socialId.substring(pos+3);
 				return suffix;
 			} else {
-				throw new BusinessException("socialId doesn't contain an identifier");
+				throw new UnprocessableEntity422Exception("socialId doesn't contain an identifier");
 			}
 		}
 	}
 	
 	@Transactional
 	public Identity getIdentityBySocialId(String socialId)
-			throws BusinessException, EmptyResultException, DuplicateResultException {
+			throws UnprocessableEntity422Exception, NotFound404Exception, Conflict409Exception {
 		Identity result = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
@@ -80,7 +80,7 @@ public class SocialService {
 	
 	@Transactional
 	public ProviderAccount getAccountByIdentityUidAndSocialId(String identityUid, String socialId)
-			throws BusinessException, EmptyResultException, DuplicateResultException {
+			throws UnprocessableEntity422Exception, NotFound404Exception, Conflict409Exception {
 		ProviderAccount account = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		//String suffix = getIdentifierFromSocialId(socialId);
@@ -90,16 +90,16 @@ public class SocialService {
 			account = pList.get(0);
 		} else {
 			if (pList.size() == 0)
-				throw new EmptyResultException("No rows in ProviderAccount correspond to "+prefix);
+				throw new NotFound404Exception("No rows in ProviderAccount correspond to "+prefix);
 			if (pList.size() > 1)
-				throw new DuplicateResultException("More rows in ProviderAccount correspond to "+prefix);
+				throw new Conflict409Exception("More rows in ProviderAccount correspond to "+prefix);
 		}
 		return account;
 	}
 	
 	@Transactional
 	public ProviderAccount createProviderAccount(Integer idIdentity, String socialId)
-			throws BusinessException {
+			throws UnprocessableEntity422Exception, Conflict409Exception, NotFound404Exception {
 		ProviderAccount result = null;
 		String prefix = getCasPrefixFromSocialId(socialId);
 		String suffix = getIdentifierFromSocialId(socialId);
@@ -108,11 +108,11 @@ public class SocialService {
 	}
 	
 	@Transactional
-	public void deleteProviderAccount(ProviderAccount pa) throws BusinessException {
+	public void deleteProviderAccount(ProviderAccount pa) throws NotFound404Exception {
 		if (pa != null) {
 			providerAccountDao.delete(pa.getId());
 		} else {
-			throw new BusinessException("ProviderAccount to delete is null");
+			throw new NotFound404Exception("ProviderAccount to delete is null");
 		}
 	}
 }

@@ -6,15 +6,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.giunti.chimera.AppConstants;
-import it.giunti.chimera.BusinessException;
 import it.giunti.chimera.IdentityPropertiesEnum;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
 import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
 import it.giunti.chimera.model.entity.Identity;
+import it.giunti.chimera.mvc.Internal418Exception;
 
 public class BeanValidator {
 
-	public static Map<String,String> validateIdentityBean(IdentityBean bean) throws BusinessException {
+	public static Map<String,String> validateIdentityBean(IdentityBean bean) 
+			throws Internal418Exception {
 		Map<String,String> errMap = new HashMap<String, String>();
 		
 		//FILTER Identity fields by IdentityPropertiesEnum
@@ -47,12 +48,12 @@ public class BeanValidator {
 				}
 			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new BusinessException(e.getMessage(), e);
+			throw new Internal418Exception(e.getMessage(), e);
 		}
 		return errMap;
 	}
 	
-	public static Map<String,String> validateConsentBean(IdentityConsentBean bean) throws BusinessException {
+	public static Map<String,String> validateConsentBean(IdentityConsentBean bean) {
 		Map<String,String> errMap = new HashMap<String, String>();
 		if (bean.getRange() == null) errMap.put("range", "Valore obbligatorio");
 		//TODO

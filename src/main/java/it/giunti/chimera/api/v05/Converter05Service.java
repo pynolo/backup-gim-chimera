@@ -36,7 +36,6 @@ public class Converter05Service {
 			Identity identity = identityDao.selectById(entity.getId());
 			bean.setIdentityUid(identity.getIdentityUid());
 		}
-		bean.setError(null);
 		bean.setSocialId(entity.getProvider().getCasPrefix()+"#"+entity.getAccountIdentifier());
 		return bean;
 	}
@@ -45,7 +44,6 @@ public class Converter05Service {
 	
 	public IdentityBean toIdentityBean(Identity entity) {
 		IdentityBean bean = new IdentityBean();
-		bean.setError(null);
 		bean.setIdentityUid(entity.getIdentityUid());
 		bean.setReplacedByUid(entity.getReplacedByUid());
 		bean.setAddressTown(entity.getAddressTown());

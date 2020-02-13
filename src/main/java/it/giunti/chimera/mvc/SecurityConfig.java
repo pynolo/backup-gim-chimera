@@ -1,4 +1,4 @@
-package it.giunti.chimera.auth;
+package it.giunti.chimera.mvc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

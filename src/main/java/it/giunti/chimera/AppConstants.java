@@ -31,12 +31,7 @@ public class AppConstants {
 	public static final SimpleDateFormat FORMAT_FILENAME_TIMESTAMP = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 	public static final SimpleDateFormat FORMAT_TIMESTAMP_ISO8601 = new SimpleDateFormat(PATTERN_ISO8601);
 	public static final SimpleDateFormat FORMAT_DATE_JSON = new SimpleDateFormat("yyyy-MM-dd");
-	
-	//CHANGE TYPES
-	public static final String CHANGE_TYPE_UPDATE = "update";
-	public static final String CHANGE_TYPE_REPLACE = "replace";
-	public static final String CHANGE_TYPE_DELETE = "delete";
-	
+		
 	//PROPERTY TYPES
 	public static final String PROPERTY_TYPE_STRING = "string";
 	public static final String PROPERTY_TYPE_NUMBER = "number";

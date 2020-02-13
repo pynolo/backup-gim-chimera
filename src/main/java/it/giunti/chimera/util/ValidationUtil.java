@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.giunti.chimera.ValidationException;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 
 public class ValidationUtil {
 
@@ -14,34 +14,34 @@ public class ValidationUtil {
 	public final static String REGEX_P_IVA = "^[0-9]{11}$";
 	
 	public static String validateEan(String stringValue)
-			throws ValidationException {
+			throws UnprocessableEntity422Exception {
 		Matcher matcher = eanPattern.matcher(stringValue);
 		if (!matcher.matches()) {
-			throw new ValidationException("Ean non valido");
+			throw new UnprocessableEntity422Exception("Ean non valido");
 		}
 		return stringValue;
 	}
 	
 	public static String validateCodiceFiscale(String codFis)
-			throws ValidationException {
+			throws UnprocessableEntity422Exception {
 		if (codFis == null) {
-			new ValidationException("Codice fiscale non valido");
+			new UnprocessableEntity422Exception("Codice fiscale non valido");
 		}
 		boolean isValid = isValidCodFisc(codFis);
 		if (!isValid) {
-			throw new ValidationException("Codice fiscale non valido");
+			throw new UnprocessableEntity422Exception("Codice fiscale non valido");
 		}
 		return codFis;
 	}
 	
 	public static String validatePartitaIva(String pIva)
-			throws ValidationException {
+			throws UnprocessableEntity422Exception {
 		if (pIva == null) {
-			new ValidationException("Partita iva non valida");
+			new UnprocessableEntity422Exception("Partita iva non valida");
 		}
 		boolean isValid = isValidPIva(pIva);
 		if (!isValid) {
-			throw new ValidationException("Partita iva non valida");
+			throw new UnprocessableEntity422Exception("Partita iva non valida");
 		}
 		return pIva;
 	}

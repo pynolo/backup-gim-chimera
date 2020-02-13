@@ -1,4 +1,4 @@
-package it.giunti.chimera.auth;
+package it.giunti.chimera.mvc;
 
 import java.io.IOException;
 import java.io.PrintWriter;

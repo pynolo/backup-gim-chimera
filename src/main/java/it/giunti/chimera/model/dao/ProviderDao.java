@@ -8,8 +8,6 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.entity.Provider;
 import it.giunti.chimera.util.QueryUtil;
 
@@ -45,8 +43,7 @@ public class ProviderDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Provider findByCasPrefix(String casPrefix) 
-			throws EmptyResultException, DuplicateResultException {
+	public Provider findByCasPrefix(String casPrefix) {
 		Provider result = null;
 		String hql = "from Provider as p where " +
 				"p.casPrefix = :id1 " +
@@ -56,13 +53,8 @@ public class ProviderDao {
 		q.setParameter("id1", casPrefix);
 		List<Provider> pList = (List<Provider>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() == 1) {
+			if (pList.size() >= 1) {
 				result = pList.get(0);
-			} else {
-				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in Provider have prefix="+casPrefix);
-				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in Provider have the same prefix");
 			}
 		}
 		return result;

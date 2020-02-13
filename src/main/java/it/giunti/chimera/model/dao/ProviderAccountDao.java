@@ -12,11 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import it.giunti.chimera.BusinessException;
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
 import it.giunti.chimera.model.entity.Provider;
 import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.mvc.Conflict409Exception;
+import it.giunti.chimera.mvc.NotFound404Exception;
 import it.giunti.chimera.util.QueryUtil;
 
 @Repository("providerAccountDao")
@@ -56,8 +55,7 @@ public class ProviderAccountDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public ProviderAccount findByProviderIdentifier(String pac4jPrefix, String accountIdentifier) 
-			throws DuplicateResultException {
+	public ProviderAccount findByProviderIdentifier(String pac4jPrefix, String accountIdentifier) {
 		ProviderAccount result = null;
 		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
@@ -70,11 +68,8 @@ public class ProviderAccountDao {
 		q.setParameter("id2", accountIdentifier);
 		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() == 1) {
+			if (pList.size() >= 1) {
 				result = pList.get(0);
-			} else {
-				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in ProviderAccount corresponds to "+pac4jPrefix+"#"+accountIdentifier);
 			}
 		}
 		return result;
@@ -112,23 +107,16 @@ public class ProviderAccountDao {
 	}
 	
 	public ProviderAccount createProviderAccount(Integer idIdentity, String pac4jPrefix, String accountIdentifier) 
-			throws BusinessException {
-		Provider provider;
-		try {
-			provider = providerDao.findByCasPrefix(pac4jPrefix);
-		} catch (EmptyResultException e) {
-			throw new BusinessException(e.getMessage());
-		} catch (DuplicateResultException e) {
-			throw new BusinessException(e.getMessage());
-		}
-		if (provider == null) throw new BusinessException("No provider identified by '"+pac4jPrefix+"'");
+			throws NotFound404Exception, Conflict409Exception {
+		Provider provider = providerDao.findByCasPrefix(pac4jPrefix);
+		if (provider == null) throw new NotFound404Exception("No provider identified by '"+pac4jPrefix+"'");
 		
 		//TEST 1
 		//List<ProviderAccount> testList = findByProviderAndIdentifier(ses, pac4jPrefix, accountIdentifier);
 		//if (testList.size() > 0) throw new BusinessException("One or more ProviderAccount correspond to "+pac4jPrefix+"#"+accountIdentifier);
 		//TEST 2
 		List<ProviderAccount> testList = findByIdentityAndProvider(idIdentity, pac4jPrefix);
-		if (testList.size() > 0) throw new BusinessException("A ProviderAccount for "+pac4jPrefix+" and id_identity "+idIdentity+" already exists");
+		if (testList.size() > 0) throw new Conflict409Exception("A ProviderAccount for "+pac4jPrefix+" and id_identity "+idIdentity+" already exists");
 		
 		ProviderAccount result = new ProviderAccount();
 		result.setAccountIdentifier(accountIdentifier);
@@ -141,7 +129,7 @@ public class ProviderAccountDao {
 	
 	@SuppressWarnings("unchecked")
 	public void deleteProviderAccount(Integer idIdentity, String pac4jPrefix, String accountIdentifier) 
-			throws EmptyResultException, DuplicateResultException {
+			throws NotFound404Exception {
 		ProviderAccount toDelete = null;
 		String hql = "from ProviderAccount as pa where " +
 				"pa.provider.casPrefix = :id1 and " +
@@ -156,13 +144,10 @@ public class ProviderAccountDao {
 		q.setParameter("id3", idIdentity);
 		List<ProviderAccount> pList = (List<ProviderAccount>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() == 1) {
+			if (pList.size() >= 1) {
 				toDelete = pList.get(0);
 			} else {
-				if (pList.size() == 0)
-					throw new EmptyResultException("No rows in ProviderAccount to delete");
-				if (pList.size() > 1)
-					throw new DuplicateResultException("More rows in ProviderAccount corresponds to given user");
+				throw new NotFound404Exception("No rows in ProviderAccount to delete");
 			}
 		}
 		delete(toDelete.getId());

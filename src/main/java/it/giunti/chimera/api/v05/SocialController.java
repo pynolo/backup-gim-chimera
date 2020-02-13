@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.giunti.chimera.BusinessException;
-import it.giunti.chimera.DuplicateResultException;
-import it.giunti.chimera.EmptyResultException;
-import it.giunti.chimera.ErrorEnum;
-import it.giunti.chimera.api.v05.bean.ErrorBean;
 import it.giunti.chimera.api.v05.bean.ProviderAccountBean;
 import it.giunti.chimera.api.v05.bean.ProviderAccountListBean;
 import it.giunti.chimera.api.v05.bean.SocialInputBean;
@@ -28,6 +23,10 @@ import it.giunti.chimera.api.v05.bean.ValidationBean;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.mvc.Conflict409Exception;
+import it.giunti.chimera.mvc.NotFound404Exception;
+import it.giunti.chimera.mvc.Unauthorized401Exception;
+import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 import it.giunti.chimera.service.FederationService;
 import it.giunti.chimera.service.IdentityService;
 import it.giunti.chimera.service.SocialService;
@@ -65,71 +64,65 @@ public class SocialController {
 	}
 	
 	@PostMapping("/api/05/add_provider_account")
-	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) {
+	public ProviderAccountBean addProviderAccount(@Valid @RequestBody SocialInputBean input) 
+			throws Unauthorized401Exception, UnprocessableEntity422Exception,
+			Conflict409Exception, NotFound404Exception {
 		ProviderAccountBean resultBean = new ProviderAccountBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
-		if (error == null) {
+		try {
 			Identity identity = identityService.getIdentity(input.getIdentityUid());
-			try {
-				ProviderAccount entity = socialService.createProviderAccount(identity.getId(), input.getSocialId());
-				resultBean = converter05Service.toProviderAccountBean(entity);
-			} catch (BusinessException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-				error.setMessage("Impossibile abbinare un nuovo account social");
-			}
+			ProviderAccount entity = socialService.createProviderAccount(identity.getId(), input.getSocialId());
+			resultBean = converter05Service.toProviderAccountBean(entity);
+		} catch (Exception e) {
+			if (input != null)
+				identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/add_provider_account", input, e.getMessage());
+			throw e;
 		}
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/add_provider_account", input, error);
+				"/api/05/add_provider_account", input, null);
 		return resultBean;	
 	}
 	
 	@PostMapping("/api/05/delete_provider_account")
-	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) {
+	public ValidationBean deleteProviderAccount(@Valid @RequestBody SocialInputBean input) 
+			throws Unauthorized401Exception, UnprocessableEntity422Exception,
+			Conflict409Exception, NotFound404Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
 		Federation fed = federationService.findFederationByUid(federationUid);
 		
-		ErrorBean error = null;
 		//Verifica diritti scrittura
 		if (!fed.getCanUpdate()) {
-			error = new ErrorBean();
-			error.setCode(ErrorEnum.UNAUTHORIZED.getErrorCode());
-			error.setMessage(ErrorEnum.UNAUTHORIZED.getErrorDescr());
+			throw new Unauthorized401Exception("Non autorizzato");
 		}
 		boolean success = false;
-		if (error == null) {
-			try {
-				ProviderAccount entity = socialService.getAccountByIdentityUidAndSocialId(
-						input.getIdentityUid(), input.getSocialId());
-				socialService.deleteProviderAccount(entity);
-				success = true;
-			} catch (BusinessException | EmptyResultException | DuplicateResultException e) {
-				error = new ErrorBean();
-				error.setCode(ErrorEnum.INTERNAL_ERROR.getErrorCode());
-				error.setMessage("Errore nell'eliminazione dell'account social");
-			}
+		try {
+			ProviderAccount entity = socialService.getAccountByIdentityUidAndSocialId(
+					input.getIdentityUid(), input.getSocialId());
+			socialService.deleteProviderAccount(entity);
+			success = true;
+		} catch (Exception e) {
+			if (input != null)
+				identityService.addLog(input.getIdentityUid(), fed.getId(),
+					"/api/05/add_provider_account", input, e.getMessage());
+			throw e;
 		}
 		resultBean.setSuccess(success);
-		resultBean.setError(error);
 		//LOG
 		if (input != null)
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
-				"/api/05/delete_provider_account", input, error);
+				"/api/05/delete_provider_account", input, null);
 		return resultBean;
 	}
 
