@@ -8,7 +8,7 @@ public class HttpException extends Exception {
 	
 	private String message = null;
 	private HttpStatus status = null;
-	private Throwable throwable = null;
+	private Throwable error = null;
 	
 	public HttpException(String message){
 		this.message = message;
@@ -16,11 +16,11 @@ public class HttpException extends Exception {
 	
 	public HttpException(String message, Throwable ex){
 		this.message = message;
-		this.throwable = ex;
+		this.error = ex;
 	}
 
 	public HttpException(Throwable ex){
-		this.throwable = ex;
+		this.error = ex;
 	}
 
 	public String getMessage() {
@@ -39,12 +39,12 @@ public class HttpException extends Exception {
 		this.status = status;
 	}
 
-	public Throwable getThrowable() {
-		return throwable;
+	public Throwable getError() {
+		return error;
 	}
 
-	public void setThrowable(Throwable throwable) {
-		this.throwable = throwable;
+	public void setError(Throwable error) {
+		this.error = error;
 	}
-	
+
 }
