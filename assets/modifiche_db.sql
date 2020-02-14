@@ -1,8 +1,9 @@
 #Preparazione del db alle API 5.0
 
+##PROVINCES
 DROP TABLE provinces;
 
-#IDENTITIES ADD
+##IDENTITIES-ADD
 ALTER TABLE identities ADD COLUMN `change_time` datetime NOT NULL,
 ADD COLUMN `change_type` varchar(8) NOT NULL,
 ADD COLUMN `replaced_by_uid` varchar(32) DEFAULT NULL,
@@ -12,41 +13,28 @@ ADD COLUMN `school` varchar(256) DEFAULT NULL,
 ADD COLUMN `deletion_time` date DEFAULT NULL;
 ALTER TABLE identities ADD INDEX `replaced_by_idx` (replaced_by_uid);
 UPDATE identities set `change_time`=`last_modified`, `change_type`='update';
-#IDENTITIES CHANGE
+##IDENTITIES-CHANGE
 ALTER TABLE identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL,
 CHANGE COLUMN `birth` `birth_date` date DEFAULT NULL,
 CHANGE COLUMN `address` `address_street` varchar(64) DEFAULT NULL,
 CHANGE COLUMN `province_code` `address_province_id` varchar(4) DEFAULT NULL,
 CHANGE COLUMN `zip` `address_zip` varchar(16) DEFAULT NULL,
 CHANGE COLUMN `city` `address_town` varchar(64) DEFAULT NULL;
-#IDENTITIES DROP
+##IDENTITIES-DROP
 ALTER TABLE identities DROP COLUMN `id_service`,
 DROP COLUMN `last_modified`;
 
-#LOG
+##LOG
 ALTER TABLE log_identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL,
 CHANGE COLUMN `id_service` `id_federation` int(11) NOT NULL,
 CHANGE COLUMN `operation` `function` varchar(128) NOT NULL,
 CHANGE COLUMN `parameters` `parameters` TEXT DEFAULT NULL,
 CHANGE COLUMN `result` `result` varchar(256) NOT NULL;
 
-#COUNTERS
+##COUNTERS
 UPDATE counters set ckey='identity_uid' where ckey='user_uid';
 
-DROP TABLE IF EXISTS `identities_consent`;
-CREATE TABLE `identities_consent` (
-  `id` int(11) NOT NULL auto_increment,
-  `id_identity` int(11) NOT NULL,
-  `range` varchar(64) NOT NULL,
-  `tos` bit(1) NOT NULL,
-  `marketing` bit(1) NOT NULL,
-  `profiling` bit(1) NOT NULL,
-  `tos_date` date NOT NULL,
-  `marketing_date` date NOT NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `identity_range_key` (`id_identity`,`range`)
-) ENGINE=InnoDB AUTO_INCREMENT=0;
-
+## SERVICES -> FEDERATIONS
 DROP TABLE IF EXISTS `federations`;
 CREATE TABLE `federations` (
   `id` int(11) NOT NULL auto_increment,
@@ -73,19 +61,32 @@ INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,ca
 INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (13,'sitemanager','LVX32J65','Gestione siti Giunti (Livia)','Federici',true,true,true);
 INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (14,'gedu01','EDU66K9T71','www.giuntiedu.it','Biasioli (salsetta)',true,true,true);
 INSERT INTO federations (id,federation_uid,access_key,name,contact,can_update,can_delete,can_replace) VALUES (15,'gscuola02','GSNW9U54D97','www.giuntiscuola.it (webranking)','Di Marzo',true,true,true);
+#DROP TABLE `services`;
 
+## IDENTITIES_SERVICES -> IDENTITIES_FEDERATIONS
 DROP TABLE IF EXISTS `identities_federations`;
-CREATE TABLE `identities_federations` (
+ALTER TABLE `identities_services` RENAME `identities_federations`;
+ALTER TABLE `identities_federations`
+CHANGE COLUMN `id_service` `id_identity` int(11) NOT NULL,
+ADD COLUMN `first_access` datetime DEFAULT NULL,
+ADD COLUMN `last_access` datetime DEFAULT NULL;
+ALTER TABLE `identities_federations` DROP CONSTRAINT identity_service_key;
+ALTER TABLE `identities_federations` ADD CONSTRAINT `identity_federation_idx` UNIQUE (`id_identity`,`id_federation`);
+
+
+DROP TABLE IF EXISTS `identities_consent`;
+CREATE TABLE `identities_consent` (
   `id` int(11) NOT NULL auto_increment,
   `id_identity` int(11) NOT NULL,
-  `id_federation` int(11) NOT NULL,
-  `first_access` datetime DEFAULT NULL,
-  `last_access` datetime DEFAULT NULL,
+  `range` varchar(64) NOT NULL,
+  `tos` bit(1) NOT NULL,
+  `marketing` bit(1) NOT NULL,
+  `profiling` bit(1) NOT NULL,
+  `tos_date` date NOT NULL,
+  `marketing_date` date NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `identity_federation_idx` (`id_identity`,`id_federation`)
+  UNIQUE KEY `identity_range_key` (`id_identity`,`range`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
-INSERT INTO `identities_federations` SELECT id,id_identity,id_service as id_federation,null,null FROM identities_services;
-#DROP TABLE `services`;
 
 DROP TABLE IF EXISTS `identities_newsletter`;
 CREATE TABLE `identities_newsletter` (
@@ -119,12 +120,6 @@ CREATE TABLE `lookup_schools` (
   `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
-
-
-#TEMP
-ALTER TABLE identities 
-CHANGE COLUMN `user_uid_old` `replaced_by_uid` varchar(32) DEFAULT NULL,
-ADD COLUMN `deletion_time` date DEFAULT NULL;
 
 
 
