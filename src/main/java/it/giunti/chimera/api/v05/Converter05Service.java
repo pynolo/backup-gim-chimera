@@ -1,5 +1,8 @@
 package it.giunti.chimera.api.v05;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +16,12 @@ import it.giunti.chimera.api.v05.bean.ProviderAccountBean;
 import it.giunti.chimera.model.dao.CounterDao;
 import it.giunti.chimera.model.dao.IdentityConsentDao;
 import it.giunti.chimera.model.dao.IdentityDao;
+import it.giunti.chimera.model.dao.LookupConsentRangeDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.IdentityConsent;
+import it.giunti.chimera.model.entity.LookupConsentRange;
 import it.giunti.chimera.model.entity.ProviderAccount;
+import it.giunti.chimera.mvc.NotFound404Exception;
 
 @Service("converter05Service")
 public class Converter05Service {
@@ -29,6 +35,9 @@ public class Converter05Service {
 	@Autowired
 	@Qualifier("counterDao")
 	private CounterDao counterDao;
+	@Autowired
+	@Qualifier("lookupConsentRangeDao")
+	private LookupConsentRangeDao lookupConsentRangeDao;
 	
 	public ProviderAccountBean toProviderAccountBean(ProviderAccount entity) {
 		ProviderAccountBean bean = new ProviderAccountBean();
@@ -113,32 +122,46 @@ public class Converter05Service {
 		bean.setMarketing(entity.getMarketing());
 		bean.setMarketingDate(entity.getMarketingDate());
 		bean.setProfiling(entity.getProfiling());
-		bean.setRange(entity.getRange());
+		bean.setRange(entity.getConsentRange());
 		bean.setTos(entity.getTos());
 		bean.setTosDate(entity.getTosDate());
 		return bean;
 	}
 	
 	@Transactional
-	public IdentityConsent persistIntoConsent(IdentityConsentBean bean) {
-		IdentityConsent entity = new IdentityConsent();
-		if (bean.getIdentityUid() != null && bean.getRange() != null) {
-			entity = identityConsentDao.findByIdentityUidAndRange(
-					bean.getIdentityUid(), bean.getRange());
-		}
-		entity.setMarketing(bean.getMarketing());
-		entity.setMarketingDate(bean.getMarketingDate());
-		entity.setProfiling(bean.getProfiling());
-		entity.setRange(bean.getRange());
-		entity.setTos(bean.getTos());
-		entity.setTosDate(bean.getTosDate());
-		if (entity.getId() != null) {
-			//UPDATE
-			entity = identityConsentDao.update(entity);
+	public void persistIntoConsent(IdentityConsentBean bean) 
+			throws NotFound404Exception {
+		List<String> rangeList = new ArrayList<String>();
+		List<LookupConsentRange> lookupList = lookupConsentRangeDao.findAll();
+		// rangeList should contain only the selected range, unless it's "all"
+		if (bean.getRange().equalsIgnoreCase("ALL")) {
+			for (LookupConsentRange lcr:lookupList) rangeList.add(lcr.getId());
 		} else {
-			//INSERT
-			entity = identityConsentDao.insert(entity);
+			for (LookupConsentRange lcr:lookupList) {
+				if (lcr.getId().equals(bean.getRange())) rangeList.add(lcr.getId());
+			}
 		}
-		return entity;
+		if (rangeList.size() == 0) throw new NotFound404Exception("Range '"+bean.getRange()+"' not found");
+		// Here rangeList contains all applicable ranges
+		for (String range:rangeList) {
+			IdentityConsent entity = new IdentityConsent();
+			if (bean.getIdentityUid() != null) {
+				entity = identityConsentDao.findByIdentityUidAndRange(
+						bean.getIdentityUid(), range);
+			}
+			entity.setMarketing(bean.getMarketing());
+			entity.setMarketingDate(bean.getMarketingDate());
+			entity.setProfiling(bean.getProfiling());
+			entity.setConsentRange(range);
+			entity.setTos(bean.getTos());
+			entity.setTosDate(bean.getTosDate());
+			if (entity.getId() != null) {
+				//UPDATE
+				entity = identityConsentDao.update(entity);
+			} else {
+				//INSERT
+				entity = identityConsentDao.insert(entity);
+			}
+		}
 	}
 }

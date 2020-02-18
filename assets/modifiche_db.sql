@@ -73,19 +73,18 @@ ADD COLUMN `last_access` datetime DEFAULT NULL;
 ALTER TABLE `identities_federations` DROP CONSTRAINT identity_service_key;
 ALTER TABLE `identities_federations` ADD CONSTRAINT `identity_federation_idx` UNIQUE (`id_identity`,`id_federation`);
 
-
 DROP TABLE IF EXISTS `identities_consent`;
 CREATE TABLE `identities_consent` (
   `id` int(11) NOT NULL auto_increment,
   `id_identity` int(11) NOT NULL,
-  `range` varchar(64) NOT NULL,
+  `consent_range` varchar(64) NOT NULL,
   `tos` bit(1) NOT NULL,
   `marketing` bit(1) NOT NULL,
   `profiling` bit(1) NOT NULL,
   `tos_date` date NOT NULL,
   `marketing_date` date NOT NULL,
   PRIMARY KEY  (`id`),
-  UNIQUE KEY `identity_range_key` (`id_identity`,`range`)
+  UNIQUE KEY `identity_range_key` (`id_identity`,`consent_range`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS `identities_newsletter`;
@@ -102,6 +101,16 @@ CREATE TABLE `lookup_newsletters` (
   `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
+
+DROP TABLE IF EXISTS `lookup_consent_ranges`;
+CREATE TABLE `lookup_consent_ranges` (
+  `id` varchar(64) NOT NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0;
+INSERT INTO lookup_consent_ranges (id) VALUES ('GE');
+INSERT INTO lookup_consent_ranges (id) VALUES ('GAP');
+INSERT INTO lookup_consent_ranges (id) VALUES ('GS');
+INSERT INTO lookup_consent_ranges (id) VALUES ('GEDU');
 
 DROP TABLE IF EXISTS `lookup_interests`;
 CREATE TABLE `lookup_interests` (
@@ -120,6 +129,4 @@ CREATE TABLE `lookup_schools` (
   `id` varchar(64) NOT NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0;
-
-
 

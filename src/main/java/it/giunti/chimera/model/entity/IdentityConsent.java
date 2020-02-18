@@ -25,8 +25,8 @@ public class IdentityConsent {
     @Column(name = "id_identity")
     private Integer idIdentity;
 	@Basic(optional = false)
-	@Column(name = "range", nullable = false, length = 64)
-	private String range;
+	@Column(name = "consent_range", nullable = false, length = 64)
+	private String consentRange;
 	@Basic(optional = false)
 	@Column(name = "tos", nullable = false)
 	private Boolean tos;
@@ -61,12 +61,12 @@ public class IdentityConsent {
 		this.idIdentity = idIdentity;
 	}
 
-	public String getRange() {
-		return range;
+	public String getConsentRange() {
+		return consentRange;
 	}
 
-	public void setRange(String range) {
-		this.range = range;
+	public void setConsentRange(String consentRange) {
+		this.consentRange = consentRange;
 	}
 
 	public Boolean getTos() {

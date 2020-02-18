@@ -257,7 +257,7 @@ public class IdentityController {
 	
 	@PostMapping("/api/05/update_identity_consent")
 	public ValidationBean updateIdentityConsent(@Valid @RequestBody IdentityConsentBean input) 
-			throws Unauthorized401Exception {
+			throws Unauthorized401Exception, NotFound404Exception {
 		ValidationBean resultBean = new ValidationBean();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String federationUid = authentication.getName();
