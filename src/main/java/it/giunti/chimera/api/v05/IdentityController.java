@@ -203,13 +203,15 @@ public class IdentityController {
 		}
 		boolean success = false;
 		try {
+			Identity output = new Identity();
 			resultBean = validateUpdatingIdentity(input);
 			if (resultBean.getSuccess()) {
 				/*Identity updatedIdentity =*/
-				converter05Service.persistIntoIdentity(input);
+				output = converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
 			resultBean.setSuccess(success);
+			resultBean.setAssignedIdentityUid(output.getIdentityUid());
 		} catch (Internal418Exception e) {
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
 					"/api/05/update_identity", input, e.getMessage());
@@ -236,13 +238,15 @@ public class IdentityController {
 		}
 		boolean success = false;
 		try {
+			Identity output = new Identity();
 			resultBean = validateNewIdentity(input);
 			if (resultBean.getSuccess()) {
 				/*Identity identity */
-				converter05Service.persistIntoIdentity(input);
+				output = converter05Service.persistIntoIdentity(input);
 				success = true;
 			}
 			resultBean.setSuccess(success);
+			resultBean.setAssignedIdentityUid(output.getIdentityUid());
 		} catch (Exception e) {
 			identityService.addLog(input.getIdentityUid(), fed.getId(),
 					"/api/05/add_identity", input, e.getMessage());
