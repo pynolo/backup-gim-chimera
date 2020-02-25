@@ -24,6 +24,13 @@ CHANGE COLUMN `city` `address_town` varchar(64) DEFAULT NULL;
 ALTER TABLE identities DROP COLUMN `id_service`,
 DROP COLUMN `last_modified`;
 
+##USERS
+ALTER TABLE users CHANGE COLUMN `user_name` `username` varchar(32) NOT NULL,
+ADD COLUMN `role` varchar(8) NOT NULL;
+UPDATE users set `role`='user';
+UPDATE users set `role`='admin' where `username`='p.tacconi';
+UPDATE users set `role`='admin' where `username`='g.congiu';
+
 ##LOG
 ALTER TABLE log_identities CHANGE COLUMN `user_uid` `identity_uid` varchar(32) NOT NULL,
 CHANGE COLUMN `id_service` `id_federation` int(11) NOT NULL,

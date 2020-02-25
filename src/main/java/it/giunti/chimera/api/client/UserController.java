@@ -51,7 +51,7 @@ public class UserController {
     public User createNewUser(@Valid @RequestBody User user) {
     	return userService.addUser(user);
     }
- 
+
     @PutMapping("/api/client/changeuser")
     public void changeExistingUser(@Valid @RequestBody User user) {
     	userService.modifyUser(user);

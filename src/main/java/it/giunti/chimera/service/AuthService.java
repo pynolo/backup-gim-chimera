@@ -52,7 +52,7 @@ public class AuthService {
 	public void authenticate(String username, String password) throws AuthenticationException {
 		String errorString = null;
 		//Search on DB
-		User u = userDao.findByUserName(username);
+		User u = userDao.findByUsername(username);
 		if (u != null) {
 			// You specify in the authenticate user the attributes that you want returned.
 			// Some companies use standard attributes <like 'description' to hold an employee ID.

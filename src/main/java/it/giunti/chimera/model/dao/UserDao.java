@@ -27,8 +27,9 @@ public class UserDao {
 	
 	public User update(User item) {
 		User itemToUpdate = selectById(item.getId());
-		itemToUpdate.setPassword(item.getPassword());
-		itemToUpdate.setUserName(item.getUserName());
+		//itemToUpdate.setPassword(item.getPassword());
+		itemToUpdate.setUsername(item.getUsername());
+		itemToUpdate.setRole(item.getRole());
 		entityManager.merge(itemToUpdate);
 		entityManager.flush();
 		return item;
@@ -42,12 +43,12 @@ public class UserDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public User findByUserName(String userName) {
+	public User findByUsername(String username) {
 		User result = null;
 		String hql = "from User as u where " +
-				"u.userName = :s1 ";
+				"u.username = :s1 ";
 		Query q = entityManager.createQuery(hql);
-		q.setParameter("s1", userName);
+		q.setParameter("s1", username);
 		List<User> pList = (List<User>) q.getResultList();
 		if (pList != null) {
 			if (pList.size() > 1) {
@@ -61,7 +62,7 @@ public class UserDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<User> selectAll() {
-		Query query = entityManager.createQuery("from User as user order by user.userName");
+		Query query = entityManager.createQuery("from User as user order by user.username");
 		return (List<User>) query.getResultList();
 	}
 	

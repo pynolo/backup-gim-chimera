@@ -20,7 +20,7 @@ public class UserService {
 
 	@Transactional
 	public User getUserByUsername(String username) {
-		return userDao.findByUserName(username);
+		return userDao.findByUsername(username);
 	}
 	
 	@Transactional
@@ -40,7 +40,7 @@ public class UserService {
 
 	@Transactional
 	public void removeUser(String username) {
-		User user = userDao.findByUserName(username);
+		User user = userDao.findByUsername(username);
 		userDao.delete(user.getId());
 	}
 

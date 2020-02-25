@@ -21,11 +21,16 @@ public class User {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
+	
     @Basic(optional = false)
-    @Column(name = "user_name", nullable = false, length = 256)
-    private String userName;
-    @Column(name = "password", length = 256)
-    private String password;
+    @Column(name = "username", nullable = false, length = 32)
+    private String username;
+    
+    @Column(name = "role", nullable = false, length = 8)
+    private String role;
+    
+//    @Column(name = "password", length = 256)
+//    private String password;
 
     public User() {
     }
@@ -38,20 +43,20 @@ public class User {
 		this.id = id;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getRole() {
+		return role;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override
