@@ -7,10 +7,11 @@ public class SearchBean {
 	private String email = null;
 	private String lastName = null;
 	private String firstName = null;
-	private String address = null;
-	private String provId = null;
-	private String zip = null;
-	private String phone = null;
+	private String addressStreet = null;
+	private String addressZip = null;
+	private String addressTown = null;
+	private String addressProvinceId = null;
+	private String telephone = null;
 	private String codiceFiscale = null;
 	private String partitaIva = null;
 	
@@ -44,29 +45,35 @@ public class SearchBean {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	public String getAddress() {
-		return address;
+	public String getAddressStreet() {
+		return addressStreet;
 	}
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAddressStreet(String addressStreet) {
+		this.addressStreet = addressStreet;
 	}
-	public String getProvId() {
-		return provId;
+	public String getAddressZip() {
+		return addressZip;
 	}
-	public void setProvId(String provId) {
-		this.provId = provId;
+	public void setAddressZip(String addressZip) {
+		this.addressZip = addressZip;
 	}
-	public String getZip() {
-		return zip;
+	public String getAddressProvinceId() {
+		return addressProvinceId;
 	}
-	public void setZip(String zip) {
-		this.zip = zip;
+	public void setAddressProvinceId(String addressProvinceId) {
+		this.addressProvinceId = addressProvinceId;
 	}
-	public String getPhone() {
-		return phone;
+	public String getAddressTown() {
+		return addressTown;
 	}
-	public void setPhone(String phone) {
-		this.phone = phone;
+	public void setAddressTown(String addressTown) {
+		this.addressTown = addressTown;
+	}
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
 	}
 	public String getCodiceFiscale() {
 		return codiceFiscale;

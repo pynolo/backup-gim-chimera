@@ -51,7 +51,7 @@ public class UserDao {
 		q.setParameter("s1", username);
 		List<User> pList = (List<User>) q.getResultList();
 		if (pList != null) {
-			if (pList.size() > 1) {
+			if (pList.size() >= 1) {
 				result = pList.get(0);
 			} else {
 				return null;

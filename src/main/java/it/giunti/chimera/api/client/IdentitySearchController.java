@@ -25,7 +25,7 @@ public class IdentitySearchController {
 	private IdentityService identityService;
 
 	@PostMapping("/api/client/search_identity")
-	public List<IdentitySearchBean> searchIdentity(@Valid @RequestBody SearchBean input) 
+	public List<IdentityResultBean> searchIdentity(@Valid @RequestBody SearchBean input) 
 			throws NotFound404Exception {
 		if (input == null) throw new NotFound404Exception("Empty search params");
 		
@@ -35,15 +35,16 @@ public class IdentitySearchController {
 				input.getEmail(),
 				input.getLastName(),
 				input.getFirstName(), 
-				input.getAddress(),
-				input.getProvId(),
-				input.getZip(),
-				input.getPhone(),
+				input.getAddressStreet(),
+				input.getAddressZip(),
+				input.getAddressTown(),
+				input.getAddressProvinceId(),
+				input.getTelephone(),
 				input.getCodiceFiscale(),
 				input.getPartitaIva());
-		List<IdentitySearchBean> beanList = new ArrayList<IdentitySearchBean>();
+		List<IdentityResultBean> beanList = new ArrayList<IdentityResultBean>();
 		for (Identity i:iList) {
-			IdentitySearchBean isb = new IdentitySearchBean(i);
+			IdentityResultBean isb = new IdentityResultBean(i);
 			beanList.add(isb);
 		}
 		return beanList;

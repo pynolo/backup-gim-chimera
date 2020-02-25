@@ -4,7 +4,7 @@ import java.util.Date;
 
 import it.giunti.chimera.model.entity.Identity;
 
-public class IdentitySearchBean {
+public class IdentityResultBean {
 	
 	private String identityUid = null;
 	private String replacedByUid = null;
@@ -17,8 +17,8 @@ public class IdentitySearchBean {
 	private Date birthDate = null;
 	private String addressStreet = null;
 	private String addressZip = null;
-	private String addressProvinceId = null;
 	private String addressTown = null;
+	private String addressProvinceId = null;
 	private String telephone = null;
 	private String codiceFiscale = null;
 	private String partitaIva = null;
@@ -29,11 +29,11 @@ public class IdentitySearchBean {
 	private Date deletionTime = null;
 	private String replacedById = null;
 	
-	public IdentitySearchBean() {
+	public IdentityResultBean() {
 		super();
 	}
 	
-	public IdentitySearchBean(Identity item) {
+	public IdentityResultBean(Identity item) {
 		super();
 		this.setIdentityUid(item.getIdentityUid());
 		this.setAddressProvinceId(item.getAddressProvinceId());

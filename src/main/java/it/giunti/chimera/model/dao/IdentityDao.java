@@ -339,8 +339,9 @@ public class IdentityDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Identity> findIdentityByProperties(int maxResults, String identityUid, String email,
-			String lastName, String firstName, String address, String provId,
-			String zip, String phone, String codiceFiscale, String partitaIva) 
+			String lastName, String firstName, String addressStreet, String addressZip,
+			String addressTown, String addressProvinceId, String telephone, String codiceFiscale,
+			String partitaIva) 
 					throws NotFound404Exception {
 		int count = 0;
 		Map<String, String> paramMap = new HashMap<String, String>();
@@ -375,47 +376,55 @@ public class IdentityDao {
 				paramMap.put("s3", firstName);
 			}
 		}
-		if (address != null) {
-			if (address.length() > 3) {
+		if (addressStreet != null) {
+			if (addressStreet.length() > 3) {
 				count++;
 				qs+="i.addressStreet like :s4 and ";
-				address = address.replaceFirst("\\*", "%");
-				paramMap.put("s4", address);
+				addressStreet = addressStreet.replaceFirst("\\*", "%");
+				paramMap.put("s4", addressStreet);
 			}
 		}
-		if (provId != null) {
-			if (provId.length() == 2) {
+		if (addressTown != null) {
+			if (addressTown.length() > 3) {
 				count++;
-				qs+="i.addressProvinceId = :s5 and ";
-				paramMap.put("s5", provId);
+				qs+="i.addressTown like :s5 and ";
+				addressTown = addressTown.replaceFirst("\\*", "%");
+				paramMap.put("s5", addressTown);
 			}
 		}
-		if (zip != null) {
-			if (zip.length() > 3) {
+		if (addressProvinceId != null) {
+			if (addressProvinceId.length() == 2) {
 				count++;
-				qs+="i.addressZip = :s6 and ";
-				paramMap.put("s6", zip);
+				qs+="i.addressProvinceId = :s6 and ";
+				paramMap.put("s6", addressProvinceId);
 			}
 		}
-		if (phone != null) {
-			if (phone.length() > 3) {
+		if (addressZip != null) {
+			if (addressZip.length() > 3) {
 				count++;
-				qs+="i.telephone = :s7 and ";
-				paramMap.put("s7", phone);
+				qs+="i.addressZip = :s7 and ";
+				paramMap.put("s7", addressZip);
+			}
+		}
+		if (telephone != null) {
+			if (telephone.length() > 3) {
+				count++;
+				qs+="i.telephone = :s8 and ";
+				paramMap.put("s8", telephone);
 			}
 		}
 		if (codiceFiscale != null) {
 			if (codiceFiscale.length() > 3) {
 				count++;
-				qs+="i.codiceFiscale = :s8 and ";
-				paramMap.put("s8", codiceFiscale);
+				qs+="i.codiceFiscale = :s9 and ";
+				paramMap.put("s9", codiceFiscale);
 			}
 		}
 		if (partitaIva != null) {
 			if (partitaIva.length() > 3) {
 				count++;
-				qs+="i.partitaIva = :s9 and ";
-				paramMap.put("s9", partitaIva);
+				qs+="i.partitaIva = :s10 and ";
+				paramMap.put("s10", partitaIva);
 			}
 		}
 		qs += "i.deletionTime == null " +
