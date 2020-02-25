@@ -2,6 +2,7 @@ package it.giunti.chimera.api.client;
 
 public class SearchBean {
 	
+	private int maxResults = 1;
 	private String identityUid = null;
 	private String email = null;
 	private String lastName = null;
@@ -13,6 +14,12 @@ public class SearchBean {
 	private String codiceFiscale = null;
 	private String partitaIva = null;
 	
+	public int getMaxResults() {
+		return maxResults;
+	}
+	public void setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
+	}
 	public String getIdentityUid() {
 		return identityUid;
 	}

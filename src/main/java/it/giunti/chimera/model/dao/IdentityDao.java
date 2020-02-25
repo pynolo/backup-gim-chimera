@@ -338,7 +338,7 @@ public class IdentityDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Identity> findIdentityByProperties(String identityUid, String email,
+	public List<Identity> findIdentityByProperties(int maxResults, String identityUid, String email,
 			String lastName, String firstName, String address, String provId,
 			String zip, String phone, String codiceFiscale, String partitaIva) 
 					throws NotFound404Exception {
@@ -427,6 +427,7 @@ public class IdentityDao {
 				value = QueryUtil.escapeParam(value);
 				q.setParameter(key, value);
 			}
+			q.setMaxResults(maxResults);
 			List<Identity> iList = (List<Identity>) q.getResultList();
 			return iList;
 		} else {

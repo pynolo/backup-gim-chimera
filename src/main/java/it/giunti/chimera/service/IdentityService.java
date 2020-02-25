@@ -127,11 +127,11 @@ public class IdentityService {
 	}
 	
 	@Transactional
-	public List<Identity> findIdentityByProperties(String identityUid, String email,
+	public List<Identity> findIdentityByProperties(int maxResults, String identityUid, String email,
 			String lastName, String firstName, String address, String provId,
 			String zip, String phone, String codiceFiscale, String partitaIva)
 			throws NotFound404Exception {
-		List<Identity> resultList = identityDao.findIdentityByProperties(identityUid, email, 
+		List<Identity> resultList = identityDao.findIdentityByProperties(maxResults, identityUid, email, 
 					lastName, firstName, address, provId, zip, 
 					phone, codiceFiscale, partitaIva);
 		return resultList;

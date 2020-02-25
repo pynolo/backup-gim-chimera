@@ -30,6 +30,7 @@ public class IdentitySearchController {
 		if (input == null) throw new NotFound404Exception("Empty search params");
 		
 		List<Identity> iList = identityService.findIdentityByProperties(
+				input.getMaxResults(),
 				input.getIdentityUid(),
 				input.getEmail(),
 				input.getLastName(),
