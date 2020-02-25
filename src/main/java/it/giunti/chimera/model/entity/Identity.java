@@ -63,10 +63,10 @@ public class Identity {
     private String addressTown;
     @Column(name = "telephone", length = 32)
     private String telephone;
-    @Column(name = "giunti_card", length = 16)
-    private String giuntiCard; 
-    @Column(name = "giunti_card_mode", length = 4)
-    private String giuntiCardMode; 
+    //@Column(name = "giunti_card", length = 16)
+    //private String giuntiCard; 
+    //@Column(name = "giunti_card_mode", length = 4)
+    //private String giuntiCardMode; 
     @Column(name = "codice_fiscale", length = 16)
     private String codiceFiscale; 
     @Column(name = "partita_iva", length = 16)
@@ -220,22 +220,6 @@ public class Identity {
 
 	public void setAddressTown(String addressTown) {
 		this.addressTown = addressTown;
-	}
-
-	public String getGiuntiCard() {
-		return giuntiCard;
-	}
-
-	public void setGiuntiCard(String giuntiCard) {
-		this.giuntiCard = giuntiCard;
-	}
-
-	public String getGiuntiCardMode() {
-		return giuntiCardMode;
-	}
-
-	public void setGiuntiCardMode(String giuntiCardMode) {
-		this.giuntiCardMode = giuntiCardMode;
 	}
 
 	public String getCodiceFiscale() {

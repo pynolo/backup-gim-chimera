@@ -111,8 +111,8 @@ public class IdentityService {
 		if (fin.getSchool() == null) fin.setSchool(red.getSchool());
 		if (fin.getSex() == null) fin.setSex(red.getSex());
 		if (fin.getTelephone() == null) fin.setTelephone(red.getTelephone());
-		if (fin.getGiuntiCard() == null) fin.setGiuntiCard(red.getGiuntiCard());
-		if (fin.getGiuntiCardMode() == null) fin.setGiuntiCardMode(red.getGiuntiCardMode());
+		//if (fin.getGiuntiCard() == null) fin.setGiuntiCard(red.getGiuntiCard());
+		//if (fin.getGiuntiCardMode() == null) fin.setGiuntiCardMode(red.getGiuntiCardMode());
 		Identity result = identityDao.update(fin, ChangeEnum.REPLACE);
 		identityDao.logicalDelete(red.getId());
 		return result;
@@ -124,5 +124,16 @@ public class IdentityService {
 		String result = "OK";
 		if (errorMsg != null) result = errorMsg;
 		logIdentityDao.insertLog(identityUid, idFederation, functionName, parameterBean, result);	
+	}
+	
+	@Transactional
+	public List<Identity> findIdentityByProperties(String identityUid, String email,
+			String lastName, String firstName, String address, String provId,
+			String zip, String phone, String codiceFiscale, String partitaIva)
+			throws NotFound404Exception {
+		List<Identity> resultList = identityDao.findIdentityByProperties(identityUid, email, 
+					lastName, firstName, address, provId, zip, 
+					phone, codiceFiscale, partitaIva);
+		return resultList;
 	}
 }

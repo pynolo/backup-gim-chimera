@@ -3,7 +3,9 @@ package it.giunti.chimera.model.dao;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +19,7 @@ import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.GiuntiCardModeEnum;
 import it.giunti.chimera.IdentityPropertiesEnum;
+import it.giunti.chimera.exception.NotFound404Exception;
 import it.giunti.chimera.exception.UnprocessableEntity422Exception;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.util.PasswordUtil;
@@ -60,8 +63,8 @@ public class IdentityDao {
 		itemToUpdate.setCodiceFiscale(item.getCodiceFiscale());
 		itemToUpdate.setEmail(item.getEmail());
 		itemToUpdate.setFirstName(item.getFirstName());
-		itemToUpdate.setGiuntiCard(item.getGiuntiCard());
-		itemToUpdate.setGiuntiCardMode(item.getGiuntiCardMode());
+		//itemToUpdate.setGiuntiCard(item.getGiuntiCard());
+		//itemToUpdate.setGiuntiCardMode(item.getGiuntiCardMode());
 		itemToUpdate.setLastName(item.getLastName());
 		itemToUpdate.setPartitaIva(item.getPartitaIva());
 		itemToUpdate.setPasswordMd5(item.getPasswordMd5());
@@ -98,8 +101,8 @@ public class IdentityDao {
 		item.setCodiceFiscale(null);
 		item.setEmail(null);
 		item.setFirstName(null);
-		item.setGiuntiCard(null);
-		item.setGiuntiCardMode(null);
+		//item.setGiuntiCard(null);
+		//item.setGiuntiCardMode(null);
 		item.setLastName(null);
 		item.setPartitaIva(null);
 		item.setPasswordMd5("x");
@@ -333,4 +336,102 @@ public class IdentityDao {
 		}
 		return email;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Identity> findIdentityByProperties(String identityUid, String email,
+			String lastName, String firstName, String address, String provId,
+			String zip, String phone, String codiceFiscale, String partitaIva) 
+					throws NotFound404Exception {
+		int count = 0;
+		Map<String, String> paramMap = new HashMap<String, String>();
+		String qs = "from Identity as i where ";
+		if (identityUid != null) {
+			if (identityUid.length() > 3) {
+				count++;
+				qs+="i.identityUid = :id1 and ";
+				paramMap.put("id1", identityUid);
+			}
+		}
+		if (email != null) {
+			if (email.length() > 3) {
+				count++;
+				qs+="i.email = :s1 and ";
+				paramMap.put("s1", email);
+			}
+		}
+		if (lastName != null) {
+			if (lastName.length() > 3) {
+				count++;
+				qs+="i.lastName like :s2 and ";
+				lastName = lastName.replaceFirst("\\*", "%");
+				paramMap.put("s2", lastName);
+			}
+		}
+		if (firstName != null) {
+			if (firstName.length() > 3) {
+				count++;
+				qs+="i.firstName like :s3 and ";
+				firstName = firstName.replaceFirst("\\*", "%");
+				paramMap.put("s3", firstName);
+			}
+		}
+		if (address != null) {
+			if (address.length() > 3) {
+				count++;
+				qs+="i.addressStreet like :s4 and ";
+				address = address.replaceFirst("\\*", "%");
+				paramMap.put("s4", address);
+			}
+		}
+		if (provId != null) {
+			if (provId.length() == 2) {
+				count++;
+				qs+="i.addressProvinceId = :s5 and ";
+				paramMap.put("s5", provId);
+			}
+		}
+		if (zip != null) {
+			if (zip.length() > 3) {
+				count++;
+				qs+="i.addressZip = :s6 and ";
+				paramMap.put("s6", zip);
+			}
+		}
+		if (phone != null) {
+			if (phone.length() > 3) {
+				count++;
+				qs+="i.telephone = :s7 and ";
+				paramMap.put("s7", phone);
+			}
+		}
+		if (codiceFiscale != null) {
+			if (codiceFiscale.length() > 3) {
+				count++;
+				qs+="i.codiceFiscale = :s8 and ";
+				paramMap.put("s8", codiceFiscale);
+			}
+		}
+		if (partitaIva != null) {
+			if (partitaIva.length() > 3) {
+				count++;
+				qs+="i.partitaIva = :s9 and ";
+				paramMap.put("s9", partitaIva);
+			}
+		}
+		qs += "i.deletionTime == null " +
+				"order by up.id desc";
+		if (count > 0) {
+			Query q = entityManager.createQuery(qs);
+			for (String key:paramMap.keySet()) {
+				String value = paramMap.get(key);
+				value = QueryUtil.escapeParam(value);
+				q.setParameter(key, value);
+			}
+			List<Identity> iList = (List<Identity>) q.getResultList();
+			return iList;
+		} else {
+			throw new NotFound404Exception("I parametri di ricerca sono vuoti o troppo corti");
+		}
+	}
+		
 }
