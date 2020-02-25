@@ -13,6 +13,7 @@ import it.giunti.chimera.ChangeEnum;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
 import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
 import it.giunti.chimera.api.v05.bean.ProviderAccountBean;
+import it.giunti.chimera.exception.NotFound404Exception;
 import it.giunti.chimera.model.dao.CounterDao;
 import it.giunti.chimera.model.dao.IdentityConsentDao;
 import it.giunti.chimera.model.dao.IdentityDao;
@@ -21,7 +22,6 @@ import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.IdentityConsent;
 import it.giunti.chimera.model.entity.LookupConsentRange;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.mvc.NotFound404Exception;
 
 @Service("converter05Service")
 public class Converter05Service {

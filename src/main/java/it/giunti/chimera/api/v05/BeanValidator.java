@@ -9,8 +9,8 @@ import it.giunti.chimera.AppConstants;
 import it.giunti.chimera.IdentityPropertiesEnum;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
 import it.giunti.chimera.api.v05.bean.IdentityConsentBean;
+import it.giunti.chimera.exception.Internal418Exception;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.mvc.Internal418Exception;
 
 public class BeanValidator {
 

@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import it.giunti.chimera.api.v05.bean.ChangedIdentitiesBean;
 import it.giunti.chimera.api.v05.bean.FederationListBean;
 import it.giunti.chimera.api.v05.bean.IdentityBean;
+import it.giunti.chimera.exception.UnprocessableEntity422Exception;
 import it.giunti.chimera.model.entity.Federation;
 import it.giunti.chimera.model.entity.Identity;
-import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 import it.giunti.chimera.service.FederationService;
 
 @RestController

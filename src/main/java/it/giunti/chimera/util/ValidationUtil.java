@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
+import it.giunti.chimera.exception.UnprocessableEntity422Exception;
 
 public class ValidationUtil {
 

@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import it.giunti.chimera.exception.Conflict409Exception;
+import it.giunti.chimera.exception.NotFound404Exception;
 import it.giunti.chimera.model.entity.Provider;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.mvc.Conflict409Exception;
-import it.giunti.chimera.mvc.NotFound404Exception;
 import it.giunti.chimera.util.QueryUtil;
 
 @Repository("providerAccountDao")

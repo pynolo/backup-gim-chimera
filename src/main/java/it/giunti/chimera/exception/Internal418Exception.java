@@ -1,4 +1,4 @@
-package it.giunti.chimera.mvc;
+package it.giunti.chimera.exception;
 
 import org.springframework.http.HttpStatus;
 

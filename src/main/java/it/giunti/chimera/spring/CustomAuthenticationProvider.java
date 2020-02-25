@@ -1,4 +1,4 @@
-package it.giunti.chimera.mvc;
+package it.giunti.chimera.spring;
 
 import java.util.Collections;
 

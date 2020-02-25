@@ -10,14 +10,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.giunti.chimera.ChangeEnum;
+import it.giunti.chimera.exception.Conflict409Exception;
+import it.giunti.chimera.exception.NotFound404Exception;
+import it.giunti.chimera.exception.UnprocessableEntity422Exception;
 import it.giunti.chimera.model.dao.IdentityDao;
 import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
 import it.giunti.chimera.model.entity.ProviderAccount;
-import it.giunti.chimera.mvc.Conflict409Exception;
-import it.giunti.chimera.mvc.NotFound404Exception;
-import it.giunti.chimera.mvc.UnprocessableEntity422Exception;
 
 @Service("identityService")
 public class IdentityService {
