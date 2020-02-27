@@ -24,7 +24,7 @@ public class IdentitySearchController {
 	@Qualifier("identityService")
 	private IdentityService identityService;
 
-	@PostMapping("/api/client/search_identity")
+	@PostMapping("/api/client/searchidentity")
 	public List<IdentityResultBean> searchIdentity(@Valid @RequestBody SearchBean input) 
 			throws NotFound404Exception {
 		if (input == null) throw new NotFound404Exception("Empty search params");

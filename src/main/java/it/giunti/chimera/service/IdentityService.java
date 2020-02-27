@@ -14,6 +14,7 @@ import it.giunti.chimera.exception.Conflict409Exception;
 import it.giunti.chimera.exception.NotFound404Exception;
 import it.giunti.chimera.exception.UnprocessableEntity422Exception;
 import it.giunti.chimera.model.dao.IdentityDao;
+import it.giunti.chimera.model.dao.IdentitySearchDao;
 import it.giunti.chimera.model.dao.LogIdentityDao;
 import it.giunti.chimera.model.dao.ProviderAccountDao;
 import it.giunti.chimera.model.entity.Identity;
@@ -30,6 +31,9 @@ public class IdentityService {
 	@Autowired
 	@Qualifier("identityDao")
 	private IdentityDao identityDao;
+	@Autowired
+	@Qualifier("identitySearchDao")
+	private IdentitySearchDao identitySearchDao;
 	@Autowired
 	@Qualifier("providerAccountDao")
 	private ProviderAccountDao providerAccountDao;
@@ -132,7 +136,7 @@ public class IdentityService {
 			String addressTown, String addressProvinceId, String telephone, String codiceFiscale,
 			String partitaIva)
 			throws NotFound404Exception {
-		List<Identity> resultList = identityDao.findIdentityByProperties(maxResults, identityUid, email, 
+		List<Identity> resultList = identitySearchDao.findIdentityByProperties(maxResults, identityUid, email, 
 					lastName, firstName, addressStreet, addressZip, addressTown, addressProvinceId,
 					telephone, codiceFiscale, partitaIva);
 		return resultList;

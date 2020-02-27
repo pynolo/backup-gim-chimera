@@ -6,7 +6,7 @@ public class ValidationBean {
 	
 	private Boolean success = null;
 	private String assignedIdentityUid = null;
-	private Map<String, String> warnings = null;
+	private Map<String, String> messages = null;
 	
 	public Boolean getSuccess() {
 		return success;
@@ -20,12 +20,11 @@ public class ValidationBean {
 	public void setAssignedIdentityUid(String assignedIdentityUid) {
 		this.assignedIdentityUid = assignedIdentityUid;
 	}
-	public Map<String, String> getWarnings() {
-		return warnings;
+	public Map<String, String> getMessages() {
+		return messages;
 	}
-	public void setWarnings(Map<String, String> warnings) {
-		this.warnings = warnings;
-	}
-	 
+	public void setMessages(Map<String, String> messages) {
+		this.messages = messages;
+	}	 
 	 
 }

@@ -160,7 +160,7 @@ public class IdentityController {
 		if (errMap.isEmpty()) {
 			success = true;
 		} else {
-			resultBean.setWarnings(errMap);
+			resultBean.setMessages(errMap);
 		}
 		resultBean.setSuccess(success);
 		return resultBean;
@@ -281,7 +281,7 @@ public class IdentityController {
 				converter05Service.persistIntoConsent(input);
 				success = true;
 			} else {
-				resultBean.setWarnings(errMap);
+				resultBean.setMessages(errMap);
 			}
 			resultBean.setSuccess(success);
 		} catch (Exception e) {
